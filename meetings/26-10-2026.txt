@@ -1,0 +1,730 @@
+Transcription for craig.horse/rec/2LxNVuyhigVP
+
+zaro_to
+okay now I'm recording because I want to you know take the use the what we talk about later in the AI to design things yeah the
+
+schmithvillers
+okay yeah the transcription
+hold the cut
+
+zaro_to
+transcription so let's start by where we were last time I mean we were talking about wait we came up with a good name which I forgot already all the hold that card hold the card yeah okay so hold that card and we were
+
+schmithvillers
+yeah
+
+zaro_to
+talking about how the flow is going to be right this kind of receipt then it will keep an inventory from your receipts I call the scant receipts then this inventory next time you're in the shop it
+
+schmithvillers
+yeah
+
+zaro_to
+can suggest you know you shouldn't buy this or you should buy this right like I can go both ways and it can also give you suggestions in based on the inventory of what you can use to reduce you know carbon footprint or
+
+schmithvillers
+yeah yes
+
+zaro_to
+save money or however however we can we can make this part you know because so clearly when we're talking about product suggestions it depends very much on what kind of products are there you know what's available like not like purely
+
+schmithvillers
+mm-hmm
+
+zaro_to
+knowledge based but also what is available as products so so uh well I'll start you know by what I'm thinking I mean I said a short flow right but maybe make it
+more detailed and then you can jump in you know correct and so uh or or let's let's let's brainstorm for first one one other part which was a little bit like I don't know in the gray area for me which is um
+
+schmithvillers
+yeah
+yeah
+
+zaro_to
+when we were talking about the suggestions right so because we have our flow starts with scanning a receipt but this is at the end of your shopping process this is the end of the shopping process so if we're going to be suggesting when are
+
+schmithvillers
+yes mm-hmm
+
+zaro_to
+we suggesting when you scan a receipt this is usually too late I mean yeah yeah and I mean it's not that the suggestion is not useful but it's for the next time you shop which might be in I don't know a few days one week
+
+schmithvillers
+yeah
+
+zaro_to
+depends how you shop right and then maybe you have forgotten all of it and uh so so should we so how how can we uh go around that uh or how how can we adjust the flow to
+accommodate for the fact that subsequent you know shopping shopping you go to the shop next time third time fourth time fifth time whatever that you get a suggestion at the beginning of the shopping you know but now here is the thing
+
+schmithvillers
+so
+
+zaro_to
+some suggestions are easy let's say suggestions like you are low on I don't know cooking oil whatever that's relatively easy why because I mean you cannot do it from a single scan but once you
+
+schmithvillers
+i
+
+zaro_to
+establish how often you know a person buys let's say cooking coal let's say you use that much cooking go so you buy one liter per week right and when you do it three four five times you have now enough data to predict whether you need it or not
+
+schmithvillers
+had
+
+zaro_to
+uh right but everything else
+really is it doesn't fit this kind of prediction you know let's say uh in order to say you you have to you can save we can we can say a general suggestion but when do we say the suggestion right like uh no we can think of it like okay
+yeah no no sure sure
+
+schmithvillers
+yeah okay so i had a couple of uh things so one thing what we can do is so while the person is buying the things right not at the end like with the receipt right so while the person is buying they can click a photo of their cart right so we can give them
+suggestions there right so before they have they've gone to the checkout counter even before that they can just or the second thing is like everybody creates a list right whenever they're going to the grocery store so they can give us the list like they can click the picture of the list okay this is all i want to buy and even
+
+zaro_to
+ah okay
+
+schmithvillers
+before they reach the grocery store they'll get a recommendation okay this you should buy this instead of this
+mm-hmm yeah
+
+zaro_to
+okay yeah so this is a good point with the list I didn't think about the list at all because we if we have a list like we can how to generate like the model can how to generate something for the list right like how correct is going to be I don't know but you know it can help how to generate something for
+
+schmithvillers
+yeah
+
+zaro_to
+the list and the people can enter their own stuff really you know like whatever they feel like and we can keep a list and and then if we have a list like a main screen in the app you know my shopping list then the suggestion we can show right there on the list
+
+schmithvillers
+yes exactly
+
+zaro_to
+right like so so because and and and what yours what you said actually it's quite good when you scan your card which is like a lazy thing uh a more a more correct thing will be you know you scan each item right you take picture of the item then you have very precise identification by barcode
+
+schmithvillers
+mm-hmm
+
+zaro_to
+uh but it's more work actually but if you yeah yeah yeah exactly I mean also also it doesn't need to be like um every item should be scanned that you show maybe
+
+schmithvillers
+yes yeah that's a lot of data right so every picture that's too much yeah
+yeah
+
+zaro_to
+only the ones that we give suggestions anyway we can think about this flow in more detail but uh right now when you set uh when you said that with the whole card i'm imagining uh you know you scan you scan the whole card and it recognizes what's in the card and then based on what it recognizes it can
+either straight up give you a suggestion or maybe it can tell you oh you know I don't quite recognize this product or or this is the product let's say if I continue my example with the cooking oil yes this is cooking oil but I don't know what brand it is can you scan it can you scan the barcode
+
+schmithvillers
+yeah so this like so
+
+zaro_to
+so I can check whether it's you know what you want and so on you know whether it's the whatever the carbon neutral brand or whatever the suggestion is
+so so yeah yeah
+
+schmithvillers
+this will be again a headache so let's say that you go to the grocery store right so you enter and you have a bunch of things to buy maybe like for the next two weeks right so you go there you can't scan every item number one number two let's say your cart is really full right so the items that are at the bottom you won't be able to scan those
+
+zaro_to
+yeah yeah true yeah yeah
+
+schmithvillers
+right so one thing can be that okay once that one layer of your cart is done just take a picture that can be one thing and then as subsequently as get filled but again that is a little difficult because if things are placed differently you want to be able to identify like i don't think uh gemina like muse will
+
+zaro_to
+exactly well true but we need to we need to start somewhere you know like because okay what you say makes sense uh you
+
+schmithvillers
+be able to to identify that yeah you take a picture
+
+zaro_to
+actually put some things in the car take a picture put some more things in the car take a picture again and so on yeah it's more work it's more work but I look in order to make it really convenient uh this will depend on too many
+
+schmithvillers
+yeah mm-hmm yeah
+
+zaro_to
+things you know we do not have we can what we can make to do it super convenience really at the cost of um more battery usage by the app is to say how are they going to you know uh stick like you know imagine you have a phone so you
+
+schmithvillers
+yeah
+
+zaro_to
+have a phone holder that you put the phone so it videos the card all the time right and then every few seconds our app will do the processing recognition and everything right uh and then it's going to be super convenient but here are the the two problems
+first like on a normal shopping cart there is nowhere to put the phone you know like you need to have a holder you know one of these holders that you can clip on on anything yeah great of course for a prototype to demo somebody you know how this is working perfect but
+
+schmithvillers
+put the phone yes
+yes
+
+zaro_to
+practically now look this is not a bad thing because we are not we are not developing uh a final product that's going to sell right we are developing something for a competition to show you know what we can do how good we are with creating software with AI so
+
+schmithvillers
+oh yes yes uh-huh yeah even second
+
+zaro_to
+we really it's not the most practical thing i don't think it's a big deal you know but it should be it should be clear it should be clear what and how it does like learn the value of uh and and the other side the other side of this this constant recognition is that is going to use more data and much more
+
+schmithvillers
+is too much
+
+zaro_to
+calls on the AI model you want to recognize i mean we cannot do it in frame we can do like let's say what every second or i don't know i don't know really um uh but but that's that's the other problem but if we ignore this problem and think about it on level of
+
+schmithvillers
+uh-huh yeah
+
+zaro_to
+prototype yeah i mean you can think of it something very convenient you somehow put your phone on the card and you just drive around your card put things you know and then your phone is automatically updating literally updating your checklist right because once you put an item that's on your
+
+schmithvillers
+uh-huh
+
+zaro_to
+checklist it will say okay you've got that or it will straight away tell you you know oh look use another alternative if you have it in store because it's uh i don't know better for for some reason so i mean this makes it much more appealing at the
+expense that it's it's not it's not practical yet you know it's going to be very practical if uh let's say the supermarket start adopting phone holders for their cards yeah but anyway anyway of
+
+schmithvillers
+yes true because people usually put their phones in their pocket they don't really put it on the
+
+zaro_to
+course like but now it makes no sense why why risk putting your phone in this metal card where it's going to be loose it can fall on the ground and all the audio i mean much risk oh so yeah this is also
+
+schmithvillers
+cart yeah yeah someone can take it away oh okay so what
+
+zaro_to
+concern uh not worth it but uh no that that was it you know like and and i just wanted to add that uh this means that we need to rethink a little bit of the flow of the app to start like okay
+
+schmithvillers
+we yeah go ahead yes i
+
+zaro_to
+you have a start screen and this start screen should have like let's say two three mode you know so you go either in scan receipt which is or you you go into um
+
+schmithvillers
+think
+
+zaro_to
+uh plan shoply or shopping list mode let's say where you add shopping you know like or maybe we can make it so you just dictate your shopping list right so you just press record and start speaking to your shopping list and we use some speech recognition i hope meta models that they are giving that
+they will be giving us access to i think they should have because it's pretty basic nowadays uh you know you just start recording and it makes a shopping list for you and then the third mode actually is when you're in the store and what we'll be talking about you know how you take pictures of your shopping car and carton is telling you
+
+schmithvillers
+so yeah okay
+okay
+
+zaro_to
+okay you need to take this you know this is crossed off the list and so on and so on and and that's that's how it's going to look as a start and then the only thing left actually to think about is how to connect them because right
+now they're going to be a little bit uh like all ties down to the inventory you you talked about but inventory in the sense of you have the whole inventory but you also need to have it per purchase you know so you can identify each separate purchase in time and so on so
+you can be making this kind of predictions and so on uh like you know buying something every week which which of course you can reuse to when you start editing your shopping list to just pre-populate some stuff and because it most
+probably you will need it so yeah yeah
+
+schmithvillers
+just give me one second so i just thought of something um so let's say you're the first you're the you're using this app for the first time okay so you don't have any inventory you have nothing it's a plain application for you right now right so you download the application now you're going to the grocery store now you have three three ways that you can
+
+zaro_to
+yeah yeah yeah yeah yeah yeah yeah absolutely absolutely
+
+schmithvillers
+do this maybe you have a paper right you've written your grocery list down on a paper or maybe you have it on your notes app or something so you can just upload that you can take a picture of the paper list or you can take a screenshot of your grocery list and you can upload now when you upload a grocery list right it will let's say you have oil usually people don't specify okay
+
+zaro_to
+yeah
+
+schmithvillers
+i need peanut oil or whatever right they just write oil or even if they're writing okay peanut oil fine so our app can give us give them a suggestion that this would be a good oil for you maybe peanut oil is not good maybe some maybe some other because we don't have the brand we don't know what brand they use because it's completely new right so we can only
+
+zaro_to
+yeah yeah
+yeah
+
+schmithvillers
+suggest them types of things we can't suggest them brands at the moment we don't know what brands are available in their area so we can suggest them types okay just buy this type instead of this type so one i think we can do this right now let's say the person goes now we have given them a list okay according to what grocery list you have given to us this is what you can improve
+right if you want to buy things right again at the moment we don't have a monetary thing we can't say that okay this is cheaper this is we don't know because every place has a different value right so for now we can only give them suggestions that this according to sustainability this would be better for you so our first screen if you talk about
+
+zaro_to
+yeah
+
+schmithvillers
+grocery list is purely sustainability then the second option is the person goes to the grocery store again it's a new i don't like maybe they haven't uploaded a grocery list they just went to the grocery store and they took a picture of their cart obviously whatever items are on the top of the cart image will be only image will only be able to identify those and
+on basis of that it will give the list again so this is what you bought now there can be an identification for brand and there cannot be another identification for brand but i think oil will still be like there's an oil bottle or there are eggs or whatever right fruits and stuff it will still be able to identify that at least so on
+basis of that again it can give a similar sort of a list that your cart has eggs right maybe like i there's no sustainable way of getting eggs but you know so it can just be like eggs is it
+
+zaro_to
+yeah no there is there is there is but you need to yeah but you need to scan the x like i don't know how they sell x in india but in many like in bulgaria when you buy x they have three three or four
+
+schmithvillers
+okay
+
+zaro_to
+codes actually zero one two and three and zero zero is like the best in terms of its free range chicken means chicken go outside somewhere and can roam freely at least for a while not all the time and three three is the worst means the chicken
+
+schmithvillers
+oh yeah
+got it okay i have no idea about it yes true true it's
+
+zaro_to
+lives all their life in a small cage and is just producing eggs if nothing else so so this is this is very connected to sustainability if you ask me uh but but the only way you can know it is either if it's very
+
+schmithvillers
+very good yes
+
+zaro_to
+visible on the box you know of the x or you need to actually scan if it's because not it's not always visible on the box uh you need to scan the code that's printed on the egg just just giving an example that many things can have like even if it's not obvious
+they will have certain uh you know like i don't know they will have certain level of sustainability index attached to them depends on who produces them and how now how good we can identify this i i don't think we should be concerning ourselves too much with that again we should be thinking
+as a prototype we should be thinking as this idea we are making like a demo for the idea and the main goal is if somebody picks up you know and likes our idea uh once this is happening we can think about these harder problems um it's going it's going to be too
+
+schmithvillers
+yeah okay
+
+zaro_to
+much you understand it's going to be we have 10 days
+
+schmithvillers
+okay okay so yes yes yeah so i think this is fine like you can give the grocery list it will give you suggestions like simple suggestions no brands or anything then you can take a picture of your cart it will identify items give you suggestions fine the third one is receipt now receipt is a solid thing so let's say if a person takes a photo of the cart
+and also at the end takes a photo of the receipt right now we have a solid inventory okay person bought the fruit and what brands that fruit came from right something like that so the receipt kind of ties everything up so even let's say that there can be combinations right so if the person gives a grocery list and the receipt fair enough both things work if
+
+zaro_to
+yeah yeah yeah
+exactly
+
+schmithvillers
+only receipt that is that is the most solid evidence that we have okay brands and everything quantity everything right so that can be another skill that okay this was your receipt you were not able to okay this is you have already bought things so we will give you suggestions for the next thing right only in case of grocery list and cart they can give suggestions
+for the current shopping trip right in case of receipt it can give suggestions for the next shopping trip now when um the receipt is there now you like a proper inventory is
+is generated for you okay now again we can't uh determine okay if the person has finished oil or some people finish oil in one week some take one month we can't do any of that but we can create a shopping list for the next time maybe if the person bought oil this time they will they might buy oil again the brand that they use will give us a solution
+okay use this brand instead it's a better better brand so that we can do in
+
+zaro_to
+yeah yeah yeah exactly exactly exactly you know like and and now now that you're talking i i even you know how i imagine it so so basically maybe the starting screen should be i'm
+
+schmithvillers
+inventory yes just a camera with three icons like sorry
+
+zaro_to
+should be too yeah no no no wait wait yeah wait wait before the camera just just maybe two big buttons and one is inventory and the other one is you know i'm shopping now or shopping shopping is shopping now we need
+
+schmithvillers
+yeah
+
+zaro_to
+to see how to distinguish this and the inventory basically lets you when you go there lets you see what you have and lets you make the manual shopping list you know whether you're going to scan a piece of paper you're going to dictate whatever you know we think about it you give you give our app a
+a list a shopping list as text and we create you know shopping lists as checkpoints and you know like check boxes and everything um and then this is also the place where you can see uh see what what uh
+what uh what you've been bought historically you know and you will get the suggestions for the next time because this means you know how how i see you're either thinking about planning right or you have just shopped or you're doing the shopping now so this means that you also in
+in the same place uh what does the inventory you scan a receipt to fill things in the inventory you know like thinking about it from from user from user usability perspective you know ux user experience thing uh and then the other side is where you know maybe
+it can start straight up with the camera right and then
+you just snap you know the camera is just working you snap it recognizes whatever it is and updates and show to certain updates um and then maybe at the end of it you know if you scan receipt it will just move to the to the other mode once the receipt is
+scanned um or or what i want to to think of it is you know is like many apps many apps whether on on the computer or on the phone they follow the user experience of a traditional app you have
+steps screens you feel this that you need to do this before that and so on and so on i would like us to focus for the experience of the app to be closer to a game rather than a shopping list you know and when i say game i'm not talking that we should be adding gamification really but you know in the
+game when you play the game usually most games things are happening right away you don't have steps you don't you know you just click and whatever is the next step happens you don't have to pre-fill something validate or whatever right a lot of a lot of things a lot of choices are made for
+you and you make very little choices
+
+schmithvillers
+yes okay makes sense
+
+zaro_to
+yeah yeah because you know we need to my feeling is i mean this is just a feeling is that we should need to be focusing on something that is simple and catchy and not so much super technically advanced
+
+schmithvillers
+yeah yeah
+yeah
+
+zaro_to
+because like for the real technical advancements we we we need we need time we need time and we need investment uh like like i told you know if you if you if you go and work with let's say pick one big supermarket chain uh you know and we you work with them and then you
+have access to their product list you know because they're not going to give it that for free to me and you right they just won't but if if you approach it okay we're a startup we're working you know let's make a deal you know something so maybe they they will do it right when
+
+schmithvillers
+yeah
+
+zaro_to
+you have that kind of information the quality of the suggestions that we can make will jump drama we will improve dramatically right because it's just going to be oh you can buy this better cooking uh this this better cooking call you will pick a cooking oil based on what's actually
+available in the store because when we're doing it this way we don't know whether it's available in the store or not we have no idea right so so but all this is too much for our stage that's why we should be thinking more on the on this side where it's
+catchy interesting even if it's not very precise uh and we will be thinking so yeah okay good uh if you have any ideas more to something more to add based on what we discussed so far
+
+schmithvillers
+so um i like the idea just have two buttons on the first screen nothing
+
+zaro_to
+yeah
+
+schmithvillers
+complicated right so maybe we can have like two buttons number one is um a new shopping trip so this is before the person is going to shop right so it can be grocery list or it can be a card photo whatever it will be in one button only a new shopping trip okay the other one can be either upload receipt or inventory like there
+can be two three total three buttons so inventory will be something like something like that like or should inventory be in the new shopping trip place itself because if they click on new shopping trip that means they're going to shop and when they open that
+
+zaro_to
+yeah yeah look yeah that that's exactly what i wanted to sell say that we need to be shifting it towards more like a game experience because now we can be strict and say okay you have here a place or a screen to upload the receipts or we
+
+schmithvillers
+yes
+yeah
+
+zaro_to
+can be just uh accepting the the the receipts into place because it's more convenient you know you can either look sometimes sometimes it's like that sometimes you just don't care at this moment you put the receipt in your pocket you know and you go home and and at a later point you scan it right but sometimes
+
+schmithvillers
+so if
+the
+
+zaro_to
+anyway you've been using that in the shop and the receipt is in your hand you can scan it right away right it's all things are equally probable so so we can be accepting the receipt in both places you know both in the inventory both or in the shopping mode no problem uh and and this applies to anything
+else you know so if it's convenient to do it from two places let's just think how to do it from two places uh yeah it's going to be a little bit more interfaced work or something like that but again we're using ai so we shouldn't be too much
+concerned about it exactly yes
+
+schmithvillers
+person starts shopping mode let's say right and they don't take any photos of the cart or anything yeah they will have an option to upload the receipt at the end right but if you only have one shopping mode button at the start and the person didn't start the shopping mode but now there should be an option so that they
+
+zaro_to
+exactly exactly exactly yeah
+
+schmithvillers
+can give the receipt like without starting the shopping mode as well like you said right they didn't they just went they had a quick shopping trip they just went home and now they want to upload the receipt so i think shopping mode can be one and then the upload receipt can
+
+zaro_to
+i i even imagine it like we call one is shopping mode you know like two big months shopping mode and the other big is like i call it inventory because not only about the receipt that's where we also but the inventory is not a good word we
+
+schmithvillers
+be one yeah planning mode okay yeah yeah
+
+zaro_to
+should think of something maybe maybe pantry is a better word you know or something something else you have in the kitchen where you store food uh i mean fridge is also good but it's i mean fridges already means yeah so but let's say let's say pantry you know
+
+schmithvillers
+only for refrigerated items
+yeah
+
+zaro_to
+and when you go in the pantry you can make a new shopping list or i do suggest you new shopping list actually uh and and yeah and we can think about the the shopping list creation from like two sides because again sometimes
+sometimes okay you click on the pantry and it you want to you know fill in your shopping list based on what you already have but okay maybe you say i go shopping and then at that point you want to create the shopping list which means now maybe at this point you also
+look look look what i'm what i'm thinking i mean we are using a model that's going to be recognizing stuff anyway right so this model any way can recognize whether it's looking at groceries right in a shopping cart or is looking
+
+schmithvillers
+yeah
+
+zaro_to
+at a receipt right because it's going to recognize it's a receipt or is looking just a piece of paper with words scribbled on it right it can recognize all that so we can we can have kind of a smart scanner that you just point and shoot and it will suggest what to
+
+schmithvillers
+okay
+yeah
+
+zaro_to
+do you know if it recognizes receipt it will the first i mean we can give two other options right but the first option will be okay suggest uh add this to pantry uh or if it recognizes groceries it will be updating you know the the current shopping
+list or whatever uh so so in this sense
+we can mix and much more freely you know the screens and and and and the whole flow uh
+i don't know i i think i think we don't need to be very strict i think we just need to to arrive at something like we we start with some flow and we need to to have the flow in in our mind in advance but but we don't have to be super strict about how exactly it's going to be
+because because why i mean we can change it but also if we rely on the smartness of the ai i mean we don't need to think so much about it like like imagine it like that imagine we have a scanner screen that you just shoot
+and and it does you know suggest you what to do uh but then we use the same scanner screen in both shopping mode and uh uh pantry but when you are in i mean adult like the pantry normally should should just show you what you have right like but then you should have a
+button or option somewhere that says okay add stuff to punch and then it just opens the scanner and you just kind of receive it or you just kind of product right there is no problem if it's if it's let's say let's say you just bought one i don't know one uh pack of bread right you can just scan it why not add it to
+the pantry what's the problem uh are you sharing screen okay let me let me click watch on the oh wait
+
+schmithvillers
+yes yes so i was just like trying to um solidify so so we'll have the first page
+
+zaro_to
+sorry i was speaking on the phone and when i started watching now uh okay so you are saying can
+you
+
+schmithvillers
+so something of this sort so when you click on shopping mode uh it will go to like this screen so let me just create an arrow when you click on shopping mode it will go to the screen and you can have a camera and the camera can detect on its own that if it's a shopping list or a receipt
+or a um grocery cart right based on that it will come like this
+
+zaro_to
+can can you put a name can you put a name on this rectangle because we are going to use this scheme you're drawing in the ai later yeah
+
+schmithvillers
+so let's say scanner instance right so this will be able to identify right and it will give you a list of uh suggestions so current item and solution right now this will be in case
+it is a grocery list like the scanner the scanner the scanner identifies either a grocery list or a cart so this will happen in that case if it's a receipt then it can just add it to the inventory so we can have another this thing this will be our inventory i don't
+know if it's that's the correct spelling for it right okay so yeah if it identifies this is a uh something like that and this will be in case of this seat
+
+zaro_to
+i see it's okay yeah no no you can you can double click on the arrow and it will allow you to edit the text every object yeah yeah just
+
+schmithvillers
+no what okay cool so it can be is it oh cool right so this
+
+zaro_to
+double click on the arrow on the arrow itself
+yeah
+
+schmithvillers
+will be only in case of uh grocery list and that now in case of receipt it will just come to this and also if you're in pantry mode right so in pantry mode you can only go to inventory is what i'm assuming yes yeah and you can also
+
+zaro_to
+yeah yeah because i mean normally you you want to see what you have in in your pantry yeah like a button yes
+
+schmithvillers
+add a receipt here if you want right like if you want you can just yeah how do i okay this is a button this is another button and scanner okay that's a scanner and we can have a button here to add receipt
+
+zaro_to
+also every object you can when you double click you can add text automatically and it's
+
+schmithvillers
+okay we can add okay okay we can add okay okay
+
+zaro_to
+automatically centered and everything now maybe while we are drawing a schematic of the inventory maybe put this button at the bottom and show that there is a list of items that we are going to be showing right because that's what i imagine i assume yeah
+
+schmithvillers
+okay okay so i'll just write like
+that this will be a
+
+zaro_to
+yeah something like that yeah right okay and then add receipt actually is going to open the scanner screen but this is understandable yeah something like no
+
+schmithvillers
+separate will it be a separate scanner screen okay yes yeah
+
+zaro_to
+i need no no no the same scanner screen we can make it reusable uh and we just maybe in certain situations decide that it's not going to suggest something no but normally we can have one scanner
+
+schmithvillers
+yeah
+
+zaro_to
+screen if we if we center around this now and now here is the thing we can show in this in this thing that we're looking at right this
+schematic we can show suggestions in two places right now we can show suggestions in the inventory list right how we are going to show them that's another story but let's say we make some visual indication you know whatever
+uh and in the scanner uh and in the scanner we can show the suggestions straight straight in the list of actions right and then then it becomes kind of
+
+schmithvillers
+yeah
+
+zaro_to
+a quite a simple interface i mean we probably will have to add more things but but just this can accommodate most of what we want to build just with for i mean three three screens but let's say we're going to add two three more
+
+schmithvillers
+yeah yeah yeah
+
+zaro_to
+for reasons i don't know yet it's just going to come up uh okay okay yeah yeah
+
+schmithvillers
+so one more thing like when when when we're in the inventory right so maybe so let's say one item was there in the receipt or yeah okay and they give a suggestion so we can give like scores okay so how much money you save right um how much better will it be for
+
+zaro_to
+yeah
+
+schmithvillers
+your health maybe not like a very lengthy thing just a small percentage yes yes so
+
+zaro_to
+so so what i'm imagining for the suggestions they can be small indicators something that it's small like a badge you know colorful you know but when you click i mean it can open a screen which explains you better the saving or the you know what why is it healthier or whatever because if we have
+
+schmithvillers
+let's
+
+zaro_to
+to put everything in the same screen it's going to be way too much information so it should be small badges you know some indicator score something like that uh exactly
+
+schmithvillers
+say this is one item suggestion right just this was the current item see and we give this as a suggestion so um underneath it it can just have like small tags right so this is
+
+zaro_to
+yeah
+
+schmithvillers
+saves money something like that right just like a green or maybe like some we can have a color associated to it i did
+
+zaro_to
+something something something that pops up something that's different than the other colors
+exactly yeah and then when you click on the item or on these things it can show you more information or
+
+schmithvillers
+something not this can be green something like that like is what i'm imagining yeah
+
+zaro_to
+we we see how how we do it exactly yeah no
+this is this is good
+
+schmithvillers
+i think this is fair enough and i think instead of a web app we can have a mobile app like this time we can work on a mobile if that's feasible i don't know how feasible that is uh
+
+zaro_to
+okay so
+
+schmithvillers
+yes
+
+zaro_to
+so this is one thing uh one other thing we need to decide do we want to make it uh a mobile normal mobile app or we can go with pwa again like no no leave leave this on the site it's going to be it's it's you can put an arrow from one of the
+
+schmithvillers
+not
+
+zaro_to
+items to this
+maybe maybe different color or arrow right but just put an arrow yeah exactly cool so here is the thing
+
+schmithvillers
+use this as much
+yes
+yeah
+
+zaro_to
+now this basic functionality we have now i think pwa will work uh and the thing is it's simpler everything is simpler with pwa uh development testing is simpler because you don't
+need i mean you can use simulator right but in the end you need a phone to really test it and so on and so on uh and then actually when we're talking about uh wait a second there's some noise outside
+
+schmithvillers
+mm-hmm
+
+zaro_to
+uh when we're talking about testing you know so with pwa you saw with eco site it's super easy you make an web app with url and then when you open it first time it shows you do you want to install it on the phone did you see the prompt yeah exactly and then it's an
+
+schmithvillers
+yeah yes
+
+zaro_to
+icon like any other app and when you click it it opens the browser with up and everything but it looks almost like a normal app uh with with the normal app so first you have we need to build two apps for android and ios we don't know what people who are
+
+schmithvillers
+yeah
+yeah
+
+zaro_to
+reviewing like i mean we can say it's only an ios app or we can say it's only an android app but here is dollar issue i guess you have iphone right i have android so it is a big yeah uh and and then it's a problem during the
+
+schmithvillers
+okay yes
+
+zaro_to
+development because how how i mean we need to be doing building for both and then the real issue is and we need to choose a framework that is uh what do you call it compatible with both like oh i forgot the name multi-platform so there are there are frameworks like that
+
+schmithvillers
+yes so web
+
+zaro_to
+no problem but but then it complicates other things
+if i've done yeah i've used react native yeah and here is the thing now if you if at some point we want to pack it like a normal app so it's on the app store on the play store or whatever there are frameworks like capacitor or other where
+
+schmithvillers
+app is better
+okay
+
+zaro_to
+you take a pwa app and it packages packages it like a normal app and then it's literally on the web store and i mean you cannot see difference uh like of course it's going to look different because depends on the team and what kind of you know but like all the colors and everything but
+
+schmithvillers
+yeah
+
+zaro_to
+it installs and updates just like normal app pwa the icon installs like normal app but the update happens when you open it so it's it's automatic update but it updates once you open that so but anyway it's it's not it's not a huge problem i think we
+should stick with the with the pwa ua because it's just everything is going to be simpler and we should be focusing more on the flows and everything rather than providing the best mobile experience uh and if actually the idea is good you know and we find a way to to work more in we're
+going to either use an agent to rewrite it into a real mobile app or maybe just package it as uh but but here is the thing you know uh so in order to just distribute it you know when you build a mobile app in order just to distribute it even without publishing it
+just to give it to somebody else i think you need to have a developer account which is i had one but google closed it so i need to open a new one if i want to do and for april you need to pay 100 dollars per year for
+
+schmithvillers
+yeah
+
+zaro_to
+this and for android is 25 dollars per year or something i don't know it's cheaper for android but yeah yeah yeah i'm just i'm just telling you how it is you know like
+
+schmithvillers
+whoa no it's okay we can go with the web app inside yeah yeah first
+
+zaro_to
+for the prototype we should stick with this if something you know if we manage to make something bigger out of it then we think let us have this kind of problem problem how do we put it on the real stores because it means we've made it good enough and it has to grow
+
+schmithvillers
+yes yeah
+
+zaro_to
+okay i i think i think what we what we discussed so far is really a good starter now now if you want to play more with it today you should be playing with maybe visual styles you
+know maybe maybe more ideas or whatever whatever you feel like i will at the end of this i will give you the transcript and uh this file you should save it and send it to me also like on the um no no no no no no no just just give me the file
+
+schmithvillers
+yes i'll just share a screenshot
+okay
+
+zaro_to
+no no go back to escalate draw yeah and there is save to uh sorry there is export yeah save to disk save to file and just save it to some yeah and this
+file can be imported later in escalate draw but actually you can give your agent to do something with it i'll give it to my agent to make better diagram out of it and it it it does a fairly good job uh so
+
+schmithvillers
+oh awesome okay i've never done this so i usually use pen and paper
+
+zaro_to
+you've been using what a pen and paper yeah but we have only 10 days and we have to automate as much as possible everything so so let's see
+
+schmithvillers
+i usually use pen and paper so yeah true true yes okay
+
+zaro_to
+okay cool then i think that's enough for today uh because also you know i would like to start doing something on the architectural side you know the technical side of things but first i want to see what are they going to give us as access to the meta models no i i'm not sure
+
+schmithvillers
+yes yes they have a session today right
+
+zaro_to
+how this is going to work sorry they have okay oh so you also got this
+
+schmithvillers
+they have a session today so i think in that they will tell us what time is it yeah i'll attend the session
+yeah i got it too uh it is today they haven't even on the website they haven't shared what time the session is so hackathon begins and kickoff live stream but what time i don't know
+
+zaro_to
+what time is the session i didn't see it but that's 26th no
+okay i i need to i need to check again
+
+schmithvillers
+yes today is 26 and the date is also 26.
+oh okay so getting started introduce yourself create a theme yes this is what we we have to do et eastern standard
+
+zaro_to
+so what what what what is this et time zone under time this means us but this
+
+schmithvillers
+time yeah yes us also has i think three zones
+
+zaro_to
+means it is already ah no it's it will start eight o'clock
+
+schmithvillers
+maybe like a california time or something oh yeah the kickoff session today is at 12 pm eastern standard time yes oh it's
+
+zaro_to
+for me why but eastern standard time is est
+
+schmithvillers
+because of the day then so eastern time is i think with the daylight saving and eastern standard is without the saving daylight saving
+
+zaro_to
+and so we have 11 hours difference with this i have 11 you have like what nine and a half
+
+schmithvillers
+maybe you know nine and a half
+
+zaro_to
+difference difference which is a lot i mean i don't think i don't think we'll events where was this again i okay metaglobal.ai hackathon
+so no no yeah you're right it doesn't say anything about live stream it doesn't say anything really on which
+
+schmithvillers
+it is at 12 pm so for me it will be nine okay where no no so here right at the bottom when you click on that view event you have an
+
+zaro_to
+link
+
+schmithvillers
+eye icon that is created it was not there before so if you click on that there is everything regarding the hackathon um so this one so on view
+
+zaro_to
+did you click exactly ah yeah yeah okay yeah i mean i thought it because basically when i go to the page it shows me the same thing
+
+schmithvillers
+events the mail that we got i just clicked there and at the bottom do you see a going blue color and then next to it there's no this one
+
+zaro_to
+uh but without this yeah it says going but there are details yes okay okay connect with the community join the hackathon discord let's join the discord i think this is going to be important probably this is going to be the
+
+schmithvillers
+yes this one yes okay 20 members
+
+zaro_to
+main method of
+communication
+
+schmithvillers
+yes how to claim your builder role yeah i think it's going to be the main Oof.
+Seritville Valley 934.
+Yeah. I'll stop sharing that.
+
+zaro_to
+okay now actually i'm stopping the In the recording, we don't need the--
