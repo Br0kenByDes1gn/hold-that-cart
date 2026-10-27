@@ -1,0 +1,1751 @@
+Transcription for craig.horse/rec/2KBJ1uKQ85E6
+
+zaro_to
+Did you receive credits from Meta?
+
+schmithvillers
+Yeah.
+
+zaro_to
+I
+mean,
+
+schmithvillers
+I did not check. I did get an email, but I didn't check it.
+Let me see.
+
+zaro_to
+you made the Meta account, right? The DevMeta AI account.
+
+schmithvillers
+Yes.
+
+zaro_to
+Yeah, and you put your data in the form. Yeah, so I didn't get any email.
+
+schmithvillers
+Details in the phone. Yeah, yeah, I did.
+
+zaro_to
+I just walked into the account and it just said, a banner, you've been credited $150.
+But there was no email about it.
+
+schmithvillers
+Oh, okay. Let me log in then.
+What was that link?
+Let's see the link.
+It says my account is restricted. I did get the credit, so.
+
+zaro_to
+Account restricted?
+
+schmithvillers
+Yes, but I got the credits.
+
+zaro_to
+Okay, that's strange. But you have the credits. What does it mean restricted?
+I don't know. I hope you can use them. So even if you cannot use the...
+Because mine doesn't say anything about restriction or anything.
+Who knows?
+
+schmithvillers
+I don't know why, because it says, because it's not payment method, but a payment method is fine.
+
+zaro_to
+No, look, the payment, you added a card, right?
+Debit credit card. Yeah, so basically they verified right when you enter it.
+
+schmithvillers
+Yes. Yes.
+
+zaro_to
+So there is nothing to do after. This is something else.
+I don't know why your account is restricted.
+
+schmithvillers
+Yeah, it's their problem. I have done it. And I got a notification also.
+
+zaro_to
+Yeah, exactly. Okay, no problem.
+
+schmithvillers
+Yeah.
+
+zaro_to
+No problem. I mean, look, basically we need two things.
+Being able to use credits and being able to use the APIs for production.
+
+schmithvillers
+Yeah.
+
+zaro_to
+And actually, now, 150 credits, it's...
+I don't know. We have to use the model to see. But this can be used in OpenCode with their model, you know, instead of using Frios or like that.
+
+schmithvillers
+Oh, yeah, Muse is also there in Open Project.
+
+zaro_to
+So, no, I mean...
+Sorry, you see?
+
+schmithvillers
+Muse, M-U-S-E, it's their model, right? Meta's model.
+
+zaro_to
+Muse, I think, yeah. I think the name is Muse. I keep forgetting.
+But when you click on the dashboard, there are instructions how to set it up in OpenCode.
+
+schmithvillers
+Yeah.
+
+zaro_to
+So, yeah. So, yeah. Or they have something called Muse Code, which I don't know what it is.
+I don't think I'm going to be... Yeah, yeah.
+
+schmithvillers
+I don't want another ID. No. Yeah, Open Code is fine.
+
+zaro_to
+That's the thing, I mean.
+And so, you can use Muse. And I think I will also use Muse for this project just to see how it goes.
+Now, how we should approach this, you know?
+Like, I'm thinking how to split the work for...
+I mean, today, I don't know if I will be able to do much.
+But I will try to maybe start something. Because first...
+
+schmithvillers
+Okay, no worries. Yeah.
+
+zaro_to
+Yeah. But first, there is... Now, just as before, you know, like with the previous project, we...
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+Because I see you started this mock-up you made, you know, with the pictures.
+They are very good. But this is not really usable by any agent.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+So, one thing you should do again, you did it with what?
+
+schmithvillers
+Yeah.
+
+zaro_to
+With Claude or ChatGPT or... Yeah.
+
+schmithvillers
+Yeah, I have a prompt for this, so we can give that prompt to our agents.
+
+zaro_to
+Sure.
+
+schmithvillers
+I'll paste the prompt also in the document.
+
+zaro_to
+Yeah. So, listen. Now, this is not a great way...
+I mean, it's better to save a markdown file with whatever you want to give the agent.
+I mean, it's just... Because giving it a Word document is not very easy.
+
+schmithvillers
+Mm-hmm.
+Okay.
+
+zaro_to
+And now, what you need to tell it to do is, probably, I don't know, that's what I imagine, is to generate, you know, the design file with the visual language and everything.
+
+schmithvillers
+So
+
+zaro_to
+And maybe also generate assets. You know, if you're...
+Why I'm asking, are you doing it in Claude?
+ChatGPT, I don't use much. But in Claude, when you tell it to design something for you, in the end, it can produce many files, not just one file.
+
+schmithvillers
+in
+
+zaro_to
+And you can download them all. And what I mean is, because, see, maybe we want to have some icons, some interesting stuff.
+You know, like, actually, the mock-up you made is very nice.
+It looks a little bit like a game. Now, when you say to...
+When you tell it to create the design file, it will replicate colors, you know, let's say, rounded borders and stuff like that.
+
+schmithvillers
+the same
+
+zaro_to
+But the pictures and icons, it cannot replicate via the design ND file.
+It needs to generate SVGs or PNGs or something like that, that later can be used.
+So maybe you should tell it to generate, you know, the design file with the visual language and everything.
+
+schmithvillers
+file, assets and visual language.
+
+zaro_to
+And also assets, you know, like for a little robot or whatever.
+A few assets that we have. So you can...
+Well, that's the thing. It cannot be in one file. Because, yeah, like, usually when you do stuff like this in Cloud, it will give you, like, links to all the files in generated.
+
+schmithvillers
+Like the links for the assets. Like something, I don't know.
+Assets will get in the separate files. Mm-hmm.
+
+zaro_to
+You can click and preview them. And then you can also download.
+So that's what I mean, you know, to generate everything. How it will generate the assets, I don't know.
+Maybe it generates. You have to see.
+And then, yeah, then I need to generate, you know, the backhand stuff, you know, the bare bones of the project, which probably will take one, two hours.
+
+schmithvillers
+Okay, I'll try it. Okay.
+
+zaro_to
+It's not that big of a deal.
+It was, you know, we don't have to think much. The same architecture that was used for Ecosight will work also for this project.
+No problem. But, well, yeah, doing the same thing.
+And then, but I will tell you to generate without, you know, very bare bones, without nothing visual.
+Right? So that, after that, you can start applying.
+And, yeah, then we can get something, something like that by tomorrow, I hope.
+
+schmithvillers
+Okay.
+Mm-hmm.
+
+zaro_to
+And we'll talk again how we approach it because, see, now, it's easy to generate something the first time.
+It's going to be easy. We have it, most of it, but I don't know if you check the markdown file I sent you in the repo, but it has most of the things are there that we want to add.
+
+schmithvillers
+Yeah.
+
+zaro_to
+I mean, probably we'll come up with something else, but for a start, it's definitely enough.
+So, the main thing here will be probably doing, you know, some testing because, I mean, while we have the idea, I'm not sure how exactly it's going to work when you start scanning.
+With Ecosight, things turned out really good, but I haven't done scanning of receipts, you know, and stuff like that.
+
+schmithvillers
+Yeah.
+
+zaro_to
+But we need to do more of that to figure something out.
+
+schmithvillers
+Right.
+
+zaro_to
+So, yeah, that's what I was thinking we start doing so we can set on, we both use open code in Muse and see how what Muse will do, right?
+When I was using other models, not Muse, for, let's say, $10, you can do a lot, a lot.
+So, I expect Muse will be on the same level.
+
+schmithvillers
+Yeah.
+I hope so.
+
+zaro_to
+You know, in terms of pricing, yeah, I also hope so. If it gets very expensive, we just switch to whatever, DeepSync.
+
+schmithvillers
+Okay.
+
+zaro_to
+Sorry.
+
+schmithvillers
+I mean, I don't think they are concerned with what we use for wipe coding, I think.
+
+zaro_to
+No, it's not about, I mean, I don't care what we use.
+It's just because we have credit and also this is an experience.
+I mean, I don't know, you use all kinds of models for different things, right?
+Maybe so far, if you have noticed that it's a little bit different experience with each one, like it's not.
+
+schmithvillers
+Yeah.
+Yeah.
+
+zaro_to
+So, it's worth, it's worth trying, Muse or whatever.
+
+schmithvillers
+Sure.
+
+zaro_to
+Facebook are not known for making the best models, but let's see.
+Maybe they have caught up with the competition.
+
+schmithvillers
+Okay.
+Cool.
+
+zaro_to
+So, did you watch the whole live yesterday, or you stayed late for, or you stayed for different reasons?
+
+schmithvillers
+No, because I messed up.
+Yeah.
+Oh, no, I wasn't. Actually, I messed up at work. So usually what I do is when I'm working, I do a lot of things on the side while I'm working.
+
+zaro_to
+Ah, you missed something.
+
+schmithvillers
+So yesterday, even though I wasn't doing a lot of things on the side, I did a mistake and I was very tensed about it.
+So up until like 10 p.m., I was very tensed about that one mistake that I made.
+
+zaro_to
+Yeah.
+
+schmithvillers
+And then I couldn't do anything. So I was like, okay, I'll stay up and do something because I really want to switch a job.
+
+zaro_to
+Yeah.
+And fix it.
+
+schmithvillers
+I really want to switch my job. I'm fed up with this job. So I'm like, okay, let me at least work on something so that I feel productive.
+
+zaro_to
+Yeah.
+Yeah.
+
+schmithvillers
+If I've done something because the entire day I was just stressing. So that's why I stayed up late.
+
+zaro_to
+Yeah, yeah, yeah, yeah, yeah, yeah, okay. Yeah.
+Okay, I thought, you know, because I tried, I thought it, but it was 11 already for me.
+And there was this really boring guy talking, and I'm like, okay, I'm not watching.
+
+schmithvillers
+I know that Indian guy was so boring. I literally, I was like, no, I can't listen to this.
+
+zaro_to
+Ah, you also told him. Yeah, he was, he was very boring.
+
+schmithvillers
+Yes.
+As if he was just reading. He didn't care. No expressions. He was just reading from the script.
+
+zaro_to
+Yeah, yeah, exactly, exactly. I mean, which I understand, maybe he doesn't care that much about this hackathon, for him is just job, like anything else he does.
+
+schmithvillers
+Nothing else.
+I know.
+Yeah. He could actually be AI.
+
+zaro_to
+It doesn't matter.
+
+schmithvillers
+Like, I was like, maybe this person is AI. He is not real. I think it was a recorded video.
+
+zaro_to
+All right.
+Yeah, I mean, at some point, they will start doing AI C1 for this kind of announcement, but it's hard to make people engage, you know, when it's AI, and you watch it, and then it's like, why, I mean, sorry?
+
+schmithvillers
+I just felt like it was a recorded video. I didn't think it was like, people were actually there.
+
+zaro_to
+Um, yeah, might be, might be, might be, might be, like, why not?
+Uh, there is no, there is no live discussion. You cannot ask questions.
+So what does it matter whether it's, yeah, uh, yeah, but for me, I started the
+
+schmithvillers
+Exactly.
+And in the starting, they just said that, okay, you can post all your questions and respond and we'll resolve it there.
+So obviously, they weren't looking at the chat live.
+Just one thing,
+
+zaro_to
+video because before the, before the actual person started talking, there was this kind of, like, uh, countdown timer, and below, uh, there was, uh, I don't know, chat or whatever is going to be available when the event starts, but for me, this message below didn't
+
+schmithvillers
+like,
+
+zaro_to
+change. It stayed the same. I couldn't do anything, even if I wanted to, I don't know.
+
+schmithvillers
+what did we discuss?
+
+zaro_to
+Maybe they forgot, or, or maybe my browser was, but who knows?
+Anyway, let's see what will come out of this, of this, uh, no, no, no, no.
+
+schmithvillers
+Yeah. Sorry. Go ahead.
+
+zaro_to
+Yeah,
+
+schmithvillers
+Okay. So what we discussed yesterday was, like, the flow, right?
+So I talked, I just gave that flow to Claude and it said that it is a very basic flow.
+Like, we didn't discuss, like, we just discussed, okay, we scan this list, this will happen.
+So these kind of apps were already there. So the document that I shared was basically how we can, we are supposed to make it novel, right?
+We need to add something new to it. So in that document, I just pointed out a few things that we can, which won't take us a lot of time.
+
+zaro_to
+yeah, yeah, no, no, no, I, I, I saw, I saw this
+
+schmithvillers
+And we can make it novel and simple as well, right?
+So, like, maybe one or two things we can do, maybe all, I don't know.
+I just thought of it and I just let it be in that document.
+
+zaro_to
+part. I mean, I'm going to include it when I'm generating, I'm going to include these additions because they are meaningful, you know, like, uh, okay, okay, wait a
+
+schmithvillers
+No, we still need to brainstorm on that. It's just my thought. We still need to brainstorm on what and how to do it.
+I just wrote it down for the time being. Yeah.
+
+zaro_to
+second, then let's brainstorm now a little bit.
+Uh, because it's better to have this before generating code for, you know, backend and things like that.
+
+schmithvillers
+Exactly.
+
+zaro_to
+Okay, good. I, I thought, I mean, I saw it and I was like, okay, it makes sense.
+Uh, but now that we started talking, I kind of forgot that maybe we should discuss it further.
+
+schmithvillers
+Should I share the screen?
+
+zaro_to
+Yeah, yeah, um, yeah, oh, wait a second.
+
+schmithvillers
+Okay. I'll do that.
+Yeah. So these black things are basically what Claude told me that we need to fix because it wasn't.
+
+zaro_to
+Okay, sorry, yeah, I had to switch to, I was talking from the phone, I switched to computer, so I didn't hear like the last 10 seconds.
+
+schmithvillers
+Hello?
+
+zaro_to
+Okay, so you were saying,
+
+schmithvillers
+Yeah. So I'm saying that these black ones are basically what Claude told me that we need to fix.
+Right. So we already scan list and whatever. Right.
+But we need to like. So the thing is that when we buy a product, it can fall into any of these categories.
+
+zaro_to
+hmm, moms, yeah,
+
+schmithvillers
+Right. So it can be like a few days, like milk or bread, which we use quickly.
+Right. Staples rise. It will last a few weeks, something like that. So because my problem was that when we were giving.
+
+zaro_to
+yeah.
+
+schmithvillers
+So the new idea that we were proposing was that when you go to shop something, it will give you a new list.
+Like it will create its own grocery list for you. That was the novelty we were looking at in the beginning.
+Right. But yesterday we kind of forgot about this because it's difficult to generate a grocery list every single time.
+Right. So if the person goes to for shopping in a few days, we can't suggest them oil again because they have, they might have oil already.
+
+zaro_to
+Hmm, no,
+no,
+
+schmithvillers
+Right. So that is what I asked. So this is what it told me that, okay, categorize all of the products in these four categories.
+And based on this frequency, then you can suggest. So if soap, if they have already gotten soap like in three months, once, you don't have to, you know, suggest, put it in their grocery list every single time.
+So I think this would be a good approach to,
+
+zaro_to
+no, this is, this table is, it's, I mean, I, I saw it and I thought, you know, it makes sense.
+
+schmithvillers
+yes.
+
+zaro_to
+We have to put this, absolutely. No, there is no, now, the only type of discussion is, should we have, uh, more categories here, but I think this is good for start, you know, just base it on how long each, uh, good, or whatever produces, like durables, how, this is good,
+you know, one, two, three months, uh, the, the main thing really is to exclude the perishables, you know, and, you know, that, that's, that's the main thing.
+So, yeah, and then I saw there is some suggest swap types loose instead of package.
+
+schmithvillers
+So in the inventory section, when we like, uh, like the pantry section that we have, right.
+
+zaro_to
+Mm-hmm,
+
+schmithvillers
+So in that we can have this instead of like, we can obviously have a curated grocery list, but because let's say the person, let's say I use that for the first time and today I'm in the mode to shop for another next three months.
+Right. I'll buy everything that I need for the next three months. Right. I'll stock up everything.
+
+zaro_to
+mm-hmm,
+
+schmithvillers
+So it will be like 25 to 30 items. Right. And that receipt will be very long.
+So the next time that I go to shop, right. So it's very difficult to give suggestions for each of the 30 items.
+Right. So we can place those items in these three categories that, okay, this you can buy again.
+
+zaro_to
+mm-hmm, mm-hmm,
+
+schmithvillers
+This you might want to skip because, you know, something like, like you don't, there is no suggestion, like replacement, our app was able to give for this.
+So we can just put it in the skip category. But if something we are able to give a good suggestion, then we can put it in the swap category.
+
+zaro_to
+mm-hmm,
+
+schmithvillers
+So if they are already buying something which is sustainable, then we don't need to give it a suggestion.
+
+zaro_to
+yeah.
+
+schmithvillers
+We can just put that thing in the buy category and we can just recommend directly that, okay, you can buy it again.
+It's fine. Skip is, okay, we can't find a replacement for this.
+Just don't buy it at all. So we can put it in skip. And instead of giving them suggestions for every item, okay, you might want to buy this.
+You might want to buy that. We can just give them this sort of a category.
+Okay. You can buy this, maybe skip that and you can swap. So they can just look quickly and they know, okay, maybe I won't buy this or maybe I would buy that instead, something of that sort.
+
+zaro_to
+Yeah, that's, that's actually pretty good, because this will simplify what we display a lot.
+So, basically just, we just need to have three visual indicators by skip or whatever, and then maybe we can add some functionality when you click to actually say, okay, I really need this, I will skip it, and so on, and so on, and so on, to make the, the list final, let's say.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Uh, so, yeah, yeah, it's, it's, so, I will, I will figure it out, don't worry about it.
+
+schmithvillers
+I don't know how this all will fit into the pages that we discussed.
+We need to still figure that out. This is just some things.
+
+zaro_to
+I will figure how to put this, this categorization that you added into.
+Into the rest of the stuff. I mean, it's, basically, this is, uh, both of these are only at the level of suggestions, and when we were discussing so far, we didn't discuss at all how to make suggestions concrete, you know, like, we're just talking about, okay, there are going to be suggestions.
+
+schmithvillers
+Yes.
+Yes. Yes.
+
+zaro_to
+So, this is fitting straight into the suggestions topic, and we don't have anything called suggestions so far.
+And then how it learns, typical interval, the meaning, then.
+
+schmithvillers
+Yeah. And then this was, yeah.
+So like, tea is basically the gap between two purchases.
+So if I go on Sunday to buy milk and then again next Sunday, I go to buy milk.
+So next week on Thursday, it will remind me, okay, maybe you need to buy milk because that is like 30% of the time has passed.
+So if I take a trip on either Thursday, Friday, Saturday or Sunday, I will have this suggestion that, okay, you need to buy milk.
+But yeah, so this is something right about, I think 60% is a good mark.
+
+zaro_to
+Yeah, yeah, yeah, yeah, yeah, definitely, it needs to be something approximate, I mean, I, I, I, I don't think we can really think of a good number straight away, this has to come with usage and data, really, like, what is the, the, the good.
+
+schmithvillers
+Yeah, exactly. This will only work when the person has had a few purchases.
+They have used our app for a couple of times. So this will only come in picture then.
+
+zaro_to
+Yeah, yeah, yeah, of course, of course, of course, of course,
+
+schmithvillers
+And then this one is basically how we start.
+
+zaro_to
+but,
+
+schmithvillers
+So in the beginning, right, we can only give swap suggestions.
+So if they take a picture of the grocery list or cart, we'll give them suggestions.
+Okay. And instead of giving each tag a number or like a, you know, you can just highlight.
+So in the mock-up here, right, so it is, it gives us these three tags, saves money.
+I know it's not very clear, but saves money, healthier and sustainable.
+
+zaro_to
+yeah, yeah,
+yeah,
+
+schmithvillers
+So they can be gray, right? And let's say this product only saves money.
+It doesn't, I mean, like we'll obviously try to be more, like more, most tags should have sustainability, yes.
+But it's okay if they don't have healthier and sustainability. So we can just highlight that one tag and we don't need to put a percentage or we don't need to really tell them why it is healthier, how it is healthier.
+So we can just say, okay, this is healthy. It saves money for you. That's all.
+
+zaro_to
+I, I, I like this type of interface, simple, simple, really, like, that's, that's what we need to be focusing on.
+And then keep it personal rhythm with stronger.
+
+schmithvillers
+Yeah. So once the person has a receipt, so this is all like, this will add into our suggestions part.
+
+zaro_to
+A five-second shelf photo, let's vision check what's actually stopped.
+
+schmithvillers
+So after one receipt, after two receipts. So that's all good.
+
+zaro_to
+Yeah, yeah, I get it.
+
+schmithvillers
+Oh, this was just like a, so let's say they don't want any.
+
+zaro_to
+You check your own, you take a picture of your own country kitchen, whatever, where you store and then it tries to, yeah.
+
+schmithvillers
+Yeah.
+Like if they don't have a grocery list or something, so they just take a picture and they leave the house and in the meanwhile, they reach the store, the list is created based on what they don't have or something is less or something.
+
+zaro_to
+Yeah, no, it's a good option.
+
+schmithvillers
+I don't know. It's just an option.
+
+zaro_to
+Show confidence, only floating items with enough history, yes, of course.
+Everything should be correctable, you know, we're giving suggestions only.
+And verify the saving.
+I don't know what we can verify, we need to experiment with this.
+
+schmithvillers
+Yeah. Yeah, we can put that. I don't know.
+
+zaro_to
+No, no, no problem, no problem.
+
+schmithvillers
+I just don't know what I wrote. I was very tired.
+
+zaro_to
+Like, it's good enough, it's just that something should be softened, you know, like verify the saving.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Maybe we can rephrase it, try to verify the saving, or make best effort, you know, like, but we cannot really.
+
+schmithvillers
+Yeah.
+Yeah. Obviously, this is just boilerplate.
+We can support. So this is just.
+
+zaro_to
+Well, this is, this is the same diagram we have in ASCII in the markdown.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+And this one is more, okay, free option.
+
+schmithvillers
+Yes. And this is like. Yeah.
+Yeah.
+
+zaro_to
+Yeah, okay, this is more detailed and it's actually better. I need to convert it somehow for the model.
+And then buttons on each screen.
+Now.
+
+schmithvillers
+Just.
+
+zaro_to
+Well, well, look, I mean, how we can approach this two ways.
+
+schmithvillers
+So this is like, this is the new user screen. I, I just put it.
+Claude gave me this. I put it. I didn't review this. So I'll review this and I'll tell you if this is good or not.
+
+zaro_to
+I mean, we can say, okay, we don't care about users.
+Your data still stays in the app. I mean, but you lose it if you, I don't know, if you use different browser, different device or whatever.
+
+schmithvillers
+Yes.
+
+zaro_to
+Or we can say, put an email in order to save it and we save it straight away.
+I think maybe it's better to add an email straight away.
+I'm not sure. Anyway, but yeah, some form of new user will be needed if we want to be able to save somewhere.
+
+schmithvillers
+So, like, this will be like a toggle button at the top.
+
+zaro_to
+Household, business, to-go, shopping mode. Okay.
+Yeah.
+
+schmithvillers
+So household mode. Again, both modes will have exactly the same things.
+It's just in business toggle you'll have. Analysis will be more prominent, that's all.
+
+zaro_to
+Yeah, that's, that's actually good for the new user screen.
+
+schmithvillers
+Nothing else.
+
+zaro_to
+I mean, when you're creating the user, you say, okay, I'm a business, I'm a household.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Because it's very unlikely you to be switching all the time.
+It's better to have two separate accounts actually between household and
+
+schmithvillers
+Yes. So, let's have this here installed.
+
+zaro_to
+business.
+
+schmithvillers
+Home will have just either pantry mode or shopping mode. Same for both business and household type accounts.
+Pre-shopping, brief, start shopping, I'm out. We'll see all items.
+Scanners. Don't know. I'll look at this.
+I don't know what. I don't know. It doesn't really make sense.
+
+zaro_to
+Yeah.
+
+schmithvillers
+Why does it say this? I'm out. Never remind me. Oh, these are the buttons on that screen.
+Okay, okay. So, start shopping is one button.
+
+zaro_to
+Yeah. Sure.
+But what does it mean? I am out and never remind me SEO items like maybe, maybe I am out and never remind me is for some specific products, you know, not really for the whole shopping event.
+
+schmithvillers
+It's kind of anti-4R thing, so I'll just remove it.
+
+zaro_to
+Yeah, no, I, not even about notification, you know, because we were talking about, okay, you say I'm going shopping and then it will show you suggested list of grocery, right?
+
+schmithvillers
+If the person doesn't want a notification, don't open the app.
+Yeah.
+
+zaro_to
+Uh, but maybe if it does something wrong, you know, interest, you can say, okay, either you say I am out.
+
+schmithvillers
+Yes.
+
+zaro_to
+So, you know, you correct, you want this thing instead of, you know, it's just, you don't need it.
+Or it says, you know, don't remind me, I don't want to buy this ever again.
+
+schmithvillers
+So, we can put it in pantry.
+
+zaro_to
+Imagine some, like you, you buy two, three times, I don't know what, beetroot, and then you decide you don't, you don't want to ever buy beetroot again. So, you understand, like, some things need, you need to be able to correct because you cannot predict everything really, you know, like, habits change, you buy something just to try it, and then you don't want to buy it anymore.
+It's, that's normal. Um, but this is, but this is more like, you know, generally, I would say this table is far too simplistic.
+
+schmithvillers
+So, yes.
+
+zaro_to
+Uh, because what it needs to do is, uh, like describe the function of the screen and then the buttons, but the function is important.
+Uh, because it's not just like the buttons are not enough to, to save the whole context, you know, what is going to happen there.
+I mean, for some things, yes.
+Uh, analyze, uh, the receipt pantry, okay, filter chips.
+What does filter chips mean? Ah, chips, when you click them, you filter by them.
+Okay, analyze last month.
+Business pantry.
+No, we don't need a separate business pantry, we just need a pantry.
+Uh, and then, as you said, the toggle will change how the, how the analysis is done.
+Maybe a little bit change how the results are presented, but it doesn't need to be a separate screen.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Okay. Uh, you know, I think, I think you can keep working
+
+schmithvillers
+No, I don't think so. So, if the person is already in business account, so, everything will already be in business.
+And it's not any different. It's almost the same thing.
+
+zaro_to
+on the screens and what actions there will be in a separate document.
+
+schmithvillers
+Yeah.
+
+zaro_to
+For the initial generations, I will, I will leave this out, you know, it will generate something, right?
+
+schmithvillers
+Okay.
+Yeah.
+
+zaro_to
+But it's going to be just there.
+I, I probably will not even do all the functionality.
+And then when you have, you know, another document with screen functionality and, and the actions, then we use it to generate something.
+
+schmithvillers
+Okay. Yeah. Makes sense.
+
+zaro_to
+Uh, yeah. And then, uh, below that is the, um, the mockups, right?
+Or the, uh, so basically out of this, what you want to do is maybe tell it to generate some assets.
+
+schmithvillers
+Yeah. Just one image.
+
+zaro_to
+You know, these are icons, images and things like that that are reusable assets.
+
+schmithvillers
+Yes.
+
+zaro_to
+Okay, great.
+
+schmithvillers
+I'll do that. I gave it a prompt.
+I don't know what it's in later. It's created a zip file, let's see.
+
+zaro_to
+Yeah, that's, I bet there will be files with images inside.
+Yeah, of course.
+
+schmithvillers
+Yeah. Hopefully, a good one. Sometimes, just.
+Okay. Assets.
+
+zaro_to
+Yeah, go on. Yeah, this is good.
+
+schmithvillers
+Brands. Cards. Oh.
+
+zaro_to
+Yeah, also good. Now, shopping mode card.
+I mean, it's not great, but it's good because, yeah, because we don't need, we don't need a picture of the whole card.
+
+schmithvillers
+It's not great. It's fine.
+
+zaro_to
+We need the picture of the icon, but maybe there is a separate icon here.
+But these icons are okay. The only problem is they're square.
+
+schmithvillers
+Don't worry.
+
+zaro_to
+Okay.
+No, we need, we need an image of the, of the toilet paper.
+
+schmithvillers
+Because we don't need images like these.
+We need, like. It's going to be text and stuff.
+
+zaro_to
+Maybe, you know, like, or if you go back to the cards, go back to the cards, click on some cards.
+So, so this is good one, but without the, we don't need the background.
+Or if you go to, you imagine, because we're going to create the, all these are good, but the background, yeah, we're going to create with HTML.
+
+schmithvillers
+Yeah.
+The background we're going to create. This will put. It's.
+
+zaro_to
+So, so, so, so these are, these are generally okay.
+
+schmithvillers
+Yes. Yes.
+
+zaro_to
+And this is okay.
+
+schmithvillers
+No, no. I'll try to fix this. I'll ask.
+Because. So, what I did was I took the prompt from Claude.
+And I asked ChatGPT to generate the images. So, what I'll do is I'll ask ChatGPT to generate the assets.
+Not Claude to generate the assets. I think that will be better.
+
+zaro_to
+Okay, yeah. But the direction is what we want, you know, assets where, where you have images reusable and so on.
+
+schmithvillers
+And this is the MD file.
+
+zaro_to
+Well, I mean, it's, it's not going to be a hundred percent, right, but it's going to be something.
+
+schmithvillers
+Yes. Yes.
+Hopefully, this is a good MD file.
+
+zaro_to
+Yeah, yeah, exactly.
+
+schmithvillers
+I'll try to create some visuals. So, I'll know. Okay, this is good or not.
+
+zaro_to
+But you, but you, but you, but you imagine what we're aiming for, you know, most of these borders and whatever, they don't need to be in the images because we can just.
+
+schmithvillers
+No other way to verify.
+Yeah, exactly. HTML should be able to create this.
+
+zaro_to
+exactly HTML, but the icons, we don't want the simple icons that it's going to pull from, I don't know what library we want this nice images, like whatever it is.
+And now for the products, you should do this separately, you know, maybe just use the same style guide and everything, but just tell it to generate.
+I don't know, let's say 20, 30, 40, 50 icons of different products.
+Now you can, I, I don't know. But I'm thinking there are way too many different products to generate icon for everything.
+
+schmithvillers
+Yes.
+
+zaro_to
+But, but I'm thinking we start with something.
+
+schmithvillers
+Also, open. Mm-hmm.
+
+zaro_to
+Then when we find some, you know, when we find something is missing, you just add something, you know, tell it, okay, generate me for this and this and this and we have some more.
+Yeah. And of course there should be a few generic ones for, I mean, unidentified item or just food item, you know, like cleaning item or something like that, something very generic.
+
+schmithvillers
+Mm-hmm.
+Okay.
+
+zaro_to
+Yeah.
+
+schmithvillers
+Okay. I'll take it.
+I'll try doing that.
+
+zaro_to
+Okay.
+And then this is like a start already.
+Yeah.
+
+schmithvillers
+Yes. Excited.
+
+zaro_to
+Yeah, yeah, yeah. Absolutely. I even, I even wanted to ask you, I was thinking before, before we started talking, maybe to ask you, do you even want to generate
+
+schmithvillers
+No, because in this one, I am from the beginning, right? So, I'm like, okay.
+Let's. I wanted to start from the beginning. Yeah.
+
+zaro_to
+the code? But then maybe it's like, it's going to be too much for her to do everything.
+So no, no, no, no, no.
+
+schmithvillers
+Like, write the code ourselves.
+
+zaro_to
+No, you, I mean, I help you do the prompt for the, for the generating of the backend and everything.
+Uh, but this means we, if you want, we can do it this way, but maybe it's going to be wasting too much time because I'm not going to, to work with you on the, on the images.
+Uh, yeah, yeah, I mean, I mean, look, look, yeah, I, I offer it just as a learning experience, not as, you know, I, but yeah, you're right.
+
+schmithvillers
+No, no. You work on the backend. I'll keep reviewing whatever you do.
+And wherever I have a question, I'll just ask. And maybe in the next project, I can work with the backend.
+Yes.
+
+zaro_to
+It can be something else. And, uh, one thing I can tell you from now is that all the suggestion stuff, you know, the suggestions generating stuff, it will, it will require a lot of tweaking.
+I can tell you from, even now I can tell you because I mean, it will do something, but very unlikely it's going, it's going to be exactly what we want.
+So we will need to tweak the prompt, you know, and tell it how do it this way, that way, whatever, you know, uh, especially when it's about generating suggestions.
+So, there will be plenty of work on that. No, no, no problem.
+
+schmithvillers
+I'll try to finish at the frontend quickly so that I can be involved in that too.
+
+zaro_to
+Look, once, once we get to a point where we have something working and we can test, we, we can do more things together.
+You know, like, because, you know, what I imagine is we, we have to test a lot and actually, because you see, like you use some prompt and in, let's say, in 20 minutes, in an hour, you have a result.
+
+schmithvillers
+Yeah.
+
+zaro_to
+But then you need to test it to see whether it's, what, what you want. So the bottleneck is not really making cold, you know, it's actually, uh, polishing the result, you know, getting something that you like as a result.
+
+schmithvillers
+Mm-hmm.
+Yeah.
+
+zaro_to
+So, so we can, I, I would say we should do a few sessions like this together just because now we have an idea, but I don't know how clear the idea is in your head.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+In my head, there are a lot of uncertainties in the idea.
+Like, I know that generally the direction, yeah, it's, many of these things are possible, but I don't know really.
+
+schmithvillers
+Me too.
+
+zaro_to
+Uh, I don't know how accurate it's going to be with the receipts and everything.
+So we will need to experiment a lot and, and that's where we can actually do more things together or, you know.
+So, yeah, cool.
+
+schmithvillers
+For me, it's like how things will, you know, how we put together everything is kind of like a mystery to me, all the suggestions.
+
+zaro_to
+Look, it's mystery.
+
+schmithvillers
+Like, I understand the flow. Yeah.
+
+zaro_to
+It's mystery to me also. Like, okay.
+It's mystery in the sense that if I want to, I will be able to understand it better than you.
+
+schmithvillers
+Yes. Yeah.
+
+zaro_to
+But at the level we are working now, we're just doing prompts and you get an output.
+I don't know. I don't know. Uh, you know, I have this image in my mind.
+
+schmithvillers
+Yes.
+Okay. Okay.
+
+zaro_to
+I think about it like that. I am playing in some kind of deterministic slot machines.
+
+schmithvillers
+Okay.
+
+zaro_to
+You know, like you put something in the slot machine, you get something out.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+And most of the time is deterministic because it's based on what you want.
+
+schmithvillers
+Yeah.
+
+zaro_to
+But sometimes it's not. Sometimes it's like slot machine and you just, just get something.
+
+schmithvillers
+It's random.
+
+zaro_to
+So, again, yeah, don't think too much about the mystery.
+
+schmithvillers
+Hoping for the best.
+
+zaro_to
+Think about, think about the facts, you know, like, am I getting something that I understand, that I imagine is what I want, you know, on this level.
+
+schmithvillers
+Mm-hmm. Okay.
+
+zaro_to
+Um, I don't know if you've seen this meme, I don't know, funny clip.
+There is this guy and literally it's an excerpt from interview and the guy is some, you know, old guy.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+His hair is white, uh, little bit bald on top and, but long white hair.
+And he is saying something like, actually, they pay me for my exquisite taste, you know, and my confidence in my taste and so on and so on.
+
+schmithvillers
+Okay.
+
+zaro_to
+I think you, you, you see this, you remember?
+
+schmithvillers
+Yeah. No. Okay.
+
+zaro_to
+No. I'll send it to you. Somebody, the guy is working in the music industry or something like that.
+Right. But it is so true for when you're working with agents, you know, like, because the agent is doing so much work for you, you need to be confident in what you want to achieve.
+
+schmithvillers
+Okay.
+
+zaro_to
+You know, like, uh, like, uh, like, is it good and especially, is it good?
+Because it's going to put some bullshit things there.
+And if you, and if you just glance over and accept it, then the bullshit things just stay.
+
+schmithvillers
+Yeah.
+
+zaro_to
+That's it. There is nobody. You are the person who has to, uh, you know, polish out and filter the bullshit.
+
+schmithvillers
+Exactly.
+
+zaro_to
+So yeah, that's, that's, that's the level of thinking we should be going on for now, you know, polish out the bullshit.
+
+schmithvillers
+Exactly.
+Yeah.
+
+zaro_to
+Because we don't even, like, for me, whether, whatever much it comes up for suggestions is really good.
+For me, it's not even that important. Uh, in order for the math to be good, you need people to start using it.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+You need to collect data and then make, improve the algorithm based on the data.
+
+schmithvillers
+Okay.
+
+zaro_to
+Deadlines. Cool. Okay. Cool.
+
+schmithvillers
+That sounds. Yeah. No, I just wanted, like, we have something, some sort of a deadline.
+Okay. By this, we'll have this so that we are on track.
+
+zaro_to
+Cool. Absolutely. Uh, I have another suggestion.
+When you're working on something like what you have in this document. Like, it is better to save it as markdown in the repo than have it in this document.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+Because now this document, we need to convert it to something usable in, in open code.
+Uh, open code cannot read.
+Maybe it can. It will do something. Like it will use some Python library to extract stuff from Google docs or whatever.
+Never. I don't know. But it's better if it's straight markdown and file, image files on the site.
+Just convenience.
+
+schmithvillers
+Okay.
+
+zaro_to
+And then... No. This one, this one you don't need to do.
+
+schmithvillers
+Well, I'll write a, write them. I'll write down a markdown.
+By this.
+
+zaro_to
+Uh, I will convert. Because Google docs has save us markdown anyway.
+The only. Yeah. Uh, download markdown. Yeah.
+Uh, download markdown. Yeah. The only problem with this is, it's tiny problem that the images get embedded in the markdown.
+
+schmithvillers
+Oh, yeah.
+
+zaro_to
+So the markdown, it's huge. Uh, but besides that, it kind of works.
+
+schmithvillers
+Okay.
+
+zaro_to
+So, so you don't have to do anything right now.
+I'm just saying, when it's about this kind of technical designs, you know, you're designing here algorithm, how behavior, you know, whatever.
+
+schmithvillers
+Mm-hmm.
+
+zaro_to
+Uh, it's better to just make a markdown, name it properly in the repo.
+
+schmithvillers
+Yeah.
+
+zaro_to
+And this way you can reference it every time.
+And when you're working, most importantly, when you're working, the agent will scan the repo, it will see the file, and it will have it for reference every time you're doing work.
+
+schmithvillers
+Got it. Yep.
+
+zaro_to
+So, yeah.
+Cool. Anything else?
+No. Okay.
+
+schmithvillers
+Yeah. No, just the deadline thing.
+
+zaro_to
+Put a deadline for yourself. I'm putting deadline for myself for the backend until tomorrow, I don't know, noon or I don't know, early afternoon.
+Because I don't know what I'm going to be.
+
+schmithvillers
+Okay.
+
+zaro_to
+Probably after dinner I will work, but I'm not sure.
+Yeah.
+
+schmithvillers
+Okay. I'll try to have the first set of assets first.
+And then maybe, like, a basic web page thing.
+
+zaro_to
+And here is the thing. With assets, with assets, you can go crazy.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Even if there are more than what we need, this is not a problem.
+So, cool.
+
+schmithvillers
+Yeah. Okay.
+
+zaro_to
+Then, I don't know, I hope nobody was making you angry today at work.
+Or whatever you said, it was a mistake.
+Same stuff. Scared.
+
+schmithvillers
+Yeah, I made a mistake. And I was very scared about what will happen.
+
+zaro_to
+No, but what's going to happen with the mistake?
+
+schmithvillers
+Yeah. Yeah, sort of.
+
+zaro_to
+Like, you take the whole data center down?
+
+schmithvillers
+No. So, we have different companies, right?
+
+zaro_to
+Yeah, yeah, yeah.
+
+schmithvillers
+So, they push their domains onto Akamai's network, right, for the content delivery.
+And I kind of, so there are different accounts. Like, even for TikTok, there are a lot of different accounts.
+So, TikTok US will have another account. TikTok Europe will have different accounts.
+
+zaro_to
+Okay,
+
+schmithvillers
+Yeah. So, all those accounts. So, they were migrating.
+So, they try to migrate all of the accounts, all of the domains on both of them.
+So, if your TikTok Europe has some domains listed under them, sometimes they migrate some of the domains to the US account as well.
+So, they had done that for some accounts, but the user raised a request for a different domain that wasn't in that list.
+And I was not supposed to approve that list to be migrated to the US account, but I did.
+So, I was very scared that I kind of pulled a non-relevant domain to a different TikTok account.
+But today, I got an email that it's fine. They were going to do that anyways later on.
+So, I'm like, oh, thank God.
+
+zaro_to
+the mistake was correct. You know, how do you think it happens nowadays?
+
+schmithvillers
+Yes. So, yeah.
+
+zaro_to
+You hear, "Oh, Google is down, Microsoft is heading pro." I mean, somebody is making this kind of mistake.
+What's the big deal? TikTok should be down from time to time.
+No, yeah.
+
+schmithvillers
+I know it's not that critical. But it was scary for me.
+
+zaro_to
+I know, I know. Because it's like the pressure, responsibility, everything.
+Can you feel bad? Because... And then, if there is a real problem, you're going to be in endless meetings about problem and what happened.
+
+schmithvillers
+Yes.
+We'll fix that. And, yeah. You know.
+
+zaro_to
+A route caused it and all the...
+Whatever.
+But...
+
+schmithvillers
+And the TikTok user is so annoying. Like, it's the most annoying user.
+They have the most number of requests. And they have the most number of instructions.
+And looking at every... It's boring. And it's...
+You have to pay a lot of attention. So, paying attention to boring stuff is the most difficult thing for me.
+
+zaro_to
+Yes. Yes, and unfortunately, by the way, now that you mentioned paying attention to boring stuff is...
+Yeah, it's the worst.
+Unfortunately, that's what calling with agents will be turning into.
+I mean... Now, huge distinction.
+When you're making it for a project of your own, you know, and you're having fun with the project, of course, it's not going to be boring.
+But when you're doing it in corporate environment, of course, it's going to be boring.
+How much can you care about whatever business reporter, whatever you're working on?
+
+schmithvillers
+Yeah. You can't put it on the agent.
+
+zaro_to
+It's going to be absolutely the same what you're describing.
+And you need to pay the attention. Why?
+Yeah, the agent will do everything. And why are you there?
+To bear the responsibility. Really. Exactly.
+I mean, I think there wasn't time, but I think they're going to close that and they're not going to accept anymore putting it on the agent.
+
+schmithvillers
+Yes.
+
+zaro_to
+Because, I mean, then, of course, of course, of course, of course, of course.
+
+schmithvillers
+Because the agents are making quite a lot of mistakes.
+Like, it's more costly to rectify agents' mistakes than to hire a person to take care of it.
+
+zaro_to
+So, but that's what it is, you know, that's what it is.
+
+schmithvillers
+Yay. I am trying.
+
+zaro_to
+So, when you're thinking about your new job, you should definitely, if you like coding, you should definitely try to find coding job.
+But just be aware that the same kind of boringness is coming also
+
+schmithvillers
+Yeah.
+I know. The only thing is that...
+
+zaro_to
+through
+
+schmithvillers
+So, I've been in... Like, it's only been 1.5 years that I have worked.
+Right? I did my master's in the middle of that. I did internships.
+I did many different... Other different type of jobs between that...
+Between this time. So, I've been all over the place. And I've never had clarity on what I should be doing.
+And even now, I don't have clarity. So, I have a network engineer position.
+I'm trying to switch into a software development position. I don't know what that position will bring for me.
+Because at the end, it's all agents. Like, even in software development, it's all agents, right?
+They are also using agents to write their code and tests and everything.
+
+zaro_to
+coding. Yeah, listen.
+
+schmithvillers
+So, I don't know what I want. Yeah.
+
+zaro_to
+Yeah. When you're junior, no matter what you work, there is never going to be clarity.
+
+schmithvillers
+Exactly.
+
+zaro_to
+So, I mean, don't, and I know, I know very well how much juniors yearn for clarity, because, I mean, it's stressful.
+You don't really have the confidence to just do things.
+And, like, depends on the team, right?
+Maybe there are people to ask and guide you.
+Maybe there are not. Can be any situation.
+So, yeah. But here is the thing.
+The solution is very simple. But it's very hard to search for it in advance before you find, before you land the job.
+Because the solution actually is to like the people you work with.
+Because when it's a good place to work in, they will help you initially.
+And then, I mean, look, I've done this, you know, like, I'm working and we have a new junior and I'm spending a lot of time every day with them.
+Like, first few days, a lot of time. This was my initiative, you know.
+And then you see how, what really happens. And then you see that every week they need you less and less and less.
+And one month after that, they need you just for the important stuff.
+And this is very natural, right? Now, how this happens with the AI agents, I don't know, because this was before really AI coding was super popular.
+
+schmithvillers
+Yeah.
+
+zaro_to
+But when you're in a team like that, no problem, you know, you will not be thinking about most of the things.
+But when it's not like that, you are always going to have problems.
+
+schmithvillers
+Yeah.
+
+zaro_to
+And you're always going to be uncertain and what to do.
+You know, most of the things in IT nowadays is just a lot of complexity.
+It's a lot. I mean, you can, I don't know exactly what you do as a network engineer, but I know it's a lot of complexity compared to, you know, a simple network.
+Oh, we have here a DNS server. Oh, we have here a server.
+Whatever, let's make a request, right? Probably it's 10 times more complicated than that.
+
+schmithvillers
+I mean, I...
+
+zaro_to
+Especially for a CDN, we need to be globally distributed and everything, right?
+It's the same in writing code.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Well,
+
+schmithvillers
+No, I feel like writing code is... Because, like, what happens...
+Like, in my team, what happens is a big team. Everybody gets very small part of the task, right?
+So, it's very repetitive, that same task.
+Like, we all have a certain amount of steps to do.
+And it's just repetitive for every account, for every case, right?
+So, it's very boring. I don't think in software, it's like that.
+
+zaro_to
+sure, because you have, you have complexity, you have challenges, but also depends, depends what kind of software, you know, like exactly what you're doing.
+So, if you're working only on the shopping cart of some, I don't know, e-commerce, it's not going to be super interesting, believe me.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Like, you're going to have challenges. I don't know how many challenges you have now.
+You're going to have challenges for sure, but it's not going to be something that's going to be, oh, this is super interesting, you know, like, oh, I'm super excited about how to make these discount codes work in this specific case, but don't work in this other specific case or whatever it is, you
+know, whatever. That's, sorry, what was very interesting.
+
+schmithvillers
+My previous job was very interesting in this sense.
+Like, my previous job that I was working, it was very interesting. Because we were, like, integrating new tools into our security system.
+
+zaro_to
+Okay. Yeah, exactly.
+
+schmithvillers
+So, it was very... Because every tool was different. Microsoft Defender was different.
+Like, the steps were the same. The ways to test it out, to look at the incidents.
+One of that was the same. But every tool worked in a different way.
+Every tool had a different capability, you know, scope.
+
+zaro_to
+Exactly. It depends very much on the job.
+
+schmithvillers
+So, that was very fun. Yeah.
+
+zaro_to
+That's the reality. So, what, you were just an intern there.
+
+schmithvillers
+I wish I get the previous job.
+
+zaro_to
+Yeah, but why did you leave?
+
+schmithvillers
+No, no. I was... Like, I was a trainee for a year. But actually, my senior wasn't a very technical person.
+He was just, like, a manager sort of a person. Right? So, I was doing a lot of his work.
+I was a trainee, but for my master's.
+
+zaro_to
+For your masters.
+Okay. You want to study more. Well, yeah, and now, and now this kind of job is already automated.
+
+schmithvillers
+Yeah. But that...
+
+zaro_to
+So, I don't know, I don't know really, but that's, that's a thing that's, that's, it's happening.
+
+schmithvillers
+Yes.
+
+zaro_to
+We see.
+
+schmithvillers
+Let's see. So, that's why I want to create something of my own.
+
+zaro_to
+Yeah.
+
+schmithvillers
+I think that will be more interesting. I still don't know how to deploy stuff.
+But I want to learn all of that. Create things.
+
+zaro_to
+Okay. You know what? You know what?
+
+schmithvillers
+Yeah.
+
+zaro_to
+We can, if you want with this project, we can do that.
+I can really show you step by step how to, I mean, without all the stuff, you know, what's in the code, even without knowing this, how to deploy it.
+I can, what is what?
+
+schmithvillers
+Yeah, that would be awesome. Yes. Please.
+
+zaro_to
+No problem.
+Uh, now here, here, although with this project, there is a difference, you know, with the previous one, we had to use Google Cloud.
+
+schmithvillers
+Yeah.
+
+zaro_to
+Uh, now we don't have to use, and basically, we don't have hosting at Meta.
+So, I need to host it somewhere.
+So, we can try to do it on Cloudflare as a free hosting, if you want.
+
+schmithvillers
+Okay.
+
+zaro_to
+Uh, I guess we can do that. That's one.
+
+schmithvillers
+Okay.
+
+zaro_to
+I mean, this, on Cloudflare, it's also architectural, architectural decision, because, uh, there, you don't have the traditional server.
+You know, you put your code and it runs a long, a long running process.
+You have workers, you know, and these are short-lived.
+So, and things change.
+
+schmithvillers
+Yeah. So, I can't use Google.
+
+zaro_to
+But for moderate usage, it's free, you know, you can have, I don't know how many requests.
+I think 100,000 per day. It's okay.
+Uh, we can use Google Cloud again.
+
+schmithvillers
+Because it's meta.
+
+zaro_to
+No, we can, because I still have the credits for the Ecosite, but they're going to expire, I don't know when.
+I think, wait a second, September, they are going to expire end of November.
+
+schmithvillers
+You can... We can use my account.
+
+zaro_to
+Do you have free credits there?
+
+schmithvillers
+We could use my Google account.
+
+zaro_to
+No, after you sign up for the credits, they last only three months.
+
+schmithvillers
+Let me check. I think I do because I've never used them up.
+
+zaro_to
+After that, they expire.
+So, but also, there is a point at which you claim them.
+
+schmithvillers
+Let me see.
+
+zaro_to
+So, maybe you have the account and you haven't claimed them.
+Uh, you have to check.
+
+schmithvillers
+Yeah, maybe.
+I'll share my screen. You tell me.
+
+zaro_to
+Okay, let's see, I don't know.
+
+schmithvillers
+I don't know. Even I don't know.
+
+zaro_to
+Usually they put, they put a banner on top of your account, claim your 300 credits.
+That's how I know. I mean, it's not like, uh...
+
+schmithvillers
+It's like it has a billing account. And I have to pay something here.
+Which I haven't. But I will if required.
+
+zaro_to
+Well, for me to give it, they gave me the credits, but I had to put credit card.
+They didn't charge me anything. But I think I had to put a card or something like that.
+Or, look, wait a second, wait a second.
+
+schmithvillers
+I did. Put account.
+
+zaro_to
+Before we are talking about credits, check what is the free tire.
+I think there is a free tire in Google. We can do that.
+Use free tire. Ah, no, you have to use some search engine.
+
+schmithvillers
+Me there.
+I don't know.
+
+zaro_to
+I don't know how. Thousand things here like that.
+
+schmithvillers
+Wait. I have multiple accounts. We can try with any.
+
+zaro_to
+Uh, okay.
+Now, look, I would say let's do this tomorrow or...
+
+schmithvillers
+Sure.
+
+zaro_to
+I'll search in the meantime.
+So, again, it's your choice. We can do it on Google if you have free tire and the free tire is good enough.
+Um, or we can do it on Cloudflare if you like Cloudflare for some reason.
+
+schmithvillers
+Okay. Yeah.
+
+zaro_to
+Um, or I have a shared server.
+You know, we can deploy it there, but then it's just making a helm chart for Kubernetes for my server and that's it.
+Um, generally, uh, meaning there is not going to be dashboard.
+
+schmithvillers
+Okay.
+
+zaro_to
+They're just going to be Herm installed and that's all.
+And then maybe I give you access for you to look.
+
+schmithvillers
+I'll be trying to myself.
+
+zaro_to
+But it's not all this cloud stuff that you see here.
+This big account is closed.
+Yeah.
+Yeah.
+Yeah, that's the problem with all these accounts.
+
+schmithvillers
+Can't we do it on AWS?
+
+zaro_to
+Do you have... There is also free tire there.
+We can do it on AWS.
+
+schmithvillers
+Yes. Since I have a bunch of accounts everywhere.
+I've never used them.
+
+zaro_to
+Yeah, look. Look, look, look, look. Before doing this, AWS free tire.
+AWS free tire and you have on AWS.
+Okay, they give you $200 in credit.
+I guess you can make a new AWS account, no?
+No. I know you have a lot, but at least one email should be unused.
+
+schmithvillers
+Yes.
+
+zaro_to
+No. Look, look.
+
+schmithvillers
+Yep. Let me first check.
+I'll check all of the accounts that I already have. If I have any credits on them.
+
+zaro_to
+Sure. Check. Check the accounts whether we have a free tire and also just use the search engine and check the AWS free tire, Google Cloud free tire and Azure free tire.
+
+schmithvillers
+Or if it's eligible for free.
+
+zaro_to
+Let's see. I think all three give you some kind of free tire.
+
+schmithvillers
+Yes. Okay.
+
+zaro_to
+I don't know. For sure.
+
+schmithvillers
+Yes. Yes. I will be wonders.
+
+zaro_to
+And look a little bit. Decide and we are putting it on your account, your server, everything.
+We're just going to be using the meta API from the accounts we have, you know, with the credits.
+That's all.
+
+schmithvillers
+Okay. Sounds good.
+
+zaro_to
+Cool. Talk tomorrow then.
+
+schmithvillers
+Yep.
+
+zaro_to
+And see how it goes. Have a good evening.
+No more problems. Until the end of the hackathon.
+
+schmithvillers
+You too. Have a great email. Hopefully.
+
+zaro_to
+Okay. Have a good evening. Bye. Bye.
+
+schmithvillers
+Yes.
+
+zaro_to
+Bye. Bye. Bye.
+
+schmithvillers
+Okay. Then. See you. Bye-bye. - Thank you.
