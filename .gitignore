@@ -1,0 +1,8 @@
+.env
+node_modules/
+dist/
+dist-server/
+.data/
+public/icons/products/
+*.local
+.DS_Store
