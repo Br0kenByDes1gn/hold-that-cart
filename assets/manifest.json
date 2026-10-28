@@ -1,0 +1,1274 @@
+[
+  {
+    "filename": "fruit_assortment.png",
+    "category": "produce",
+    "source_bbox": [
+      25,
+      34,
+      157,
+      119
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "vegetable_assortment.png",
+    "category": "produce",
+    "source_bbox": [
+      192,
+      18,
+      160,
+      140
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "milk_glass_and_carton.png",
+    "category": "produce",
+    "source_bbox": [
+      365,
+      19,
+      109,
+      139
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "eggs.png",
+    "category": "produce",
+    "source_bbox": [
+      493,
+      58,
+      126,
+      96
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cheese.png",
+    "category": "produce",
+    "source_bbox": [
+      626,
+      50,
+      130,
+      107
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "yogurt.png",
+    "category": "produce",
+    "source_bbox": [
+      763,
+      49,
+      117,
+      99
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "butter.png",
+    "category": "produce",
+    "source_bbox": [
+      882,
+      61,
+      128,
+      92
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "rice_bowl.png",
+    "category": "produce",
+    "source_bbox": [
+      1021,
+      52,
+      113,
+      99
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "flour_bowl.png",
+    "category": "produce",
+    "source_bbox": [
+      1147,
+      60,
+      103,
+      91
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "flour_sack.png",
+    "category": "produce",
+    "source_bbox": [
+      1259,
+      21,
+      140,
+      135
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "oats_bowl.png",
+    "category": "produce",
+    "source_bbox": [
+      1403,
+      48,
+      116,
+      98
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cooking_oil.png",
+    "category": "pantry",
+    "source_bbox": [
+      30,
+      163,
+      56,
+      129
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "olive_oil.png",
+    "category": "pantry",
+    "source_bbox": [
+      106,
+      158,
+      91,
+      129
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "sugar_jar.png",
+    "category": "pantry",
+    "source_bbox": [
+      227,
+      175,
+      83,
+      113
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "brown_sugar_jar.png",
+    "category": "pantry",
+    "source_bbox": [
+      338,
+      175,
+      85,
+      112
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "salt_shaker.png",
+    "category": "pantry",
+    "source_bbox": [
+      451,
+      169,
+      61,
+      119
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "pepper_grinder.png",
+    "category": "pantry",
+    "source_bbox": [
+      546,
+      166,
+      54,
+      122
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "spice_assortment.png",
+    "category": "pantry",
+    "source_bbox": [
+      624,
+      177,
+      184,
+      105
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "mixed_nuts_bowl.png",
+    "category": "pantry",
+    "source_bbox": [
+      823,
+      177,
+      112,
+      95
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "pasta_bundle.png",
+    "category": "pantry",
+    "source_bbox": [
+      943,
+      166,
+      145,
+      109
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "rice_grains_bowl.png",
+    "category": "pantry",
+    "source_bbox": [
+      1099,
+      177,
+      116,
+      91
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "bread_loaf.png",
+    "category": "pantry",
+    "source_bbox": [
+      1231,
+      173,
+      145,
+      109
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "tortillas.png",
+    "category": "pantry",
+    "source_bbox": [
+      1392,
+      171,
+      123,
+      96
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "canned_food.png",
+    "category": "pantry",
+    "source_bbox": [
+      29,
+      307,
+      81,
+      109
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "peanut_butter.png",
+    "category": "pantry",
+    "source_bbox": [
+      139,
+      299,
+      86,
+      117
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "jam_jar.png",
+    "category": "pantry",
+    "source_bbox": [
+      256,
+      302,
+      85,
+      113
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "honey_jar.png",
+    "category": "pantry",
+    "source_bbox": [
+      365,
+      293,
+      105,
+      122
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "pickles_jar.png",
+    "category": "pantry",
+    "source_bbox": [
+      488,
+      298,
+      81,
+      117
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "tomato_sauce.png",
+    "category": "pantry",
+    "source_bbox": [
+      603,
+      297,
+      75,
+      117
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "ketchup_bottle.png",
+    "category": "pantry",
+    "source_bbox": [
+      724,
+      288,
+      59,
+      128
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "mayonnaise_jar.png",
+    "category": "pantry",
+    "source_bbox": [
+      825,
+      297,
+      79,
+      118
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "mustard_bottle.png",
+    "category": "pantry",
+    "source_bbox": [
+      947,
+      286,
+      64,
+      128
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "soy_sauce.png",
+    "category": "pantry",
+    "source_bbox": [
+      1077,
+      293,
+      63,
+      122
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "hot_sauce.png",
+    "category": "pantry",
+    "source_bbox": [
+      1199,
+      286,
+      41,
+      130
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "milk_bottle.png",
+    "category": "pantry",
+    "source_bbox": [
+      1304,
+      287,
+      67,
+      129
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "spice_jar.png",
+    "category": "pantry",
+    "source_bbox": [
+      1432,
+      289,
+      67,
+      122
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "tea_box.png",
+    "category": "snacks",
+    "source_bbox": [
+      23,
+      434,
+      108,
+      106
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "coffee_jar.png",
+    "category": "snacks",
+    "source_bbox": [
+      154,
+      426,
+      79,
+      115
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cocoa_tin.png",
+    "category": "snacks",
+    "source_bbox": [
+      259,
+      434,
+      88,
+      103
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cereal_bowl.png",
+    "category": "snacks",
+    "source_bbox": [
+      366,
+      432,
+      122,
+      101
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "granola_bar.png",
+    "category": "snacks",
+    "source_bbox": [
+      484,
+      430,
+      109,
+      113
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cookies.png",
+    "category": "snacks",
+    "source_bbox": [
+      587,
+      448,
+      110,
+      92
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "chips.png",
+    "category": "snacks",
+    "source_bbox": [
+      707,
+      424,
+      95,
+      116
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "crackers.png",
+    "category": "snacks",
+    "source_bbox": [
+      814,
+      429,
+      105,
+      107
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "chocolate.png",
+    "category": "snacks",
+    "source_bbox": [
+      933,
+      428,
+      124,
+      108
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "trail_mix.png",
+    "category": "snacks",
+    "source_bbox": [
+      1078,
+      426,
+      96,
+      110
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cashews.png",
+    "category": "snacks",
+    "source_bbox": [
+      1198,
+      427,
+      82,
+      107
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "peanuts.png",
+    "category": "snacks",
+    "source_bbox": [
+      1311,
+      426,
+      83,
+      107
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "mixed_snack_nuts.png",
+    "category": "snacks",
+    "source_bbox": [
+      1424,
+      425,
+      83,
+      108
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "raw_chicken.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      10,
+      559,
+      114,
+      90
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "beef_steak.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      130,
+      563,
+      111,
+      88
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "salmon_fillet.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      242,
+      557,
+      113,
+      92
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "tofu.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      358,
+      558,
+      99,
+      91
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "soup_can.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      471,
+      553,
+      99,
+      106
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "sausages.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      580,
+      564,
+      114,
+      84
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "frozen_vegetables.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      708,
+      552,
+      109,
+      102
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "ice_cream.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      834,
+      549,
+      88,
+      107
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "frozen_pizza.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      938,
+      548,
+      114,
+      111
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "french_fries.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      1069,
+      545,
+      91,
+      111
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "burger.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      1180,
+      552,
+      98,
+      99
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "veggie_burger.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      1298,
+      560,
+      100,
+      84
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "deli_meat.png",
+    "category": "protein_frozen",
+    "source_bbox": [
+      1410,
+      550,
+      116,
+      95
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "plastic_water_bottle.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      32,
+      657,
+      51,
+      132
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "steel_water_bottle.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      126,
+      656,
+      52,
+      129
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "travel_tumbler.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      211,
+      657,
+      59,
+      118
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "thermos.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      305,
+      651,
+      57,
+      138
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "food_storage_containers.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      391,
+      671,
+      121,
+      113
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "travel_mug.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      544,
+      661,
+      62,
+      124
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cola_bottle.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      651,
+      660,
+      53,
+      126
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "orange_juice_bottle.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      745,
+      662,
+      54,
+      127
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "orange_juice_carton.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      840,
+      665,
+      68,
+      124
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "juice_carton.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      955,
+      665,
+      66,
+      123
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "green_juice_carton.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      1074,
+      665,
+      65,
+      124
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "energy_drink.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      1198,
+      664,
+      52,
+      121
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "sports_drink.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      1329,
+      656,
+      56,
+      130
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "apple_juice_carton.png",
+    "category": "bottles_containers",
+    "source_bbox": [
+      1435,
+      658,
+      64,
+      127
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "toilet_paper.png",
+    "category": "household_paper",
+    "source_bbox": [
+      17,
+      800,
+      81,
+      90
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "paper_towels.png",
+    "category": "household_paper",
+    "source_bbox": [
+      121,
+      793,
+      72,
+      97
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "tissue_box.png",
+    "category": "household_paper",
+    "source_bbox": [
+      213,
+      791,
+      102,
+      99
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "wet_wipes.png",
+    "category": "household_paper",
+    "source_bbox": [
+      321,
+      823,
+      126,
+      64
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "trash_bags.png",
+    "category": "household_paper",
+    "source_bbox": [
+      452,
+      783,
+      123,
+      119
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "aluminum_foil.png",
+    "category": "household_paper",
+    "source_bbox": [
+      584,
+      793,
+      103,
+      97
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "plastic_wrap.png",
+    "category": "household_paper",
+    "source_bbox": [
+      697,
+      813,
+      113,
+      72
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "zip_bags.png",
+    "category": "household_paper",
+    "source_bbox": [
+      830,
+      801,
+      107,
+      86
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "paper_bag.png",
+    "category": "household_paper",
+    "source_bbox": [
+      964,
+      791,
+      81,
+      101
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "reusable_shopping_bag.png",
+    "category": "household_paper",
+    "source_bbox": [
+      1075,
+      792,
+      89,
+      111
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "plastic_shopping_bag.png",
+    "category": "household_paper",
+    "source_bbox": [
+      1190,
+      791,
+      89,
+      107
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "food_container.png",
+    "category": "household_paper",
+    "source_bbox": [
+      1300,
+      805,
+      120,
+      86
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "glass_jar.png",
+    "category": "household_paper",
+    "source_bbox": [
+      1440,
+      792,
+      77,
+      100
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "dish_soap.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      26,
+      896,
+      61,
+      116
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "laundry_detergent.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      108,
+      896,
+      84,
+      116
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "spray_cleaner.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      211,
+      896,
+      57,
+      116
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "cleaning_wipes.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      304,
+      895,
+      60,
+      117
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "sponge.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      379,
+      917,
+      117,
+      83
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "toothbrush.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      506,
+      896,
+      52,
+      117
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "toothpaste.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      553,
+      899,
+      88,
+      115
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "shampoo.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      662,
+      896,
+      57,
+      116
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "conditioner.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      751,
+      896,
+      53,
+      116
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "body_wash.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      835,
+      896,
+      50,
+      113
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "lotion.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      906,
+      897,
+      57,
+      114
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "hand_soap.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      998,
+      897,
+      55,
+      115
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "deodorant.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      1087,
+      909,
+      51,
+      102
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "razor.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      1170,
+      906,
+      49,
+      103
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "baby_diapers.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      1242,
+      909,
+      100,
+      98
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "baby_wipes.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      1367,
+      909,
+      24,
+      99
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  },
+  {
+    "filename": "sanitary_pad.png",
+    "category": "cleaning_personal_care",
+    "source_bbox": [
+      1404,
+      898,
+      97,
+      111
+    ],
+    "dimensions": "256x256",
+    "transparent_background": true
+  }
+]
