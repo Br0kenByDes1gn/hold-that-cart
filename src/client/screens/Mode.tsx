@@ -17,13 +17,20 @@ export function ModeScreen() {
             <img className="mode-art" src="/assets/page-icons/shoppingmode.png" alt="Shopping mode" />
             <h1 className="mode-title">Shopping Mode</h1>
             <p className="mode-hint">Scan a list, cart or a receipt while you shop</p>
-            <ModeArrow />
+            <span className="mode-arrow-box">
+              <ModeArrow />
+            </span>
           </Link>
           <Link to="/pantry" className="card mode-card mode-pantry">
             <img className="mode-art" src="/assets/page-icons/pantrymode.png" alt="Pantry mode" />
             <h1 className="mode-title">Pantry Mode</h1>
             <p className="mode-hint">Track what you have at home</p>
-            <ModeArrow />
+            <span className="mode-arrow-box">
+              <ModeArrow />
+            </span>
+          </Link>
+          <Link to="/quick-view" className="card mode-card mode-grocery">
+            <h1 className="mode-title">Grocery List</h1>
           </Link>
         </div>
       </div>

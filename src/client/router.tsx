@@ -11,6 +11,7 @@ import { ScannerScreen } from "./screens/Scanner";
 import { PantryScreen, ProductScreen } from "./screens/Pantry";
 import { ListScreen } from "./screens/Lists";
 import { ModeScreen } from "./screens/Mode";
+import { QuickViewScreen } from "./screens/QuickView";
 
 function Shell() {
   return (
@@ -62,6 +63,12 @@ const modeRoute = createRoute({
   component: ModeScreen,
 });
 
+const quickViewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/quick-view",
+  component: QuickViewScreen,
+});
+
 const routeTree = rootRoute.addChildren([
   homeRoute,
   briefingRoute,
@@ -70,6 +77,7 @@ const routeTree = rootRoute.addChildren([
   productRoute,
   listRoute,
   modeRoute,
+  quickViewRoute,
 ]);
 export const router = createRouter({ routeTree });
 
