@@ -17,7 +17,7 @@ export function PantryScreen() {
       {q.isLoading && <p>Loading…</p>}
       {q.data?.products?.length === 0 && (
         <p>
-          Pantry is empty. <Link to="/">Load the demo pantry</Link> or scan a receipt.
+          Pantry is empty. <Link to="/home">Load the demo pantry</Link> or scan a receipt.
         </p>
       )}
       <div className="grid">
