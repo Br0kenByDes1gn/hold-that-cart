@@ -10,6 +10,10 @@ export function PantryScreen() {
     <div className="main">
       <h2>The Stash</h2>
       <p className="dim">Your home pantry.</p>
+      <Link to="/briefing" className="card glow-cyan">
+        <h1>Analyse My Pantry →</h1>
+        <p>See what's due, stocked, and swappable.</p>
+      </Link>
       {q.isLoading && <p>Loading…</p>}
       {q.data?.products?.length === 0 && (
         <p>

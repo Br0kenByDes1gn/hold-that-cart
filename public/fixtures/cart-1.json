@@ -1,0 +1,5 @@
+[
+  { "rawName": "Milk bottle", "normalizedName": "milk", "qty": 1, "confidence": 0.7 },
+  { "rawName": "Chips bag", "normalizedName": "chips", "qty": 2, "confidence": 0.65 },
+  { "rawName": "Rice?", "normalizedName": "rice", "qty": 1, "confidence": 0.5 }
+]

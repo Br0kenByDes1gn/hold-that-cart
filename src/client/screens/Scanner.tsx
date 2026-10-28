@@ -68,14 +68,6 @@ export function ScannerScreen() {
     onError: (e: any) => setError(e.message),
   });
 
-  const loadFixture = async (name: string) => {
-    setError("");
-    const res = await fetch(`/tests-fixtures/${name}`).catch(() => null);
-    void res;
-    // fixtures live in tests/, not served — use inline paste instead
-    setError("Paste ExtractedItem JSON below (dev), or upload a photo for AI extract.");
-  };
-
   return (
     <div className="main">
       <h2>Cart Radar</h2>
@@ -109,7 +101,29 @@ export function ScannerScreen() {
       </label>
       {extract.isPending && <p>Reading photo…</p>}
       <details>
-        <summary className="dim">Or paste items JSON (dev fallback)</summary>
+        <summary className="dim">Or use demo JSON (no camera needed)</summary>
+        <div className="row">
+          {(["receipt-1.json", "list-1.json", "cart-1.json"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={async () => {
+                setError("");
+                try {
+                  const arr = await fetch(`/fixtures/${f}`).then((r) => r.json());
+                  const kindGuess = f.startsWith("receipt") ? "receipt" : f.startsWith("list") ? "list" : "cart";
+                  const scan = await api.createScan(kindGuess, arr);
+                  setScanId(scan.id);
+                  setKind(scan.kind);
+                  setItems(scan.matches ?? arr);
+                } catch (e: any) {
+                  setError(e.message);
+                }
+              }}
+            >
+              Load {f.replace("-1.json", "")}
+            </button>
+          ))}
+        </div>
         <textarea
           rows={5}
           className="json"
@@ -132,9 +146,8 @@ export function ScannerScreen() {
               }
             }}
           >
-            Use JSON
+            Use pasted JSON
           </button>
-          <button onClick={() => void loadFixture("receipt-1.json")}>Fixtures live in tests/</button>
         </div>
       </details>
       {error && <p className="error">{error}</p>}

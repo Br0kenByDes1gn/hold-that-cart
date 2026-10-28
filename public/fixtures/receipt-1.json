@@ -1,0 +1,6 @@
+[
+  { "rawName": "Milk 1L", "normalizedName": "milk", "brand": "Dairy Pure", "qty": 1, "packQty": 1, "packUnit": "L", "price": 1.4, "confidence": 0.95 },
+  { "rawName": "White bread 500g", "normalizedName": "bread", "qty": 1, "packQty": 500, "packUnit": "g", "price": 2.1, "confidence": 0.9 },
+  { "rawName": "Eggs 10pcs", "normalizedName": "eggs", "qty": 1, "packQty": 10, "packUnit": "pcs", "price": 3.1, "confidence": 0.92 },
+  { "rawName": "Olive oil 500ml", "normalizedName": "olive oil", "brand": "Borges", "qty": 1, "packQty": 500, "packUnit": "ml", "price": 6.0, "confidence": 0.88 }
+]
