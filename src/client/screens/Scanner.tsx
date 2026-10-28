@@ -52,6 +52,7 @@ export function ScannerScreen() {
       if (!scanId) throw new Error("nothing to confirm");
       const payload = items.map((it) => ({
         rawName: it.rawName,
+        normalizedName: it.normalizedName,
         productId: it.match?.productId ?? it.productId ?? null,
         qty: it.qty ?? 1,
         packQty: it.packQty,

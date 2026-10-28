@@ -32,6 +32,12 @@ that file are explicitly **out of scope**, see "Not built yet").
    claims. Only flags with enough history; label estimates "probably".
 5. **Only tags that apply light up** (money/health/planet); the rest stay
    grey. Health/planet tags need model confidence ≥0.5 and a ≥1-point delta.
+6. **Canonical product identity = generic type.** `normalizedName`
+   ("peanut oil") is the product; brand, pack size, and the raw receipt line
+   are purchase-level *variants* (`purchases.brand`, `purchases.variant`).
+   Brand A / Brand B of the same type always pool into one product — pooled
+   rhythm, variant comparison for money suggestions. Never key a product by
+   raw receipt text.
 
 ## Stack
 
