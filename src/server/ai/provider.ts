@@ -18,6 +18,9 @@ export interface ProductEnrichmentLike {
     rationale?: string;
     confidence?: number;
   }>;
+  modelName?: string;
+  promptVersion?: string;
+  generatedAt?: string;
 }
 
 export interface AIProvider {
@@ -40,7 +43,12 @@ export class StubAIProvider implements AIProvider {
   }
 }
 
+import { MetaProvider } from "./meta.js";
+
 export function getAIProvider(): AIProvider {
-  // Muse via dev.meta.ai plugs in here later (step 3). Stub until then.
+  const meta = new MetaProvider();
+  if (meta.configured) return meta;
   return new StubAIProvider();
 }
+
+export { MetaProvider };

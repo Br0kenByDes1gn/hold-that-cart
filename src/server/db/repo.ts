@@ -153,12 +153,19 @@ export async function loadProductView(
     .orderBy(desc(corrections.createdAt));
 
   let know: ProductEnrichment | null = null;
-  if (product.knowledgeKey) {
+  const keys = [
+    product.knowledgeKey,
+    knowledgeKey(product.name), // fallback: shared cache by plain name
+  ].filter((k): k is string => !!k);
+  for (const k of keys) {
     const krows = await db
       .select()
       .from(productKnowledge)
-      .where(eq(productKnowledge.key, product.knowledgeKey));
-    if (krows[0]) know = krows[0].enrichment as ProductEnrichment;
+      .where(eq(productKnowledge.key, k));
+    if (krows[0]) {
+      know = krows[0].enrichment as ProductEnrichment;
+      break;
+    }
   }
 
   const lastDate = purchRows.length > 0 ? new Date(purchRows[0].purchasedAt) : null;

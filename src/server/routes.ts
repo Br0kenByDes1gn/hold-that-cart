@@ -32,7 +32,8 @@ import {
 import { matchProduct } from "./domain/match.js";
 import { suggestForProducts } from "./domain/suggestions.js";
 import { DEMO_ITEMS, DEMO_PURCHASES, demoKnowledgeKey } from "./domain/demo.js";
-import { normalizeName } from "./domain/normalize.js";
+import { knowledgeKey, normalizeName } from "./domain/normalize.js";
+import { getAIProvider } from "./ai/provider.js";
 
 export const routes = new Hono();
 
@@ -538,6 +539,99 @@ routes.post("/api/lists/:id/evaluate", async (c) => {
   }
   const holdCount = results.filter((r) => r.suggestion.action === "SKIP").length;
   return c.json({ results, holdCount });
+});
+
+// ── AI (Muse via Meta Model API) ──
+
+// POST /api/ai/extract { image: dataURL|base64, mimeType?, kindHint? }
+// Image is NOT persisted — only the validated extraction JSON is returned.
+routes.post("/api/ai/extract", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const body = await c.req.json().catch(() => ({}));
+  const raw = typeof body.image === "string" ? body.image : "";
+  const mimeType = typeof body.mimeType === "string" ? body.mimeType : "image/jpeg";
+  const m = raw.match(/^data:([^;]+);base64,(.+)$/);
+  const b64 = m ? m[2] : raw;
+  if (!b64 || b64.length < 100) return c.json({ error: "missing image (base64 or data URL)" }, 400);
+  if (b64.length > 14 * 1024 * 1024) return c.json({ error: "image too large (>10MB)" }, 413);
+  try {
+    const provider = getAIProvider() as any;
+    const result = await provider.extractItems(
+      Buffer.from(b64, "base64"),
+      m ? m[1] : mimeType,
+      typeof body.kindHint === "string" ? body.kindHint : undefined,
+    );
+    return c.json(result);
+  } catch (e: any) {
+    const status = /not configured/i.test(String(e?.message)) ? 503 : 502;
+    return c.json({ error: String(e?.message ?? e).slice(0, 500) }, status);
+  }
+});
+
+// POST /api/ai/enrich { name, brand?, form? } → cached in product_knowledge
+routes.post("/api/ai/enrich", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const body = await c.req.json().catch(() => ({}));
+  if (typeof body.name !== "string" || !body.name.trim())
+    return c.json({ error: "name is required" }, 400);
+  try {
+    const provider = getAIProvider();
+    const enrichment = (await provider.enrichProduct({
+      name: body.name.trim(),
+      brand: body.brand,
+      form: body.form,
+    })) as any;
+    const parsed = productEnrichmentSchema.parse(enrichment);
+    const key = knowledgeKey(body.name.trim(), body.brand, body.form);
+    await upsertKnowledge(key, parsed);
+    // Link household products with the plain-name key so briefings pick it up.
+    const db = await getDb();
+    const prows = await db.select().from(products).where(eq(products.householdId, hh!.id));
+    for (const p of prows) {
+      if (!p.knowledgeKey && knowledgeKey(p.name) === key) {
+        await db
+          .update(products)
+          .set({ knowledgeKey: key, shelfLifeClass: parsed.shelfLifeClass })
+          .where(eq(products.id, p.id));
+      }
+    }
+    return c.json({ key, enrichment: parsed });
+  } catch (e: any) {
+    const status = /not configured/i.test(String(e?.message)) ? 503 : 502;
+    return c.json({ error: String(e?.message ?? e).slice(0, 500) }, status);
+  }
+});
+
+// POST /api/products/:id/enrich-ai → enrich THIS product via Muse + link + reclassify
+routes.post("/api/products/:id/enrich-ai", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const db = await getDb();
+  const rows = await db
+    .select()
+    .from(products)
+    .where(and(eq(products.id, c.req.param("id")), eq(products.householdId, hh!.id)));
+  if (!rows[0]) return c.json({ error: "not found" }, 404);
+  try {
+    const provider = getAIProvider();
+    const enrichment = (await provider.enrichProduct({ name: rows[0].name })) as any;
+    const parsed = productEnrichmentSchema.parse(enrichment);
+    const key = knowledgeKey(rows[0].name);
+    await upsertKnowledge(key, parsed);
+    await db
+      .update(products)
+      .set({ knowledgeKey: key, shelfLifeClass: parsed.shelfLifeClass })
+      .where(eq(products.id, rows[0].id));
+    return c.json({ key, enrichment: parsed });
+  } catch (e: any) {
+    const status = /not configured/i.test(String(e?.message)) ? 503 : 502;
+    return c.json({ error: String(e?.message ?? e).slice(0, 500) }, status);
+  }
 });
 
 // ── Demo seed/reset ──
