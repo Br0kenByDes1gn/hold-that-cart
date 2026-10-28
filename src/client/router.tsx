@@ -25,7 +25,8 @@ function Shell() {
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/scanner" ||
-    location.pathname === "/pantry";
+    location.pathname === "/pantry" ||
+    location.pathname === "/quick-view";
   const homeTarget = loggedIn ? "/mode" : "/";
   const homeActive = loggedIn
     ? location.pathname === "/mode" || location.pathname === "/home"
