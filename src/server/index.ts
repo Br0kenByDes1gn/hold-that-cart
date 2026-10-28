@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
+import { existsSync, readFileSync } from "node:fs";
 import { getDb } from "./db/client.js";
 import { households } from "./db/schema.js";
 import { householdUpsertSchema, householdPatchSchema } from "../shared/schemas.js";
@@ -13,6 +14,26 @@ app.use("*", cors());
 
 app.get("/api/health", (c) => c.json({ ok: true, version: "0.1.0" }));
 app.route("/", routes);
+
+// ── Static client (production: Hono serves Vite dist) ──
+const DIST = "./dist";
+if (existsSync(DIST + "/index.html")) {
+  const { serveStatic } = await import("@hono/node-server/serve-static").catch(() => ({ serveStatic: null }) as any);
+  if (serveStatic) {
+    app.use("/assets/*", serveStatic({ root: DIST }));
+    app.use("/icons/*", serveStatic({ root: DIST }));
+    app.use("/*.png", serveStatic({ root: DIST }));
+    app.use("/*.svg", serveStatic({ root: DIST }));
+    app.use("/*.webmanifest", serveStatic({ root: DIST }));
+    app.use("/sw.js", serveStatic({ root: DIST }));
+    app.use("/workbox-*.js", serveStatic({ root: DIST }));
+  }
+  const indexHtml = readFileSync(DIST + "/index.html", "utf8");
+  app.get("*", (c) => {
+    if (c.req.path.startsWith("/api")) return c.notFound();
+    return c.html(indexHtml);
+  });
+}
 
 function deviceId(c: { req: { header: (n: string) => string | undefined } }): string | null {
   return c.req.header("X-Device-Id") ?? null;
