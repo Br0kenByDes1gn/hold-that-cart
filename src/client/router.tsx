@@ -7,27 +7,31 @@ import {
   Outlet,
   useLocation,
 } from "@tanstack/react-router";
+import { Boxes, CircleUser, Home, ScanLine } from "lucide-react";
 import { HomeScreen, BriefingScreen } from "./screens/Home";
 import { ScannerScreen } from "./screens/Scanner";
 import { PantryScreen, ProductScreen } from "./screens/Pantry";
 import { ListScreen } from "./screens/Lists";
 import { ModeScreen } from "./screens/Mode";
 import { QuickViewScreen } from "./screens/QuickView";
+import { AnalyseScreen } from "./screens/Analyse";
 import { SignUpScreen, LoginScreen } from "./screens/Auth";
+import { isLoggedIn } from "./lib/auth";
 
 function Shell() {
   const location = useLocation();
+  const loggedIn = isLoggedIn();
   const hideHeader =
     location.pathname === "/" ||
     location.pathname === "/login" ||
     location.pathname === "/scanner" ||
     location.pathname === "/pantry";
-  const hideTabbar =
-    location.pathname === "/" ||
-    location.pathname === "/login" ||
-    location.pathname === "/scanner";
+  const homeTarget = loggedIn ? "/mode" : "/";
+  const homeActive = loggedIn
+    ? location.pathname === "/mode" || location.pathname === "/home"
+    : location.pathname === "/";
   return (
-    <div className="shell">
+    <div className="shell has-tabbar">
       {!hideHeader && (
         <header className="header">
           <Link to="/" className="wordmark wordmark-link">
@@ -46,13 +50,47 @@ function Shell() {
         </header>
       )}
       <Outlet />
-      {!hideTabbar && (
-        <nav className="tabbar">
-          <Link to="/home" activeProps={{ className: "active" }}>Home</Link>
-          <Link to="/scanner" activeProps={{ className: "active" }}>Scanner</Link>
-          <Link to="/pantry" activeProps={{ className: "active" }}>Pantry</Link>
-        </nav>
-      )}
+      <nav className="tabbar" aria-label="Main navigation">
+          <Link
+            to={homeTarget}
+            className={`tab-icon ${homeActive ? "active" : ""}`}
+            aria-label="Home"
+          >
+            <Home size={28} strokeWidth={2} />
+          </Link>
+          <Link
+            to="/scanner"
+            className={`tab-icon ${location.pathname === "/scanner" ? "active" : ""}`}
+            aria-label="Scanner"
+          >
+            <ScanLine size={28} strokeWidth={2} />
+          </Link>
+          {loggedIn ? (
+            <Link
+              to="/pantry"
+              className={`tab-icon ${location.pathname === "/pantry" ? "active" : ""}`}
+              aria-label="Pantry"
+            >
+              <Boxes size={28} strokeWidth={2} />
+            </Link>
+          ) : (
+            <span
+              className="tab-icon is-disabled"
+              aria-label="Pantry (log in required)"
+              aria-disabled="true"
+              title="Log in to use Pantry"
+            >
+              <Boxes size={28} strokeWidth={2} />
+            </span>
+          )}
+          <Link
+            to="/analyse"
+            className={`tab-icon ${location.pathname === "/analyse" ? "active" : ""}`}
+            aria-label="Analyse"
+          >
+            <CircleUser size={28} strokeWidth={2} />
+          </Link>
+      </nav>
     </div>
   );
 }
@@ -85,6 +123,12 @@ const quickViewRoute = createRoute({
   component: QuickViewScreen,
 });
 
+const analyseRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/analyse",
+  component: AnalyseScreen,
+});
+
 const signupRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
@@ -106,6 +150,7 @@ const routeTree = rootRoute.addChildren([
   listRoute,
   modeRoute,
   quickViewRoute,
+  analyseRoute,
   signupRoute,
   loginRoute,
 ]);

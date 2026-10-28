@@ -505,10 +505,6 @@ export function ScannerScreen() {
           </article>
         ))}
       </div>
-
-      <div className="cr-safearea" aria-hidden="true">
-        <span className="cr-home-indicator" />
-      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { setLoggedIn } from "../lib/auth";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -24,6 +25,7 @@ export function SignUpScreen() {
   function onSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!validate()) return;
+    setLoggedIn();
     setSubmitted(true);
     setTimeout(() => nav({ to: "/mode" }), 900);
   }
@@ -119,6 +121,7 @@ export function LoginScreen() {
   function onSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!validate()) return;
+    setLoggedIn();
     setSubmitted(true);
     setTimeout(() => nav({ to: "/mode" }), 900);
   }
