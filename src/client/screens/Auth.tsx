@@ -25,7 +25,7 @@ export function SignUpScreen() {
     ev.preventDefault();
     if (!validate()) return;
     setSubmitted(true);
-    setTimeout(() => nav({ to: "/home" }), 900);
+    setTimeout(() => nav({ to: "/mode" }), 900);
   }
 
   return (
@@ -120,7 +120,7 @@ export function LoginScreen() {
     ev.preventDefault();
     if (!validate()) return;
     setSubmitted(true);
-    setTimeout(() => nav({ to: "/home" }), 900);
+    setTimeout(() => nav({ to: "/mode" }), 900);
   }
 
   return (

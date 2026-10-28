@@ -17,7 +17,15 @@ import { SignUpScreen, LoginScreen } from "./screens/Auth";
 
 function Shell() {
   const location = useLocation();
-  const hideHeader = location.pathname === "/" || location.pathname === "/login";
+  const hideHeader =
+    location.pathname === "/" ||
+    location.pathname === "/login" ||
+    location.pathname === "/scanner" ||
+    location.pathname === "/pantry";
+  const hideTabbar =
+    location.pathname === "/" ||
+    location.pathname === "/login" ||
+    location.pathname === "/scanner";
   return (
     <div className="shell">
       {!hideHeader && (
@@ -38,11 +46,13 @@ function Shell() {
         </header>
       )}
       <Outlet />
-      <nav className="tabbar">
-        <Link to="/home" activeProps={{ className: "active" }}>Home</Link>
-        <Link to="/scanner" activeProps={{ className: "active" }}>Scanner</Link>
-        <Link to="/pantry" activeProps={{ className: "active" }}>Pantry</Link>
-      </nav>
+      {!hideTabbar && (
+        <nav className="tabbar">
+          <Link to="/home" activeProps={{ className: "active" }}>Home</Link>
+          <Link to="/scanner" activeProps={{ className: "active" }}>Scanner</Link>
+          <Link to="/pantry" activeProps={{ className: "active" }}>Pantry</Link>
+        </nav>
+      )}
     </div>
   );
 }
