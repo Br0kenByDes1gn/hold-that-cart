@@ -1,0 +1,32 @@
+import { Link } from "@tanstack/react-router";
+
+function ModeArrow() {
+  return (
+    <svg className="mode-arrow" width="13" height="17" viewBox="0 0 13 17" fill="none" aria-hidden="true">
+      <path d="M1.5 2 L10 8.5 L1.5 15" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function ModeScreen() {
+  return (
+    <div className="main mode-page">
+      <div className="mode-stage">
+        <div className="mode-grid">
+          <Link to="/scanner" className="card mode-card mode-shop">
+            <img className="mode-art" src="/assets/page-icons/shoppingmode.png" alt="Shopping mode" />
+            <h1 className="mode-title">Shopping Mode</h1>
+            <p className="mode-hint">Scan a list, cart or a receipt while you shop</p>
+            <ModeArrow />
+          </Link>
+          <Link to="/pantry" className="card mode-card mode-pantry">
+            <img className="mode-art" src="/assets/page-icons/pantrymode.png" alt="Pantry mode" />
+            <h1 className="mode-title">Pantry Mode</h1>
+            <p className="mode-hint">Track what you have at home</p>
+            <ModeArrow />
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

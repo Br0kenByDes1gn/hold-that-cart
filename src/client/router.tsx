@@ -10,13 +10,25 @@ import { HomeScreen, BriefingScreen } from "./screens/Home";
 import { ScannerScreen } from "./screens/Scanner";
 import { PantryScreen, ProductScreen } from "./screens/Pantry";
 import { ListScreen } from "./screens/Lists";
+import { ModeScreen } from "./screens/Mode";
 
 function Shell() {
   return (
     <div className="shell">
       <header className="header">
-        <div className="wordmark">HOLD THAT CART</div>
-        <div className="subtitle">Cart Radar · The Stash</div>
+        <Link to="/" className="wordmark wordmark-link">
+          <span className="wordmark-line">HOLD</span>
+          <span className="wordmark-line">THAT CART</span>
+        </Link>
+        <div className="level-block">
+          <div className="level-row">
+            <img className="level-icon" src="/assets/page-icons/profilepic.png" alt="Cart Commander profile" />
+            <div className="level-text">
+              <span className="level-name">Cart Commander</span>
+              <div className="level-sub">level</div>
+            </div>
+          </div>
+        </div>
       </header>
       <Outlet />
       <nav className="tabbar">
@@ -44,7 +56,21 @@ const listRoute = createRoute({
   component: ({ params }: any) => <ListScreen listId={params.listId} />,
 });
 
-const routeTree = rootRoute.addChildren([homeRoute, briefingRoute, scannerRoute, pantryRoute, productRoute, listRoute]);
+const modeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/mode",
+  component: ModeScreen,
+});
+
+const routeTree = rootRoute.addChildren([
+  homeRoute,
+  briefingRoute,
+  scannerRoute,
+  pantryRoute,
+  productRoute,
+  listRoute,
+  modeRoute,
+]);
 export const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {
