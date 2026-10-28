@@ -1,4 +1,5 @@
 import { PGlite } from "@electric-sql/pglite";
+import { mkdirSync } from "node:fs";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
 import { drizzle as drizzlePg } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
@@ -101,6 +102,7 @@ export async function getDb(): Promise<Db> {
     return db;
   }
   const dataDir = process.env.PGLITE_DIR ?? "./.data/pglite";
+  mkdirSync(dataDir, { recursive: true });
   pglite = new PGlite({ dataDir });
   db = drizzlePglite(pglite, { schema });
   await pglite.exec(DDL);

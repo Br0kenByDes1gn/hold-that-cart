@@ -5,12 +5,14 @@ import { eq } from "drizzle-orm";
 import { getDb } from "./db/client.js";
 import { households } from "./db/schema.js";
 import { householdUpsertSchema, householdPatchSchema } from "../shared/schemas.js";
+import { routes } from "./routes.js";
 
 export const app = new Hono();
 
 app.use("*", cors());
 
 app.get("/api/health", (c) => c.json({ ok: true, version: "0.1.0" }));
+app.route("/", routes);
 
 function deviceId(c: { req: { header: (n: string) => string | undefined } }): string | null {
   return c.req.header("X-Device-Id") ?? null;
