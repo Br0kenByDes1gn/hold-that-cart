@@ -41,6 +41,9 @@ export function HomeScreen() {
           Reset
         </button>
       </div>
+      <p className="dim" style={{ textAlign: "center", marginTop: 8 }}>
+        New here? <Link to="/">Create an account</Link>
+      </p>
       {msg && <p className="dim">{msg}</p>}
     </div>
   );
