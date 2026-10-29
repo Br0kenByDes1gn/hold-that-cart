@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · moonmilk-vietnam</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+</style>
+</head>
+<body>
+  <h1>moonmilk-vietnam</h1>
+  <div class="meta">IMG_20261028_205527.jpg · 1200×1600 · 296 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/IMG_20261028_205527.jpg" alt="moonmilk-vietnam source image">
+      <p class="note"><strong>What to check:</strong> Phone photo. Vietnamese receipt, bilingual item names, VAT %, kg weight lines.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>5</b></span>
+        <span>total qty <b>302.34</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ carrot</li>
+<li class="ok">✓ pork</li>
+<li class="ok">✓ onion</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>carrot</td>
+      <td class="num">5280.00</td>
+    </tr>
+<tr>
+      <td>chocolate danish</td>
+      <td class="num">18000.00</td>
+    </tr>
+<tr>
+      <td>danish raisin</td>
+      <td class="num">18000.00</td>
+    </tr>
+<tr>
+      <td>onion</td>
+      <td class="num">7875.00</td>
+    </tr>
+<tr>
+      <td>pork shortloin</td>
+      <td class="num">50000.00</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>Last run detail (not asserted)</h2>
+      <table>
+        <thead><tr><th>Raw name</th><th class="num">Qty</th><th class="num">Pack</th><th class="num">Price</th><th class="num">Conf.</th></tr></thead>
+        <tbody>
+<tr>
+      <td>ME.P.F-Thịt heo. Fresh Pork Shortloin 300g (Cốt lết có xương) ecp - (Khay)</td>
+      <td class="num">1</td>
+      <td class="num">300g</td>
+      <td class="num">50000.00</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>VE.R-Củ, quả. Carrot (Cà rốt) -DN ecp - (kg)</td>
+      <td class="num">0.165</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">5280.00</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>VE.R-Củ, quả. Onion (Hành tây) ĐN ecp - (kg)</td>
+      <td class="num">0.175</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">7875.00</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>BA-Bánh. Danish Raisin MM ecp - (Gói)</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">18000.00</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>BA-Bánh. Danish Chocolate MM ecp - (Cái)</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">18000.00</td>
+      <td class="num">0.98</td>
+    </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

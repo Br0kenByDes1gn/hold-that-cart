@@ -1,0 +1,50 @@
+[
+  {
+    "name": "and bread butter pickle",
+    "price": 3.49
+  },
+  {
+    "name": "black cherry nonfat yogurt",
+    "price": 0.79
+  },
+  {
+    "name": "blueberry fat non yogurt",
+    "price": 0.79
+  },
+  {
+    "name": "breaded chicken drummella meat",
+    "price": 3.79
+  },
+  {
+    "name": "breaded cutlet eggplant entree",
+    "price": 2.49
+  },
+  {
+    "name": "bun hamburger wheat whole",
+    "price": 1.99
+  },
+  {
+    "name": "cheese jack jalapeno monterey",
+    "price": 3.39
+  },
+  {
+    "name": "green onion",
+    "price": 1.29
+  },
+  {
+    "name": "honey peanut roasted",
+    "price": 3.99
+  },
+  {
+    "name": "nonfat raspberry yogurt",
+    "price": 0.79
+  },
+  {
+    "name": "nonfat strawberry yogurt",
+    "price": 0.79
+  },
+  {
+    "name": "on the tomato vine",
+    "price": 2.29
+  }
+]

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · wholefoods-tribeca</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+</style>
+</head>
+<body>
+  <h1>wholefoods-tribeca</h1>
+  <div class="meta">Screenshot_2026-10-28_at_9.30.14_AM.png · 518×1282 · 130 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/Screenshot_2026-10-28_at_9.30.14_AM.png" alt="wholefoods-tribeca source image">
+      <p class="note"><strong>What to check:</strong> 18 items, weight lines with tare, mixed tax codes (F/T).</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>16</b></span>
+        <span>total qty <b>18.96</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ cilantro</li>
+<li class="ok">✓ romaine</li>
+<li class="bad">✗ sour cream</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>apple gala</td>
+      <td class="num">3.16</td>
+    </tr>
+<tr>
+      <td>avocado hass</td>
+      <td class="num">2.98</td>
+    </tr>
+<tr>
+      <td>balsamic vinegar</td>
+      <td class="num">2.99</td>
+    </tr>
+<tr>
+      <td>banana</td>
+      <td class="num">0.91</td>
+    </tr>
+<tr>
+      <td>bean black</td>
+      <td class="num">0.99</td>
+    </tr>
+<tr>
+      <td>brown egg gmo non</td>
+      <td class="num">2.99</td>
+    </tr>
+<tr>
+      <td>bunch cilantro</td>
+      <td class="num">1.99</td>
+    </tr>
+<tr>
+      <td>cherry tomato</td>
+      <td class="num">2.50</td>
+    </tr>
+<tr>
+      <td>chicken plain roti</td>
+      <td class="num">7.99</td>
+    </tr>
+<tr>
+      <td>cream sour</td>
+      <td class="num">1.69</td>
+    </tr>
+<tr>
+      <td>fiesta shred</td>
+      <td class="num">6.99</td>
+    </tr>
+<tr>
+      <td>heart romaine</td>
+      <td class="num">3.99</td>
+    </tr>
+<tr>
+      <td>light roast</td>
+      <td class="num">4.99</td>
+    </tr>
+<tr>
+      <td>lime</td>
+      <td class="num">1.20</td>
+    </tr>
+<tr>
+      <td>onion sweet</td>
+      <td class="num">0.77</td>
+    </tr>
+<tr>
+      <td>tortilla wheat whole</td>
+      <td class="num">3.49</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>Last run detail (not asserted)</h2>
+      <table>
+        <thead><tr><th>Raw name</th><th class="num">Qty</th><th class="num">Pack</th><th class="num">Price</th><th class="num">Conf.</th></tr></thead>
+        <tbody>
+<tr>
+      <td>365 OG FIESTA SHRED</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">6.99</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>OG CILANTRO BUNCH</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>365 OG ROMAINE HEART</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>3BC LIGHT ROAST</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">4.99</td>
+      <td class="num">0.90</td>
+    </tr>
+<tr>
+      <td>ROTI CKN PLN</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">7.99</td>
+      <td class="num">0.85</td>
+    </tr>
+<tr>
+      <td>365 BALSAMIC VINEGAR</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.99</td>
+      <td class="num">0.99</td>
+    </tr>
+<tr>
+      <td>365 OG BLACK BEAN</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.99</td>
+      <td class="num">0.99</td>
+    </tr>
+<tr>
+      <td>CV LIMES</td>
+      <td class="num">2</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.20</td>
+      <td class="num">0.96</td>
+    </tr>
+<tr>
+      <td>HASS AVOCADOS</td>
+      <td class="num">2</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.98</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>365 OG WW TORTILLA</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.49</td>
+      <td class="num">0.95</td>
+    </tr>
+<tr>
+      <td>CV BANANA</td>
+      <td class="num">1.85</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.91</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>365 L NON GMO BRW EGG</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.99</td>
+      <td class="num">0.95</td>
+    </tr>
+<tr>
+      <td>OG GALA APPLES</td>
+      <td class="num">1.59</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.16</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>CV SWEET ONION</td>
+      <td class="num">0.52</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.77</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>CV CHERRY TOMATO</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.50</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>FRIEN SOUR CREAM</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.69</td>
+      <td class="num">0.85</td>
+    </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · aldi-brockton</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+</style>
+</head>
+<body>
+  <h1>aldi-brockton</h1>
+  <div class="meta">Screenshot_2026-10-28_at_9.30.02_AM.png · 432×1172 · 94 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/Screenshot_2026-10-28_at_9.30.02_AM.png" alt="aldi-brockton source image">
+      <p class="note"><strong>What to check:</strong> Repeated line items (sourdough ×3, buns ×2), bottle deposits, no per-line totals column.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>30</b></span>
+        <span>total qty <b>33</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ sourdough</li>
+<li class="bad">✗ hamburger buns</li>
+<li class="bad">✗ organic baby spinach</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>baby spinach</td>
+      <td class="num">2.49</td>
+    </tr>
+<tr>
+      <td>baking cocoa</td>
+      <td class="num">1.79</td>
+    </tr>
+<tr>
+      <td>bar chocolate milk</td>
+      <td class="num">0.99</td>
+    </tr>
+<tr>
+      <td>bar chocolate milk</td>
+      <td class="num">0.99</td>
+    </tr>
+<tr>
+      <td>bar chocolate milk</td>
+      <td class="num">0.99</td>
+    </tr>
+<tr>
+      <td>beef dog hot</td>
+      <td class="num">4.15</td>
+    </tr>
+<tr>
+      <td>beef fed grass ground</td>
+      <td class="num">5.69</td>
+    </tr>
+<tr>
+      <td>belgian chunk</td>
+      <td class="num">2.49</td>
+    </tr>
+<tr>
+      <td>bone broth</td>
+      <td class="num">2.99</td>
+    </tr>
+<tr>
+      <td>bottle deposit</td>
+      <td class="num">0.05</td>
+    </tr>
+<tr>
+      <td>bottle deposit</td>
+      <td class="num">0.05</td>
+    </tr>
+<tr>
+      <td>bun hamburger</td>
+      <td class="num">0.85</td>
+    </tr>
+<tr>
+      <td>bun hamburger</td>
+      <td class="num">0.85</td>
+    </tr>
+<tr>
+      <td>butter chocolate cookie</td>
+      <td class="num">1.99</td>
+    </tr>
+<tr>
+      <td>butter chocolate cookie</td>
+      <td class="num">1.99</td>
+    </tr>
+<tr>
+      <td>butter cookie filled peanut</td>
+      <td class="num">1.45</td>
+    </tr>
+<tr>
+      <td>cake chocolate triple</td>
+      <td class="num">3.49</td>
+    </tr>
+<tr>
+      <td>cheddar popcorn white</td>
+      <td class="num">1.79</td>
+    </tr>
+<tr>
+      <td>cola</td>
+      <td class="num">0.65</td>
+    </tr>
+<tr>
+      <td>cola</td>
+      <td class="num">0.65</td>
+    </tr>
+<tr>
+      <td>cream italian or vanilla</td>
+      <td class="num">2.45</td>
+    </tr>
+<tr>
+      <td>cup granola</td>
+      <td class="num">2.99</td>
+    </tr>
+<tr>
+      <td>deli pizza supreme</td>
+      <td class="num">5.99</td>
+    </tr>
+<tr>
+      <td>grape tomato</td>
+      <td class="num">2.39</td>
+    </tr>
+<tr>
+      <td>grape tomato</td>
+      <td class="num">2.39</td>
+    </tr>
+<tr>
+      <td>mango</td>
+      <td class="num">1.78</td>
+    </tr>
+<tr>
+      <td>sourdough square</td>
+      <td class="num">2.89</td>
+    </tr>
+<tr>
+      <td>sourdough square</td>
+      <td class="num">2.89</td>
+    </tr>
+<tr>
+      <td>sourdough square</td>
+      <td class="num">2.89</td>
+    </tr>
+<tr>
+      <td>tenderloin</td>
+      <td class="num">7.23</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>Last run detail (not asserted)</h2>
+      <table>
+        <thead><tr><th>Raw name</th><th class="num">Qty</th><th class="num">Pack</th><th class="num">Price</th><th class="num">Conf.</th></tr></thead>
+        <tbody>
+<tr>
+      <td>Sourdough Square</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.89</td>
+      <td class="num">0.90</td>
+    </tr>
+<tr>
+      <td>Hamburger Buns</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.85</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Sourdough Square</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.89</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Hamburger Buns</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.85</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Sourdough Square</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.89</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Triple Choc Cake</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.49</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Wh Cheddar Popcorn</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.79</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>GrassFed Grnd Beef</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">5.69</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>ABF Tenderloins</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">7.23</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>Supreme Deli Pizza</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">5.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Baking Cocoa</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.79</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Granola Cups</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Organic Beef HD</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">4.15</td>
+      <td class="num">0.95</td>
+    </tr>
+<tr>
+      <td>Belgian Chunks</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.49</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Van or Italian Crm</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.45</td>
+      <td class="num">0.95</td>
+    </tr>
+<tr>
+      <td>2 Liter Cola</td>
+      <td class="num">1</td>
+      <td class="num">2Liter</td>
+      <td class="num">0.65</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Bottle Deposit .05</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.05</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>2 Liter Cola</td>
+      <td class="num">1</td>
+      <td class="num">2Liter</td>
+      <td class="num">0.65</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Bottle Deposit .05</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.05</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Org Grape Tomatoes</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.39</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Org Grape Tomatoes</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.39</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Mangoes</td>
+      <td class="num">2</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.78</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>Milk Chocolate Bar</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Milk Chocolate Bar</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Milk Chocolate Bar</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Choc Butter Cookie</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Choc Butter Cookie</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>PB Filled Cookies</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.45</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>Org Baby Spinach</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.49</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>Bone Broth</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.99</td>
+      <td class="num">0.98</td>
+    </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

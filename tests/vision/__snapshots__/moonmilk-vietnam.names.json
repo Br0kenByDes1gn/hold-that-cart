@@ -1,0 +1,22 @@
+[
+  {
+    "name": "carrot",
+    "price": 5280
+  },
+  {
+    "name": "chocolate danish",
+    "price": 18000
+  },
+  {
+    "name": "danish raisin",
+    "price": 18000
+  },
+  {
+    "name": "onion",
+    "price": 7875
+  },
+  {
+    "name": "pork shortloin",
+    "price": 50000
+  }
+]

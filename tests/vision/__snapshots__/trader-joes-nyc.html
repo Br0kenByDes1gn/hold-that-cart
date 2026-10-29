@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · trader-joes-nyc</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+</style>
+</head>
+<body>
+  <h1>trader-joes-nyc</h1>
+  <div class="meta">Screenshot_2026-10-28_at_9.30.27_AM.png · 566×976 · 88 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/Screenshot_2026-10-28_at_9.30.27_AM.png" alt="trader-joes-nyc source image">
+      <p class="note"><strong>What to check:</strong> Yogurt variants with sizes (6oz), tax suffix 'T', cash change lines.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>12</b></span>
+        <span>total qty <b>41</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="bad">✗ hamburger buns</li>
+<li class="bad">✗ peanuts</li>
+<li class="ok">✓ yogurt</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>and bread butter pickle</td>
+      <td class="num">3.49</td>
+    </tr>
+<tr>
+      <td>black cherry nonfat yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>blueberry fat non yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>breaded chicken drummella meat</td>
+      <td class="num">3.79</td>
+    </tr>
+<tr>
+      <td>breaded cutlet eggplant entree</td>
+      <td class="num">2.49</td>
+    </tr>
+<tr>
+      <td>bun hamburger wheat whole</td>
+      <td class="num">1.99</td>
+    </tr>
+<tr>
+      <td>cheese jack jalapeno monterey</td>
+      <td class="num">3.39</td>
+    </tr>
+<tr>
+      <td>green onion</td>
+      <td class="num">1.29</td>
+    </tr>
+<tr>
+      <td>honey peanut roasted</td>
+      <td class="num">3.99</td>
+    </tr>
+<tr>
+      <td>nonfat raspberry yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>nonfat strawberry yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>on the tomato vine</td>
+      <td class="num">2.29</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>Last run detail (not asserted)</h2>
+      <table>
+        <thead><tr><th>Raw name</th><th class="num">Qty</th><th class="num">Pack</th><th class="num">Price</th><th class="num">Conf.</th></tr></thead>
+        <tbody>
+<tr>
+      <td>WHOLE WHEAT HAMBURGER BUNS</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">1.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>HONEY ROASTED PEANUTS</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.99</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>ENTREE EGGPLANT CUTLET BREADED</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">2.49</td>
+      <td class="num">0.95</td>
+    </tr>
+<tr>
+      <td>MEAT CHICKEN BREADED DRUMMELLA</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.79</td>
+      <td class="num">0.95</td>
+    </tr>
+<tr>
+      <td>PICKLES ORG BREAD AND BUTTER</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.49</td>
+      <td class="num">0.96</td>
+    </tr>
+<tr>
+      <td>JALEPENO MONTEREY JACK CHEESE</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">3.39</td>
+      <td class="num">0.96</td>
+    </tr>
+<tr>
+      <td>YOG NONFAT TJ STRAWBERRY.</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.79</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>YOGURT BLUEBERRY NON FAT 6OZ</td>
+      <td class="num">1</td>
+      <td class="num">6oz</td>
+      <td class="num">0.79</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>YOG NONFAT TJ BLACK CHERRY.</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.79</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>YOG NONFAT TJ RASPBERRY.</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">0.79</td>
+      <td class="num">0.97</td>
+    </tr>
+<tr>
+      <td>A-TOMATOES ON THE VINE 20 OZ</td>
+      <td class="num">1</td>
+      <td class="num">20oz</td>
+      <td class="num">2.29</td>
+      <td class="num">0.96</td>
+    </tr>
+<tr>
+      <td>R-GREEN ONIONS 6 OZ</td>
+      <td class="num">1</td>
+      <td class="num">6oz</td>
+      <td class="num">1.29</td>
+      <td class="num">0.96</td>
+    </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

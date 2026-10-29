@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · supermart-india</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+</style>
+</head>
+<body>
+  <h1>supermart-india</h1>
+  <div class="meta">IMG_1437.jpg · 1200×1600 · 202 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/IMG_1437.jpg" alt="supermart-india source image">
+      <p class="note"><strong>What to check:</strong> Phone photo. Indian receipt, MRP vs our-price columns, qty in decimals, GST table.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>3</b></span>
+        <span>total qty <b>741</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ cream</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>chocolate</td>
+      <td class="num">275.00</td>
+    </tr>
+<tr>
+      <td>cream fresh</td>
+      <td class="num">75.00</td>
+    </tr>
+<tr>
+      <td>star</td>
+      <td class="num">250.00</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>Last run detail (not asserted)</h2>
+      <table>
+        <thead><tr><th>Raw name</th><th class="num">Qty</th><th class="num">Pack</th><th class="num">Price</th><th class="num">Conf.</th></tr></thead>
+        <tbody>
+<tr>
+      <td>CADBURY 5STAR 9.8GM</td>
+      <td class="num">50</td>
+      <td class="num">9.8g</td>
+      <td class="num">250.00</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>AMUL FRESH CREAM 250ML</td>
+      <td class="num">1</td>
+      <td class="num">250ml</td>
+      <td class="num">75.00</td>
+      <td class="num">0.99</td>
+    </tr>
+<tr>
+      <td>CADBURY CELEBRATIONS163</td>
+      <td class="num">1</td>
+      <td class="num"><span class="dim">—</span></td>
+      <td class="num">275.00</td>
+      <td class="num">0.97</td>
+    </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
