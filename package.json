@@ -14,6 +14,7 @@
     "start": "node dist-server/index.js",
     "test": "vitest run",
     "test:vision": "VISION_TESTS=1 vitest run tests/vision --no-file-parallelism",
+    "vision:render": "tsx scripts/render-vision-preview.ts",
     "test:e2e": "playwright test",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",

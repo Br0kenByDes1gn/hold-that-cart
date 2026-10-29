@@ -137,13 +137,7 @@ describe.skipIf(!ENABLED)("vision extraction (live model)", () => {
         {
           digest: stable,
           names,
-          detail: items.map((it: any) => ({
-            rawName: String(it.rawName ?? ""),
-            qty: Number(it.qty ?? 1),
-            pack: it.packQty != null && it.packUnit ? `${it.packQty}${it.packUnit}` : null,
-            price: it.price ?? null,
-            confidence: Number(it.confidence ?? 0),
-          })),
+          items,
         },
         images,
       );

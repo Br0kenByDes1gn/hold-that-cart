@@ -68,10 +68,12 @@ pnpm test:vision    # LIVE vision goldens — costs credits
 
   Each fixture yields `<id>.json` (strict: kind, item count, total qty, price
   multiset), `<id>.names.json` (tolerant canonical names) and `<id>.html`
-  (human preview, open before committing). Per-run detail goes to
-  `tests/vision/__artifacts__/` and is never asserted. Add coverage by
-  dropping a photo in `tests/fixtures/receipts/` and adding a case in
-  `tests/vision/cases.ts`.
+  (human preview, open before committing). The HTML shows **every property the
+  model returned per item** (schema fields plus any unexpected ones) with a
+  per-item raw JSON toggle. Per-run detail goes to `tests/vision/__artifacts__/`
+  and is never asserted. Rebuild previews from the last run for free with
+  `pnpm vision:render`. Add coverage by dropping a photo in
+  `tests/fixtures/receipts/` and adding a case in `tests/vision/cases.ts`.
 
 Key acceptance: seed → expected briefing groups; 3rd receipt flips a product
 to personal rhythm; `I'm out` clears a SKIP; durable re-scan → hold alert.

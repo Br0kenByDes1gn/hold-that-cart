@@ -10,13 +10,14 @@
   h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
        letter-spacing: 1px; color: #8aa4c0; }
   .meta { color: #8aa4c0; font-size: 12px; }
-  .wrap { display: grid; grid-template-columns: minmax(260px, 380px) 1fr; gap: 24px; align-items: start; }
-  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
   img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
   th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
-       padding: 6px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
-  td { padding: 6px 8px; border-bottom: 1px solid #10283d; }
+       padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+       white-space: nowrap; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; vertical-align: top; }
   .num { text-align: right; white-space: nowrap; }
   .dim { color: #8aa4c0; }
   .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
@@ -27,6 +28,11 @@
   li { padding: 2px 0; }
   li.ok { color: #22c55e; }
   li.bad { color: #ff3b5c; }
+  tr.json-row td { border-bottom: 1px solid #10283d; padding-bottom: 8px; }
+  details summary { cursor: pointer; color: #8aa4c0; font-size: 11px; }
+  pre { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+        padding: 10px; overflow: auto; font-size: 11px; margin: 6px 0 0; }
+  code { font-size: 11px; color: #8aa4c0; }
 </style>
 </head>
 <body>
@@ -77,7 +83,7 @@
       <td class="num">0.99</td>
     </tr>
 <tr>
-      <td>beef dog hot</td>
+      <td>beef</td>
       <td class="num">4.15</td>
     </tr>
 <tr>
@@ -179,220 +185,344 @@
         </tbody>
       </table>
 
-      <h2>Last run detail (not asserted)</h2>
+      <h2>All extracted properties (last run — not asserted)</h2>
       <table>
-        <thead><tr><th>Raw name</th><th class="num">Qty</th><th class="num">Pack</th><th class="num">Price</th><th class="num">Conf.</th></tr></thead>
+        <thead><tr><th class="">rawName</th><th class="">normalizedName</th><th class="num">qty</th><th class="num">packQty</th><th class="">packUnit</th><th class="num">price</th><th class="">store</th><th class="num">confidence</th></tr></thead>
         <tbody>
-<tr>
-      <td>Sourdough Square</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.89</td>
-      <td class="num">0.90</td>
-    </tr>
-<tr>
-      <td>Hamburger Buns</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">0.85</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Sourdough Square</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.89</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Hamburger Buns</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">0.85</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Sourdough Square</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.89</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Triple Choc Cake</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">3.49</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Wh Cheddar Popcorn</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">1.79</td>
-      <td class="num">0.97</td>
-    </tr>
-<tr>
-      <td>GrassFed Grnd Beef</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">5.69</td>
-      <td class="num">0.97</td>
-    </tr>
-<tr>
-      <td>ABF Tenderloins</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">7.23</td>
-      <td class="num">0.97</td>
-    </tr>
-<tr>
-      <td>Supreme Deli Pizza</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">5.99</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Baking Cocoa</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">1.79</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Granola Cups</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.99</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Organic Beef HD</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">4.15</td>
-      <td class="num">0.95</td>
-    </tr>
-<tr>
-      <td>Belgian Chunks</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.49</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Van or Italian Crm</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.45</td>
-      <td class="num">0.95</td>
-    </tr>
-<tr>
-      <td>2 Liter Cola</td>
-      <td class="num">1</td>
-      <td class="num">2Liter</td>
-      <td class="num">0.65</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Bottle Deposit .05</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">0.05</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>2 Liter Cola</td>
-      <td class="num">1</td>
-      <td class="num">2Liter</td>
-      <td class="num">0.65</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Bottle Deposit .05</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">0.05</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Org Grape Tomatoes</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.39</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Org Grape Tomatoes</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.39</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Mangoes</td>
-      <td class="num">2</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">1.78</td>
-      <td class="num">0.97</td>
-    </tr>
-<tr>
-      <td>Milk Chocolate Bar</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">0.99</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Milk Chocolate Bar</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">0.99</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Milk Chocolate Bar</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">0.99</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Choc Butter Cookie</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">1.99</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Choc Butter Cookie</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">1.99</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>PB Filled Cookies</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">1.45</td>
-      <td class="num">0.97</td>
-    </tr>
-<tr>
-      <td>Org Baby Spinach</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.49</td>
-      <td class="num">0.98</td>
-    </tr>
-<tr>
-      <td>Bone Broth</td>
-      <td class="num">1</td>
-      <td class="num"><span class="dim">—</span></td>
-      <td class="num">2.99</td>
-      <td class="num">0.98</td>
-    </tr>
+<tr><td class="">Org Baby Spinach</td><td class="">organic baby spinach</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.49</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Org Baby Spinach&quot;,
+  &quot;normalizedName&quot;: &quot;organic baby spinach&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.49,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Baking Cocoa</td><td class="">baking cocoa</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.79</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Baking Cocoa&quot;,
+  &quot;normalizedName&quot;: &quot;baking cocoa&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.79,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Milk Chocolate Bar</td><td class="">milk chocolate bar</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.99</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Milk Chocolate Bar&quot;,
+  &quot;normalizedName&quot;: &quot;milk chocolate bar&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Milk Chocolate Bar</td><td class="">milk chocolate bar</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.99</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Milk Chocolate Bar&quot;,
+  &quot;normalizedName&quot;: &quot;milk chocolate bar&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Milk Chocolate Bar</td><td class="">milk chocolate bar</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.99</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Milk Chocolate Bar&quot;,
+  &quot;normalizedName&quot;: &quot;milk chocolate bar&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Organic Beef HD</td><td class="">organic beef</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.15</td><td class="">ALDI</td><td class="num">0.96</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Organic Beef HD&quot;,
+  &quot;normalizedName&quot;: &quot;organic beef&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.15,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.96
+}</pre></details>
+      </td></tr>
+<tr><td class="">GrassFed Grnd Beef</td><td class="">grass fed ground beef</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.69</td><td class="">ALDI</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GrassFed Grnd Beef&quot;,
+  &quot;normalizedName&quot;: &quot;grass fed ground beef&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.69,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">Belgian Chunks</td><td class="">belgian chunk</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.49</td><td class="">ALDI</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Belgian Chunks&quot;,
+  &quot;normalizedName&quot;: &quot;belgian chunk&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.49,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">Bone Broth</td><td class="">bone broth</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.99</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Bone Broth&quot;,
+  &quot;normalizedName&quot;: &quot;bone broth&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Bottle Deposit .05</td><td class="">bottle deposit</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.05</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Bottle Deposit .05&quot;,
+  &quot;normalizedName&quot;: &quot;bottle deposit&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.05,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Bottle Deposit .05</td><td class="">bottle deposit</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.05</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Bottle Deposit .05&quot;,
+  &quot;normalizedName&quot;: &quot;bottle deposit&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.05,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Hamburger Buns</td><td class="">hamburger bun</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.85</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Hamburger Buns&quot;,
+  &quot;normalizedName&quot;: &quot;hamburger bun&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.85,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Hamburger Buns</td><td class="">hamburger bun</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.85</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Hamburger Buns&quot;,
+  &quot;normalizedName&quot;: &quot;hamburger bun&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.85,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Choc Butter Cookie</td><td class="">chocolate butter cookie</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.99</td><td class="">ALDI</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Choc Butter Cookie&quot;,
+  &quot;normalizedName&quot;: &quot;chocolate butter cookie&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">Choc Butter Cookie</td><td class="">chocolate butter cookie</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.99</td><td class="">ALDI</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Choc Butter Cookie&quot;,
+  &quot;normalizedName&quot;: &quot;chocolate butter cookie&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">PB Filled Cookies</td><td class="">peanut butter filled cookie</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.45</td><td class="">ALDI</td><td class="num">0.96</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;PB Filled Cookies&quot;,
+  &quot;normalizedName&quot;: &quot;peanut butter filled cookie&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.45,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.96
+}</pre></details>
+      </td></tr>
+<tr><td class="">Triple Choc Cake</td><td class="">triple chocolate cake</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.49</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Triple Choc Cake&quot;,
+  &quot;normalizedName&quot;: &quot;triple chocolate cake&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.49,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Wh Cheddar Popcorn</td><td class="">white cheddar popcorn</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.79</td><td class="">ALDI</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Wh Cheddar Popcorn&quot;,
+  &quot;normalizedName&quot;: &quot;white cheddar popcorn&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.79,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">2 Liter Cola</td><td class="">cola</td><td class="num">1</td><td class="num">2</td><td class="">liter</td><td class="num">0.65</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;2 Liter Cola&quot;,
+  &quot;normalizedName&quot;: &quot;cola&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 2,
+  &quot;packUnit&quot;: &quot;liter&quot;,
+  &quot;price&quot;: 0.65,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">2 Liter Cola</td><td class="">cola</td><td class="num">1</td><td class="num">2</td><td class="">liter</td><td class="num">0.65</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;2 Liter Cola&quot;,
+  &quot;normalizedName&quot;: &quot;cola&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 2,
+  &quot;packUnit&quot;: &quot;liter&quot;,
+  &quot;price&quot;: 0.65,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Van or Italian Crm</td><td class="">vanilla or italian cream</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.45</td><td class="">ALDI</td><td class="num">0.96</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Van or Italian Crm&quot;,
+  &quot;normalizedName&quot;: &quot;vanilla or italian cream&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.45,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.96
+}</pre></details>
+      </td></tr>
+<tr><td class="">Granola Cups</td><td class="">granola cup</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.99</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Granola Cups&quot;,
+  &quot;normalizedName&quot;: &quot;granola cup&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Supreme Deli Pizza</td><td class="">supreme deli pizza</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.99</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Supreme Deli Pizza&quot;,
+  &quot;normalizedName&quot;: &quot;supreme deli pizza&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.99,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Org Grape Tomatoes</td><td class="">organic grape tomato</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.39</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Org Grape Tomatoes&quot;,
+  &quot;normalizedName&quot;: &quot;organic grape tomato&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.39,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Org Grape Tomatoes</td><td class="">organic grape tomato</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.39</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Org Grape Tomatoes&quot;,
+  &quot;normalizedName&quot;: &quot;organic grape tomato&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.39,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Mangoes</td><td class="">mango</td><td class="num">2</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.78</td><td class="">ALDI</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Mangoes&quot;,
+  &quot;normalizedName&quot;: &quot;mango&quot;,
+  &quot;qty&quot;: 2,
+  &quot;price&quot;: 1.78,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">Sourdough Square</td><td class="">sourdough square</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.89</td><td class="">ALDI</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Sourdough Square&quot;,
+  &quot;normalizedName&quot;: &quot;sourdough square&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.89,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">Sourdough Square</td><td class="">sourdough square</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.89</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Sourdough Square&quot;,
+  &quot;normalizedName&quot;: &quot;sourdough square&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.89,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">Sourdough Square</td><td class="">sourdough square</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.89</td><td class="">ALDI</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Sourdough Square&quot;,
+  &quot;normalizedName&quot;: &quot;sourdough square&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.89,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">ABF Tenderloins</td><td class="">tenderloin</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">7.23</td><td class="">ALDI</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;ABF Tenderloins&quot;,
+  &quot;normalizedName&quot;: &quot;tenderloin&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 7.23,
+  &quot;store&quot;: &quot;ALDI&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
         </tbody>
       </table>
     </div>

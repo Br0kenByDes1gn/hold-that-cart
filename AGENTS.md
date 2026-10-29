@@ -62,6 +62,7 @@ pnpm run dev        # Hono API :3001 + Vite :5173 (Vite proxies /api), Ctrl-C st
 pnpm test           # 43 Vitest tests, must stay green
 pnpm run test:e2e   # 9 Playwright tests (prod bundle, Chromium mobile) — UI, auth, pantry flow
 pnpm test:vision    # LIVE vision goldens (costs credits; needs MODEL_API_KEY)
+pnpm vision:render  # rebuild HTML previews from the last run (free, no model calls)
 pnpm run typecheck  # tsc --noEmit, must stay clean
 pnpm run build && pnpm start   # production: Hono serves API + built SPA on :3001
 ```
@@ -176,6 +177,27 @@ GET  /api/health
   name/brand/form only.
 - Tests mock `fetch` (`tests/ai.test.ts`). Never call the live API in tests —
   it costs credits and is non-deterministic.
+
+## Vision (scan) tests
+
+Real photos in `tests/fixtures/receipts/` go through the **actual Muse model**;
+results are frozen in `tests/vision/__snapshots__/`. The suite is skipped unless
+`VISION_TESTS=1` (`pnpm test:vision`), so `pnpm test` stays offline and free.
+
+- `<id>.json` — strict golden: kind, item count, total qty, price multiset.
+- `<id>.names.json` — tolerant golden: canonical names (one miss allowed on
+  small receipts; the model legitimately reads ambiguous abbreviations two ways).
+- `<id>.html` — human preview. Lists every property the model returned per item
+  (schema order plus any unexpected columns) with per-item raw JSON, the source
+  image, and the must-include checklist. **Open before committing an accepted
+  run.** `pnpm vision:render` rebuilds these from the last artifacts, free.
+- `tests/vision/__artifacts__/` — per-run raw output; gitignored, never asserted.
+
+Adding a receipt: drop the file in `tests/fixtures/receipts/`, add a case to
+`tests/vision/cases.ts` (`id`, `file`, `kindHint`, `note`), run
+`pnpm test:vision -u`, review the HTML, then fill `mustInclude` with 3–6 items
+you'd notice missing. Use `VISION_FILTER=<id>` while tuning prompts. Fixtures
+are real receipts — check for names/addresses/card fragments before pushing.
 
 ## Frontend + design
 

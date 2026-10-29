@@ -1,8 +1,10 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const RECEIPTS_DIR = path.resolve(__dirname, "../../fixtures/receipts");
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const RECEIPTS_DIR = path.resolve(HERE, "../../fixtures/receipts");
 
 /**
  * Mirrors the client's preprocessing (see Scanner/upload): longest side 1600px,
