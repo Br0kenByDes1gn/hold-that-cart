@@ -42,6 +42,7 @@ export const api = {
       body: JSON.stringify({ kind, items, purchasedAt }),
     }),
   list: (id: string) => req(`/api/lists/${id}`),
+  lists: () => req("/api/lists"),
   evaluateList: (id: string) => req(`/api/lists/${id}/evaluate`, { method: "POST", body: "{}" }),
   patchListItem: (listId: string, itemId: string, patch: Record<string, unknown>) =>
     req(`/api/lists/${listId}/items/${itemId}`, { method: "PATCH", body: JSON.stringify(patch) }),
