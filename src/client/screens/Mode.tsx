@@ -1,8 +1,5 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { api } from "../api";
 import shoppingArt from "../../../assets/page-icons/shoppingmode.png";
 import pantryArt from "../../../assets/page-icons/pantrymode.png";
 
@@ -15,23 +12,6 @@ function ModeArrow() {
 }
 
 export function ModeScreen() {
-  const qc = useQueryClient();
-  const [msg, setMsg] = useState("");
-  const seed = useMutation({
-    mutationFn: api.seedDemo,
-    onSuccess: () => {
-      setMsg("Demo pantry loaded.");
-      qc.invalidateQueries();
-    },
-    onError: (e: any) => setMsg(String(e.message).slice(0, 200)),
-  });
-  const reset = useMutation({
-    mutationFn: api.resetDemo,
-    onSuccess: () => {
-      setMsg("Pantry cleared.");
-      qc.invalidateQueries();
-    },
-  });
   return (
     <div className="main mode-page">
       <div className="mode-stage">
@@ -56,15 +36,6 @@ export function ModeScreen() {
             <h1 className="mode-title">Grocery List</h1>
           </Link>
         </div>
-        <div className="row" style={{ justifyContent: "center", marginTop: 16 }}>
-          <button onClick={() => seed.mutate()} disabled={seed.isPending}>
-            {seed.isPending ? "Loading…" : "Load demo pantry"}
-          </button>
-          <button onClick={() => reset.mutate()} disabled={reset.isPending}>
-            Reset
-          </button>
-        </div>
-        {msg && <p className="dim" style={{ textAlign: "center" }}>{msg}</p>}
       </div>
     </div>
   );

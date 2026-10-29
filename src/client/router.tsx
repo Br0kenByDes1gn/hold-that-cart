@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import {
   RouterProvider,
   createRootRoute,
@@ -18,6 +19,12 @@ import { QuickViewScreen } from "./screens/QuickView";
 import { AnalyseScreen } from "./screens/Analyse";
 import { SignUpScreen, LoginScreen } from "./screens/Auth";
 import profilePic from "../../assets/page-icons/profilepic.png";
+
+// Dev-only corner menu (seed/reset). Lazily loaded and gated on
+// import.meta.env.DEV so production builds neither show nor ship it.
+const DevMenu = import.meta.env.DEV
+  ? lazy(() => import("./components/DevMenu").then((m) => ({ default: m.DevMenu })))
+  : null;
 
 function Shell() {
   const location = useLocation();
@@ -85,6 +92,11 @@ function Shell() {
             <CircleUser size={28} strokeWidth={2} />
           </Link>
       </nav>
+      {DevMenu && (
+        <Suspense fallback={null}>
+          <DevMenu />
+        </Suspense>
+      )}
     </div>
   );
 }
