@@ -207,10 +207,20 @@ export function ProductScreen({ productId }: { productId: string }) {
           {enrich.isError && <p className="error">Enrichment failed (needs MODEL_API_KEY on server).</p>}
         </div>
       )}
+      {d.variants?.length > 0 && (
+        <>
+          <h3>Variants you've bought</h3>
+          {d.variants.map((v: any) => (
+            <div className="dim" key={v.key}>
+              {v.brand ?? "No brand"} · {v.purchaseCount}× · median €{Number(v.medianPerUnit).toFixed(2)}/{v.baseUnit}
+            </div>
+          ))}
+        </>
+      )}
       <h3>History</h3>
       {d.history.map((h: any) => (
         <div className="dim" key={h.id}>
-          {new Date(h.purchasedAt).toLocaleDateString()} · {h.brand ?? "—"} ·{" "}
+          {new Date(h.purchasedAt).toLocaleDateString()} · {h.variant ?? h.brand ?? "—"} ·{" "}
           {h.totalPrice != null ? `€${h.totalPrice}` : "no price"}
         </div>
       ))}

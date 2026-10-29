@@ -33,6 +33,7 @@ import { matchProduct } from "./domain/match.js";
 import { suggestForProducts } from "./domain/suggestions.js";
 import { DEMO_ITEMS, DEMO_PURCHASES, demoKnowledgeKey } from "./domain/demo.js";
 import { knowledgeKey, normalizeName } from "./domain/normalize.js";
+import { variantStats } from "./domain/money.js";
 import { getAIProvider } from "./ai/provider.js";
 
 export const routes = new Hono();
@@ -131,11 +132,16 @@ routes.post("/api/scans/:id/confirm", async (c) => {
 
   if (parsed.data.kind === "receipt") {
     for (const it of parsed.data.items) {
+      // Canonical identity: matched product wins; otherwise the generic
+      // normalizedName ("peanut oil") — NEVER the raw receipt text, so
+      // Brand A / Brand B pool into one product as variants.
+      const canonical = it.normalizedName?.trim() || it.rawName;
+      const displayName = canonical.charAt(0).toUpperCase() + canonical.slice(1);
       const prod =
         it.productId &&
         (await db.select().from(products).where(eq(products.id, it.productId))).length > 0
           ? (await db.select().from(products).where(eq(products.id, it.productId)))[0]
-          : await getOrCreateProduct(hh!.id, it.rawName, { brand: it.brand });
+          : await getOrCreateProduct(hh!.id, displayName, { brand: it.brand });
       await addPurchase({
         productId: prod.id,
         householdId: hh!.id,
@@ -145,6 +151,7 @@ routes.post("/api/scans/:id/confirm", async (c) => {
         packUnit: it.packUnit,
         totalPrice: it.price,
         brand: it.brand,
+        variant: it.rawName !== prod.name ? it.rawName : undefined,
         scanId: srows[0].id,
       });
       committed.push(prod.id);
@@ -199,7 +206,9 @@ routes.post("/api/purchases/manual", async (c) => {
   const body = await c.req.json().catch(() => ({}));
   const parsed = manualPurchaseSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
-  const prod = await getOrCreateProduct(hh!.id, parsed.data.name, { brand: parsed.data.brand });
+  const canonical = parsed.data.normalizedName?.trim() || parsed.data.name;
+  const displayName = canonical.charAt(0).toUpperCase() + canonical.slice(1);
+  const prod = await getOrCreateProduct(hh!.id, displayName, { brand: parsed.data.brand });
   const row = await addPurchase({
     productId: prod.id,
     householdId: hh!.id,
@@ -209,6 +218,7 @@ routes.post("/api/purchases/manual", async (c) => {
     packUnit: parsed.data.packUnit,
     totalPrice: parsed.data.totalPrice,
     brand: parsed.data.brand,
+    variant: parsed.data.name !== prod.name ? parsed.data.name : undefined,
     store: parsed.data.store,
   });
   return c.json({ product: prod, purchase: row });
@@ -259,11 +269,20 @@ routes.get("/api/pantry/:id", async (c) => {
     )
     .orderBy(desc(corrections.createdAt));
   const grouped = suggestForProducts([view]);
+  // Variants of this canonical product (brand + pack), with median unit prices.
+  const variants = variantStats(view.moneyPurchases).map((v) => ({
+    key: v.key,
+    brand: v.brand,
+    medianPerUnit: Math.round(v.medianPerUnit * 10000) / 10000,
+    baseUnit: v.baseUnit,
+    purchaseCount: v.purchaseCount,
+  }));
   return c.json({
     product: rows[0],
     state: { ...view.state, lastPurchasedAt: view.state.lastPurchasedAt?.toISOString() ?? null },
     enrichment: view.enrichment,
     history: hist,
+    variants,
     corrections: corrs,
     suggestions: grouped,
   });

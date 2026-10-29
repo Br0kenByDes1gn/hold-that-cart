@@ -145,6 +145,8 @@ export const scanCreateSchema = z.object({
 
 export const scanConfirmItemSchema = z.object({
   rawName: z.string().min(1),
+  /** Canonical generic type ("peanut oil") — product identity. Brand is a variant, never identity. */
+  normalizedName: z.string().min(1).optional(),
   productId: z.string().uuid().nullable().default(null),
   qty: z.number().positive().default(1),
   packQty: z.number().positive().optional(),
@@ -162,6 +164,8 @@ export const scanConfirmSchema = z.object({
 
 export const manualPurchaseSchema = z.object({
   name: z.string().min(1),
+  /** Canonical generic type; defaults to `name` when omitted. */
+  normalizedName: z.string().min(1).optional(),
   brand: z.string().optional(),
   qty: z.number().positive().default(1),
   packQty: z.number().positive().optional(),
