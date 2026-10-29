@@ -51,11 +51,11 @@ Zod schemas in `src/shared/schemas.ts` are the single API/AI contract.
 ## Run it
 
 ```bash
-npm install
-npm run dev        # Hono API :3001 + Vite :5173 (Vite proxies /api), Ctrl-C stops both
-npm test           # 40 tests, must stay green
-npm run typecheck  # tsc --noEmit, must stay clean
-npm run build && npm start   # production: Hono serves API + built SPA on :3001
+pnpm install
+pnpm run dev        # Hono API :3001 + Vite :5173 (Vite proxies /api), Ctrl-C stops both
+pnpm test           # 42 tests, must stay green
+pnpm run typecheck  # tsc --noEmit, must stay clean
+pnpm run build && pnpm start   # production: Hono serves API + built SPA on :3001
 ```
 
 Copy `.env.example` → `.env`. `MODEL_API_KEY` (real key already in local
@@ -67,7 +67,7 @@ Gotchas:
 - Run the server with `tsx` (`src/server/dev.ts` is the listener;
   `src/server/index.ts` only builds the app). Plain `node` cannot resolve
   the `.js` import specifiers used for TS files.
-- `npm run db:migrate` is a dead script (`scripts/migrate.ts` does not
+- `pnpm run db:migrate` is a dead script (`scripts/migrate.ts` does not
   exist). Dev schema is applied as DDL inside `getDb()`
   (`src/server/db/client.ts`), which also creates the PGlite data dir.
 - Do not remove `--external:@electric-sql/pglite` from
@@ -181,7 +181,7 @@ GET  /api/health
   words, estimates labelled, no lecturing/shaming.
 - Meetings overruled the mockups on one point: game-*like* feel, **no
   XP/levels/quests**. Do not add gamification mechanics from the design doc.
-- Icons: run `npm run assets:normalize` after changing `assets/`. Product →
+- Icons: run `pnpm run assets:normalize` after changing `assets/`. Product →
   icon by slug, then category fallback (`src/client/components.tsx`).
   `public/icons/icon-*.png` are generated placeholders, replace before launch.
 - Alias caveat: manifest filenames use underscores; on-disk files carry a
@@ -211,7 +211,7 @@ real golden-photo prompt-tuning set (fixtures are JSON so far).
 
 - Keep the shared Zod schemas as the only contract — change them first,
   then server, then client, then tests.
-- Domain logic changes require unit tests (`npm test` + `npm run typecheck`
+- Domain logic changes require unit tests (`pnpm test` + `pnpm run typecheck`
   before every commit).
 - Commit after each successful, verified step with a message naming the
   step (see `git log` — Steps 1–5). Never commit `.env`, `.data/`, `dist/`,

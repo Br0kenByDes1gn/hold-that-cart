@@ -12,15 +12,15 @@ Postgres dialect everywhere (PGlite file DB for dev, real Postgres via
 ## Run it
 
 ```bash
-npm install
-npm run dev:server   # Hono API on :3001 (PGlite in ./.data, gitignored)
-npm run dev:client   # Vite on :5173 (proxies /api → :3001)
+pnpm install
+pnpm run dev:server   # Hono API on :3001 (PGlite in ./.data, gitignored)
+pnpm run dev:client   # Vite on :5173 (proxies /api → :3001)
 ```
 
 Or production-style (Hono serves the built SPA + PWA):
 
 ```bash
-npm run build && npm start   # :3001
+pnpm run build && pnpm start   # :3001
 ```
 
 Copy `.env.example` → `.env` and set `MODEL_API_KEY` (Meta dev.meta.ai key)
@@ -48,7 +48,7 @@ to enable photo extraction + AI enrichment. Everything else works without it.
 ## Tests
 
 ```bash
-npm test        # 40 tests: rhythm, matching, money, suggestions, API, AI contracts
+pnpm test        # 42 tests: rhythm, matching, money, suggestions, canonical pooling, API, AI contracts
 ```
 
 Key acceptance: seed → expected briefing groups; 3rd receipt flips a product
