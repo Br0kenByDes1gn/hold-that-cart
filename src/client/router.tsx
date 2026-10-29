@@ -4,11 +4,12 @@ import {
   createRoute,
   createRouter,
   Link,
+  Navigate,
   Outlet,
   useLocation,
 } from "@tanstack/react-router";
 import { Boxes, CircleUser, Home, ScanLine } from "lucide-react";
-import { HomeScreen, BriefingScreen } from "./screens/Home";
+import { BriefingScreen } from "./screens/Home";
 import { ScannerScreen } from "./screens/Scanner";
 import { PantryScreen, ProductScreen } from "./screens/Pantry";
 import { ListScreen } from "./screens/Lists";
@@ -16,22 +17,24 @@ import { ModeScreen } from "./screens/Mode";
 import { QuickViewScreen } from "./screens/QuickView";
 import { AnalyseScreen } from "./screens/Analyse";
 import { SignUpScreen, LoginScreen } from "./screens/Auth";
-import { isLoggedIn } from "./lib/auth";
 import profilePic from "../../assets/page-icons/profilepic.png";
 
 function Shell() {
   const location = useLocation();
-  const loggedIn = isLoggedIn();
+  // No gating: the app starts on an anonymous household; signup is optional
+  // and (later) attaches this household to an account. Access never depends
+  // on login state.
   const hideHeader =
     location.pathname === "/" ||
+    location.pathname === "/mode" ||
     location.pathname === "/login" ||
+    location.pathname === "/signup" ||
     location.pathname === "/scanner" ||
     location.pathname === "/pantry" ||
     location.pathname === "/quick-view";
-  const homeTarget = loggedIn ? "/mode" : "/";
-  const homeActive = loggedIn
-    ? location.pathname === "/mode" || location.pathname === "/home"
-    : location.pathname === "/";
+  const homeTarget = "/mode";
+  const homeActive =
+    location.pathname === "/mode" || location.pathname === "/" || location.pathname === "/home";
   return (
     <div className="shell has-tabbar">
       {!hideHeader && (
@@ -40,7 +43,7 @@ function Shell() {
             <span className="wordmark-line">HOLD</span>
             <span className="wordmark-line">THAT CART</span>
           </Link>
-          <div className="level-block">
+          <Link to="/signup" className="level-block" aria-label="Account (optional sign up)">
             <div className="level-row">
               <img className="level-icon" src={profilePic} alt="Cart Commander profile" />
               <div className="level-text">
@@ -48,7 +51,7 @@ function Shell() {
                 <div className="level-sub">level</div>
               </div>
             </div>
-          </div>
+          </Link>
         </header>
       )}
       <Outlet />
@@ -67,24 +70,13 @@ function Shell() {
           >
             <ScanLine size={28} strokeWidth={2} />
           </Link>
-          {loggedIn ? (
-            <Link
-              to="/pantry"
-              className={`tab-icon ${location.pathname === "/pantry" ? "active" : ""}`}
-              aria-label="Pantry"
-            >
-              <Boxes size={28} strokeWidth={2} />
-            </Link>
-          ) : (
-            <span
-              className="tab-icon is-disabled"
-              aria-label="Pantry (log in required)"
-              aria-disabled="true"
-              title="Log in to use Pantry"
-            >
-              <Boxes size={28} strokeWidth={2} />
-            </span>
-          )}
+          <Link
+            to="/pantry"
+            className={`tab-icon ${location.pathname === "/pantry" ? "active" : ""}`}
+            aria-label="Pantry"
+          >
+            <Boxes size={28} strokeWidth={2} />
+          </Link>
           <Link
             to="/analyse"
             className={`tab-icon ${location.pathname === "/analyse" ? "active" : ""}`}
@@ -98,7 +90,11 @@ function Shell() {
 }
 
 const rootRoute = createRootRoute({ component: Shell });
-const homeRoute = createRoute({ getParentRoute: () => rootRoute, path: "/home", component: HomeScreen });
+const homeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/home",
+  component: () => <Navigate to="/mode" />,
+});
 const briefingRoute = createRoute({ getParentRoute: () => rootRoute, path: "/briefing", component: BriefingScreen });
 const scannerRoute = createRoute({ getParentRoute: () => rootRoute, path: "/scanner", component: ScannerScreen });
 const pantryRoute = createRoute({ getParentRoute: () => rootRoute, path: "/pantry", component: PantryScreen });
@@ -133,8 +129,14 @@ const analyseRoute = createRoute({
 
 const signupRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/",
+  path: "/signup",
   component: SignUpScreen,
+});
+
+const entryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  component: ModeScreen,
 });
 
 const loginRoute = createRoute({
@@ -155,6 +157,7 @@ const routeTree = rootRoute.addChildren([
   analyseRoute,
   signupRoute,
   loginRoute,
+  entryRoute,
 ]);
 export const router = createRouter({ routeTree });
 

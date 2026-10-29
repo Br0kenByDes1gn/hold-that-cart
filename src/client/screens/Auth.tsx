@@ -162,7 +162,7 @@ export function LoginScreen() {
         {submitted && <p className="auth-success">Welcome back! Redirecting…</p>}
       </form>
       <p className="auth-footer">
-        Don't have an account? <Link to="/">Sign up</Link>
+        Don't have an account? <Link to="/signup">Sign up</Link>
       </p>
     </div>
   );
