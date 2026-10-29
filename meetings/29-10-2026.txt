@@ -1,0 +1,283 @@
+Transcription for craig.horse/rec/2KJ9lGoUtjMy
+
+zaro_to
+Okay, now I should say all this again, so the first test is about having a folder of pictures, of receipts, or maybe other things, you know, maybe produce, maybe shopping cart, like the physical cart, doesn't matter, and then
+
+schmithvillers
+I
+
+zaro_to
+we run scanning through the model, like real scan through the real model, the actual one, and we, first, there should be some way to review the output, then if it's good, a way to freeze the data.
+Freezing the data, this is built in in the testing frameworks, I mean, the testing framework has, it's called snapshot mode, and basically, you run the test, it just checks against the snapshot, if the test fails, you can either fix the test, or you can say, okay, replace the snapshot, replace the golden data you have in the
+test. So, we don't need to think too much about, you know, how this snapshotting is going to be implemented, what we need to think about is how to review the output of the model, you know, and then when we run, and when we like the output, we run the next time, and you say, okay, save the snapshot.
+Which means, which means the output of the model should be presented in two ways, one is normal JSON that is going to be saved in the snapshot, and another one in some HTML form that we can review and see, does it make sense, does it not make sense, you know, is it a good
+recognition. So this is the first type of test, and the other type of test will be for the, what I was talking about, about the predictions, you know, so for this one, we need to generate somehow a little bit of data, you know, like some pantry, which has, I don't know, three,
+four, five receipts. Or maybe, maybe a few test cases, not a single one, you know, like maybe pantry with only one receipt, pantry with two, three receipts, pantry with 10 receipts, or something like that, doesn't matter, you know, just so it covers a few scenarios that are not
+exactly the same. And then this data is, can be just JSON, you know, whatever, and then we run the test, and we see whether it can be, again, snapshotting, you know, like, but then maybe actually we can use the same kind of
+technique, you know, generate some HTML, that preview, that you can see what the prediction is, and then decide whether to snapshot it or not later.
+And this is only because, like, you can read the JSON and think whether it's a good prediction, but reading JSON is much harder in thinking, much harder when you do this.
+So with these two, two main cases in place, which one do you find more appealing to do?
+I will help you start it, you know, and do things, just which one do you find more interesting?
+
+schmithvillers
+think the one where we test out the prediction from the receipts
+okay
+
+zaro_to
+Prediction from the, okay. Good, good, good, so, so I will do the other one, you do this, this, now, do it with news, do it with tipsy, it doesn't matter.
+What you need to do for a start, you know, just to have something, maybe is, first tell the model to generate you two, three scant receipts, you know, like, just how they will come out of, or how we store it in the pantry, actually.
+Because that's, sorry, let me rephrase. Or, sorry, let me rephrase.
+Now, we have the algorithm already in code.
+This algorithm, it takes data in certain shape, right?
+
+schmithvillers
+yeah
+
+zaro_to
+Like, certain structure of JSON works on it, introduces predictions.
+
+schmithvillers
+yeah
+
+zaro_to
+Now, your job here is, you don't have to invent anything new.
+So, you need to use everything that's defined in code, you know, you need to tell the model, you know, to find the structure, you know, to tell it to generate test data, describe the test case, and tell it to generate some test data for the test case.
+You know, then generate the test, generate preview and everything, you do several iterations of this, see that it looks sensible, right?
+And once you do that, then we can think about replacing the data with better one, or keep the generated one if it's good enough, you know, if you, when you look at it, if you see it's good enough, we can keep it.
+
+schmithvillers
+yeah
+uh-huh
+
+zaro_to
+It doesn't matter.
+So, so that's, that's what you should do, really, like shortly, maybe you're not getting it the first time, but doesn't matter.
+So, I don't know, I think this is what, what we can do today, but there is another site, another topic, which we need to discuss.
+
+schmithvillers
+not yet I just woke up
+
+zaro_to
+I don't know if you checked your email.
+Look. Maybe, maybe, okay, no problem.
+
+schmithvillers
+why
+
+zaro_to
+This, this came yesterday, actually. So, look, your submission is in, this is for the AI Cup, for the Google competition, and they say, oh, do, do another demo video for 90 seconds.
+First 10 seconds, introduce ourselves, and then do something else, and, you know, and we need to upload the video.
+
+schmithvillers
+did I not get this oh because I think you're the team lead
+
+zaro_to
+Okay, let me forward it to you, maybe, I don't
+know why, I'd like to be like that, anyway, I'm forwarding you the email, so you can
+
+schmithvillers
+yeah
+
+zaro_to
+also read what is it about, so they will put your, welcome to meet the builders.
+I have forgotten how, so, okay, I don't know, I don't know either, register and submit your, so, GitHub repository, you
+will, we already have demo video.
+So, yeah, this is the video we need to do, the AI tools used, yeah, okay, this, this we also have, and link to social media post, and we need to post maybe on, I mean, I can post on LinkedIn, for example, or,
+
+schmithvillers
+I could do that too
+
+zaro_to
+yeah, I mean, we do post a video or whatever, I mean, there is a guideline here what you should post about it.
+
+schmithvillers
+yeah
+
+zaro_to
+Okay, I share your project on LinkedIn, YouTube, blah, blah, blah, with the required hashtag, okay, yes, and adding the video to the post is optional, okay.
+So, this means, first we need to record a few seconds greeting, you know, because I want both of us to be in the video, if we have to showcase, and then we have another
+
+schmithvillers
+okay so this video so the introduction I
+
+zaro_to
+60-70 seconds of short video about the project, you know.
+Yeah, I was, I was thinking maybe just do it on the phone and, you know,
+
+schmithvillers
+think we can just hop on a google meet and we'll just record the 10 second introduction I'll just screen record it while you say
+yeah like we both have our cameras on in the same thing and we just introduce ourselves quickly I just screen record it and I'll put it in the beginning of
+
+zaro_to
+just do like a selfie video on the phone, isn't, isn't it going to be easier, or you want to do it like it's both of us at the same place?
+Okay, okay, okay, yeah, sure, yeah, no, makes sense, no problem, of course.
+
+schmithvillers
+the video because it's a google competition so I thought google meet they would yeah
+
+zaro_to
+Uh, so, and then, actually, what, what we can do is, uh, have the 10 seconds introduction, and then for the rest, maybe you can just, because you have the Canva project where you edited the video, right?
+
+schmithvillers
+yeah yeah uh-huh yeah no no
+
+zaro_to
+Yeah, you can just copy it or whatever, you know, put our short introduction, and then cut something out of the rest.
+I don't know what you think, because, because it says it needs to be 90 seconds or less.
+
+schmithvillers
+yes no I think the I think the initial 30 seconds where we're explaining the problem we don't need that much of the problem and then just important
+
+zaro_to
+And so we cannot do the full one, maybe just cut out the whole demo, you know, just the, yeah,
+yeah, I mean, and it doesn't need to be the full 90 seconds, because it says 90 seconds or less, I mean, it can be probably 60, 70, whatever.
+
+schmithvillers
+parts of the demo we can just like yeah that's that's fine I don't think it'll be a problem in 90 seconds yes yeah I
+
+zaro_to
+Okay, so recording, recording 10 seconds, maybe just agree, hi, I am, uh, you know, name from team broken by design, or I'm wondering what we should say about ourselves, you know,
+
+schmithvillers
+don't
+
+zaro_to
+like, is, should we talk about personal, uh, let's say experience, or what are, what are, no, no, no, no, no, I mean, it's going to be two, three sentences, right?
+
+schmithvillers
+think in 10 seconds we'll have a lot of time to talk about all of this mm-hmm
+
+zaro_to
+That's what it's going to be, if we're talking, sure, but that's why I'm thinking what three sentences to actually choose, you understand?
+Uh, like, what, what do you think, like, you can say, oh, you know, hi, I'm, I'm, I'm Zaro, you know, I'm, I'm a software engineer, blah, blah, I'm working on this kind of project, blah, blah, blah, or, or we can say, hi, I'm Zaro, uh, we're team, uh, and you say, I'm a Bumika, uh, we are team broken by design, we're doing, uh, uh,
+
+schmithvillers
+yeah
+
+zaro_to
+projects, we're trying to bring awareness, you know, and do projects for better sustainability and environment, you know, you understand?
+Like, these are very different directions, what we are saying.
+One is more about, you know, I'm, uh, that's my experience, uh, uh, you know, that's my technical knowledge, or whatever.
+
+schmithvillers
+mm-hmm
+
+zaro_to
+The other is, okay, we are this team, and that's what we are trying to do.
+Now, I would think that it's better to talk about what we are trying to do at the expense of, we are not showing so much who we are.
+
+schmithvillers
+mm-hmm um
+
+zaro_to
+I mean, okay, they see our face, they hear who we are, but, like, experience, like, uh, I don't know, what, what do you, what do you think about, about, about this?
+
+schmithvillers
+yeah so they've mentioned right for 10 seconds when we introduce ourselves we need to specify the name and location so I think we could just do it hi I'm this and I'm this and I'm from this place and I'm a software engineer and I'll say that and we are team like I'll introduce myself in the same way
+
+zaro_to
+Yeah. Yeah,
+yeah,
+
+schmithvillers
+my name is Bhumika I live in India and I work as network engineer and we are team broken design and then we can jump into the problem statement I think that will be 10 seconds I don't think problem statements need to be in the 10 seconds so
+yeah
+
+zaro_to
+no, no, no, no, no, no, I'm not talking about the problem statement, I'm talking about what we are trying to do as a team, right?
+Like, you know, because problem statement, I know it goes into detailing this, but we can say with few sentences, oh, we are trying to, uh, work on sustainability projects, or how, how do we want to phrase it?
+
+schmithvillers
+yeah we can just call it we are team broken design and we work on making our planet more sustainable something like
+
+zaro_to
+You know, like, exactly, exactly, exactly, exactly.
+
+schmithvillers
+that just one or two lines on what are yeah we can do it in the evening maybe at maybe sometime because
+
+zaro_to
+Okay. Uh, okay, let's do it.
+Uh, when do, when do we record this? Now or later? No problem.
+As you wish, no problem.
+
+schmithvillers
+I'll try to work on the this thing first the meta thing yeah because if I run into we can discuss same thing on the call and then we can record the video as well and I'll work on it then
+
+zaro_to
+Uh, okay, sure.
+
+schmithvillers
+no you tell your time because you are like you are ahead right you
+
+zaro_to
+So, uh, let's say around what time?
+Your time. Um, so I can, you know, adjust my schedule.
+Well, well, yeah, but I probably will.
+
+schmithvillers
+how
+
+zaro_to
+So, my time, I think I will be busy around seven or, I don't know, eight and a half.
+
+schmithvillers
+about five year time okay great we can connect at five yeah I'll try to
+
+zaro_to
+So, either before seven or maybe around nine for me.
+Oh, five, my time, no problem.
+Perfect.
+Okay.
+
+schmithvillers
+so for me I think it will be three years something so I'll try to work on the meta thing once because I know like in two three hours I'll understand if I'm able to do it or not right and we can just do like if I have an issue we can work on it and resolve that
+
+zaro_to
+Okay. But, but try, try first to follow this kind of recipe I gave you, you know, and then if you hit problems, just ask me, you know, like, or you can, you can try to use the AI to resolve the problem.
+
+schmithvillers
+yeah
+
+zaro_to
+You know, the problem. The issue is sometimes the AI will lead you into over complicated solutions, which you might not need.
+Uh, that's the thing. And we're talking here about, but it's also fairly simple test, you know, it's just juggling data around, you know, testing the algorithm.
+
+schmithvillers
+you were in ICD right oh it's in five hours
+
+zaro_to
+So, it should be fine. Okay, so around five, my time.
+This is in five hours. Exactly.
+Yeah, but, but, yeah, because now for me it's 12.
+
+schmithvillers
+okay hey Siri set a timer for five hours
+
+zaro_to
+So, five o'clock is in five hours.
+Okay. Okay.
+
+schmithvillers
+yeah no so I just don't want to keep track of like okay it will be 3.30 for me I just
+
+zaro_to
+Yes.
+You're going to be too deep into work.
+You'll forget. No problem. I will write you for sure also.
+Yeah, no problem.
+
+schmithvillers
+set a five hour timer yeah yeah yep definitely okay then see you
+
+zaro_to
+Okay. Good luck then with, with this.
+If really, if you have, if something is unclear and it's not clear from the code, just, just ask me.
+I'll try to answer as soon as I can. Okay.
+See you.
+
+schmithvillers
+bye bye
+
+zaro_to
+Bye.
