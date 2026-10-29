@@ -74,6 +74,19 @@ describe("meta provider (mocked fetch, no network)", () => {
     const p = new MetaProvider({ apiKey: "bad", fetchFn: fetchFn as any });
     await expect(p.enrichProduct({ name: "x" })).rejects.toThrow(/401/);
   });
+
+  it("truncated responses fail loudly instead of returning invalid JSON", async () => {
+    const fetchFn = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        choices: [{ finish_reason: "length", message: { content: '{"kind":"receipt","items":[{"raw' } }],
+      }),
+      text: async () => "",
+    }));
+    const p = new MetaProvider({ apiKey: "test", fetchFn: fetchFn as any });
+    await expect(p.extractItems(Buffer.from("fake"))).rejects.toThrow(/truncated/);
+  });
 });
 
 describe("getAIProvider", () => {
