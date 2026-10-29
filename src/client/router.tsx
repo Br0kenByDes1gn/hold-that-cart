@@ -113,12 +113,18 @@ const pantryRoute = createRoute({ getParentRoute: () => rootRoute, path: "/pantr
 const productRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pantry/$productId",
-  component: ({ params }: any) => <ProductScreen productId={params.productId} />,
+  component: function ProductRoute() {
+    const { productId } = productRoute.useParams();
+    return <ProductScreen productId={productId} />;
+  },
 });
 const listRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/lists/$listId",
-  component: ({ params }: any) => <ListScreen listId={params.listId} />,
+  component: function ListRoute() {
+    const { listId } = listRoute.useParams();
+    return <ListScreen listId={listId} />;
+  },
 });
 
 const modeRoute = createRoute({

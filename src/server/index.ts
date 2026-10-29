@@ -22,6 +22,7 @@ if (existsSync(DIST + "/index.html")) {
   if (serveStatic) {
     app.use("/assets/*", serveStatic({ root: DIST }));
     app.use("/icons/*", serveStatic({ root: DIST }));
+    app.use("/fixtures/*", serveStatic({ root: DIST }));
     app.use("/*.png", serveStatic({ root: DIST }));
     app.use("/*.svg", serveStatic({ root: DIST }));
     app.use("/*.webmanifest", serveStatic({ root: DIST }));
