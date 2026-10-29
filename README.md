@@ -48,8 +48,30 @@ to enable photo extraction + AI enrichment. Everything else works without it.
 ## Tests
 
 ```bash
-pnpm test        # 42 tests: rhythm, matching, money, suggestions, canonical pooling, API, AI contracts
+pnpm test           # 43 unit/API tests (offline)
+pnpm run test:e2e   # 9 Playwright tests (prod bundle)
+pnpm test:vision    # LIVE vision goldens — costs credits
 ```
+
+- **Unit/API** — rhythm, matching, money, suggestions, canonical pooling, AI
+  contracts, plus end-to-end seed → briefing scenarios.
+- **E2E** — Playwright against the production build: navigation, optional
+  signup (asserts the device household is never replaced), pantry/scanner flow.
+- **Vision** — real photos in `tests/fixtures/receipts/` through the actual
+  Muse model, frozen as goldens in `tests/vision/__snapshots__/`:
+
+  ```bash
+  pnpm test:vision                    # verify against goldens
+  pnpm test:vision -u                 # accept current output — review the HTML first
+  VISION_FILTER=aldi pnpm test:vision # one fixture while tuning prompts
+  ```
+
+  Each fixture yields `<id>.json` (strict: kind, item count, total qty, price
+  multiset), `<id>.names.json` (tolerant canonical names) and `<id>.html`
+  (human preview, open before committing). Per-run detail goes to
+  `tests/vision/__artifacts__/` and is never asserted. Add coverage by
+  dropping a photo in `tests/fixtures/receipts/` and adding a case in
+  `tests/vision/cases.ts`.
 
 Key acceptance: seed → expected briefing groups; 3rd receipt flips a product
 to personal rhythm; `I'm out` clears a SKIP; durable re-scan → hold alert.
