@@ -17,6 +17,7 @@ import { QuickViewScreen } from "./screens/QuickView";
 import { AnalyseScreen } from "./screens/Analyse";
 import { SignUpScreen, LoginScreen } from "./screens/Auth";
 import { isLoggedIn } from "./lib/auth";
+import profilePic from "../../assets/page-icons/profilepic.png";
 
 function Shell() {
   const location = useLocation();
@@ -41,7 +42,7 @@ function Shell() {
           </Link>
           <div className="level-block">
             <div className="level-row">
-              <img className="level-icon" src="/assets/page-icons/profilepic.png" alt="Cart Commander profile" />
+              <img className="level-icon" src={profilePic} alt="Cart Commander profile" />
               <div className="level-text">
                 <span className="level-name">Cart Commander</span>
                 <div className="level-sub">level</div>

@@ -9,7 +9,7 @@
 }
 * { box-sizing: border-box; }
 body {
-  margin: 0; background: var(--bg); background-image: url("/assets/page-icons/backgroundimage.png"); background-size: cover; background-position: center; background-repeat: no-repeat; color: var(--text);
+  margin: 0; background: var(--bg); background-image: url("../../assets/page-icons/backgroundimage.png"); background-size: cover; background-position: center; background-repeat: no-repeat; color: var(--text);
   font-family: Inter, system-ui, sans-serif;
   display: flex; justify-content: center;
 }
