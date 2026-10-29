@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+
+import { api } from "../api";
 
 import chipsArt from "../../../assets/item/chips Background Removed.png";
 import milkGlassArt from "../../../assets/item/milk_glass_and_carton Background Removed.png";
@@ -200,13 +203,33 @@ const ACTION_LABEL: Record<ActionKind, string> = {
   swap: "Try this swap",
 };
 
-function buildDetectedItems(): DetectedItem[] {
-  const pool: ActionKind[] = ["warning", "warning", "ban", "ban", "swap", "swap"];
-  for (let i = pool.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  return ITEM_DEFS.map((item, index) => ({ ...item, action: pool[index] }));
+function artFor(name: string): { art: string; frame: string; alt: string } {
+  const n = name.toLowerCase();
+  if (n.includes("chip")) return { art: chipsArt, frame: "cr-frame-chips", alt: "Bag of chips" };
+  if (n.includes("milk") || n.includes("oat")) return { art: milkGlassArt, frame: "cr-frame-milk", alt: "Milk" };
+  if (n.includes("bread")) return { art: breadArt, frame: "cr-frame-bread", alt: "Bread" };
+  if (n.includes("egg")) return { art: eggsArt, frame: "cr-frame-eggs", alt: "Eggs" };
+  if (n.includes("banana") || n.includes("fruit")) return { art: bananasArt, frame: "cr-frame-bananas", alt: "Fruit" };
+  if (n.includes("yogurt") || n.includes("yoghurt")) return { art: yogurtArt, frame: "cr-frame-yogurt", alt: "Yogurt" };
+  return { art: milkGlassArt, frame: "cr-frame-milk", alt: name };
+}
+
+function fileToDataUrl(file: File, maxDim = 1600): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
 }
 
 function ActionIcon({ action }: { action: ActionKind }) {
@@ -223,7 +246,11 @@ export function ScannerScreen() {
   const activeDeviceIdRef = useRef<string | null>(null);
 
   const [flashOn, setFlashOn] = useState(false);
-  const [items] = useState<DetectedItem[]>(buildDetectedItems);
+  const [extracted, setExtracted] = useState<any[]>([]);
+  const [detectedKind, setDetectedKind] = useState<string>("receipt");
+  const [scanId, setScanId] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [extractError, setExtractError] = useState("");
   const [facing, setFacing] = useState<Facing>("user");
   const [scanMode, setScanMode] = useState<ScanMode>("receipt");
   const [cameraState, setCameraState] = useState<CameraState>("starting");
@@ -378,7 +405,68 @@ export function ScannerScreen() {
     setCameraState("captured");
     setCameraError("");
     stopCamera();
+    void runExtract(canvas.toDataURL("image/jpeg", 0.88));
   };
+
+  const runExtract = async (image: string) => {
+    setBusy(true);
+    setExtractError("");
+    try {
+      const data: any = await api.aiExtract(image, scanMode);
+      const items = data.items ?? [];
+      setDetectedKind(data.kind ?? scanMode);
+      setExtracted(items);
+      const scan = await api.createScan(data.kind ?? scanMode, items);
+      setScanId(scan.id);
+      // Re-match against pantry for the correction UI
+      if (Array.isArray(scan.matches)) setExtracted(scan.matches);
+    } catch (e: any) {
+      setExtractError(
+        `Couldn't read that photo. ${String(e?.message ?? e).slice(0, 180)} Try the demo items below.`,
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const loadFixture = async () => {
+    setBusy(true);
+    setExtractError("");
+    try {
+      const file = scanMode === "receipt" ? "receipt-1.json" : scanMode === "cart" ? "cart-1.json" : "list-1.json";
+      const arr = await fetch(`/fixtures/${file}`).then((r) => r.json());
+      const scan = await api.createScan(scanMode, arr);
+      setDetectedKind(scan.kind);
+      setScanId(scan.id);
+      setExtracted(scan.matches ?? arr);
+    } catch (e: any) {
+      setExtractError(String(e?.message ?? e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const confirm = useMutation({
+    mutationFn: () => {
+      if (!scanId) throw new Error("nothing to confirm");
+      const payload = extracted.map((it) => ({
+        rawName: it.rawName,
+        normalizedName: it.normalizedName,
+        productId: it.match?.productId ?? it.productId ?? null,
+        qty: it.qty ?? 1,
+        packQty: it.packQty,
+        packUnit: it.packUnit,
+        price: it.price,
+        brand: it.brand,
+      }));
+      return api.confirmScan(scanId, detectedKind, payload);
+    },
+    onSuccess: (data: any) => {
+      if (data.listId) nav({ to: "/lists/$listId", params: { listId: data.listId } });
+      else nav({ to: "/pantry" });
+    },
+    onError: (e: any) => setExtractError(e.message),
+  });
 
   return (
     <div className="scanner-page">
@@ -486,25 +574,93 @@ export function ScannerScreen() {
         ))}
       </div>
 
-      <div className="cr-swaps" aria-label="Detected items">
-        {items.map((item) => (
-          <article className="cr-swap" key={item.id}>
-            <div className={`cr-swap-figure ${item.frame}`}>
-              <span className="cr-swap-clip">
-                <img className="cr-swap-art" src={item.art} alt={item.alt} />
-              </span>
-              <span
-                className={`cr-action cr-action-${item.action}`}
-                role="img"
-                aria-label={`${ACTION_LABEL[item.action]}: ${item.name}`}
-              >
-                <ActionIcon action={item.action} />
-              </span>
-            </div>
-            <div className="cr-swap-name">{item.name}</div>
-          </article>
-        ))}
+      <div className="row" style={{ padding: "0 16px" }}>
+        <label className="btn">
+          Upload photo
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            hidden
+            onChange={async (e) => {
+              const f = e.target.files?.[0];
+              if (!f) return;
+              try {
+                const dataUrl = await fileToDataUrl(f);
+                setPhoto(dataUrl);
+                setCameraState("captured");
+                void runExtract(dataUrl);
+              } catch (err: any) {
+                setExtractError(String(err?.message ?? err));
+              }
+            }}
+          />
+        </label>
+        <button type="button" onClick={() => void loadFixture()} disabled={busy}>
+          Use demo {scanMode}
+        </button>
       </div>
+
+      {busy && <p style={{ padding: "0 16px" }}>Reading…</p>}
+      {extractError && <p className="error" style={{ padding: "0 16px" }}>{extractError}</p>}
+
+      {extracted.length > 0 && (
+        <div className="cr-swaps" aria-label="Detected items">
+          {extracted.map((it, i) => {
+            const a = artFor(it.rawName ?? it.normalizedName ?? "item");
+            return (
+              <article className="cr-swap" key={i}>
+                <div className={`cr-swap-figure ${a.frame}`}>
+                  <span className="cr-swap-clip">
+                    <img className="cr-swap-art" src={a.art} alt={a.alt} />
+                  </span>
+                </div>
+                <div className="cr-swap-name">{it.rawName}</div>
+              </article>
+            );
+          })}
+        </div>
+      )}
+
+      {extracted.length > 0 && (
+        <div style={{ padding: "0 16px 24px", display: "flex", flexDirection: "column", gap: 8 }}>
+          <h3>Detected ({detectedKind}) — correct before confirming</h3>
+          {extracted.map((it, i) => (
+            <div className="srow" key={i}>
+              <div className="srow-body">
+                <input
+                  value={it.rawName}
+                  onChange={(e) =>
+                    setExtracted(extracted.map((x, j) => (j === i ? { ...x, rawName: e.target.value } : x)))
+                  }
+                />
+                <div className="dim">
+                  {it.normalizedName} · qty {it.qty ?? 1}
+                  {it.price != null ? ` · €${it.price}` : ""}
+                  {it.match?.productId ? " · ✓ matched" : " · new item"}
+                </div>
+              </div>
+              <button onClick={() => setExtracted(extracted.filter((_, j) => j !== i))}>✕</button>
+            </div>
+          ))}
+          <div className="row">
+            <button
+              onClick={() =>
+                setExtracted([...extracted, { rawName: "New item", normalizedName: "new item", qty: 1 }])
+              }
+            >
+              + Add item
+            </button>
+            <button onClick={() => confirm.mutate()} disabled={confirm.isPending}>
+              {confirm.isPending
+                ? "Saving…"
+                : detectedKind === "receipt"
+                  ? "Confirm → add to pantry"
+                  : "Confirm → make list"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
