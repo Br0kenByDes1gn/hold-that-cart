@@ -38,6 +38,12 @@ that file are explicitly **out of scope**, see "Not built yet").
    Brand A / Brand B of the same type always pool into one product — pooled
    rhythm, variant comparison for money suggestions. Never key a product by
    raw receipt text.
+7. **Optional signup, never gating.** The app starts on an anonymous device
+   household (`X-Device-Id`). Auth screens are visuals only for now; nothing
+   may gate access on login state. When accounts are built, signup attaches
+   the *existing* device household to the account (email via
+   `PATCH /api/households/me`) — never generate a fresh household or clear
+   the device ID on signup.
 
 ## Stack
 
@@ -93,7 +99,7 @@ src/server/domain/           PURE deterministic core — no I/O except demo.ts f
   demo.ts                    fixture enrichments + demo purchase plan (dates relative to now)
 src/server/ai/provider.ts    AIProvider interface; Stub until MODEL_API_KEY set
 src/server/ai/meta.ts        Muse prompts, Meta API client, price guard
-src/client/router.tsx        routes: / /briefing /scanner /pantry /pantry/:id /lists/:id
+src/client/router.tsx        routes: / (=Mode) /mode /briefing /scanner /pantry /pantry/:id /lists/:id /quick-view /analyse (stub) /signup /login (visuals only)
 src/client/api.ts            typed fetchers (sends X-Device-Id)
 src/client/screens/          Home, Briefing, Scanner, Pantry (+detail), Lists
 src/client/components.tsx    TagChip/Tags, ProductArt, icon registry hook
@@ -204,7 +210,7 @@ briefing groups; 3 receipts → personal rhythm; `im_out` clears a SKIP;
 Analyse/"Your Impact" screen and verified-savings ledger · business-mode
 screens/seed data · shelf-photo stock check · barcode scanning · voice lists ·
 continuous cart video · Open Food Facts (possible later health-score source) ·
-email signup UI (API supports attach; no screen) · hosting/deployment ·
+email signup UI (API supports attach; Auth screens are visuals only — see rule 7) · hosting/deployment ·
 real golden-photo prompt-tuning set (fixtures are JSON so far).
 
 ## Working conventions
