@@ -1,95 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { api } from "../api";
-import { ProductArt, Tags, useIconRegistry } from "../components";
+import { ProductArt, Tags, iconFor, useIconRegistry } from "../components";
 
-import milkGlassArt from "../../../assets/item/milk_glass_and_carton Background Removed.png";
-import breadArt from "../../../assets/item/bread_loaf Background Removed.png";
-import chipsArt from "../../../assets/item/chips Background Removed.png";
-import eggsArt from "../../../assets/item/eggs Background Removed.png";
-import yogurtArt from "../../../assets/item/yogurt Background Removed.png";
-import bananasArt from "../../../assets/item/fruit_assortment Background Removed.png";
 import profilePic from "../../../assets/page-icons/profilepic.png";
 import pantryBoxArt from "../../../assets/page-icons/businesspantry.png";
 
 type TagKind = "money" | "health" | "planet";
 
-interface PantryItem {
-  id: string;
-  name: string;
-  art: string;
-  alt: string;
-  tags: Record<TagKind, boolean>;
-}
-
 interface PantrySection {
   id: string;
   title: string;
-  items: PantryItem[];
+  items: any[];
 }
-
-const SECTIONS: PantrySection[] = [
-  {
-    id: "buy",
-    title: "Buy",
-    items: [
-      {
-        id: "milk",
-        name: "Milk",
-        art: milkGlassArt,
-        alt: "Glass and carton of milk",
-        tags: { money: false, health: true, planet: false },
-      },
-      {
-        id: "bread",
-        name: "Bread",
-        art: breadArt,
-        alt: "Loaf of bread",
-        tags: { money: true, health: true, planet: false },
-      },
-    ],
-  },
-  {
-    id: "skip",
-    title: "Skip",
-    items: [
-      {
-        id: "chips",
-        name: "Chips",
-        art: chipsArt,
-        alt: "Bag of chips",
-        tags: { money: true, health: false, planet: false },
-      },
-      {
-        id: "eggs",
-        name: "Eggs",
-        art: eggsArt,
-        alt: "Carton of eggs",
-        tags: { money: true, health: true, planet: false },
-      },
-    ],
-  },
-  {
-    id: "swap",
-    title: "Swap",
-    items: [
-      {
-        id: "yogurt",
-        name: "Yogurt",
-        art: yogurtArt,
-        alt: "Tub of yogurt",
-        tags: { money: false, health: true, planet: true },
-      },
-      {
-        id: "bananas",
-        name: "Bananas",
-        art: bananasArt,
-        alt: "Bunch of bananas",
-        tags: { money: true, health: true, planet: true },
-      },
-    ],
-  },
-];
 
 const TAG_LABEL: Record<TagKind, string> = {
   money: "Saves money",
@@ -106,6 +29,19 @@ function PantryTag({ kind, on }: { kind: TagKind; on: boolean }) {
 }
 
 export function PantryScreen() {
+  const icons = useIconRegistry();
+  const q = useQuery({
+    queryKey: ["briefing", "pantry"],
+    queryFn: () => api.briefing({ buy: 50, swap: 50, skip: 50 }),
+  });
+  const sections: PantrySection[] = q.data
+    ? [
+        { id: "buy", title: "Buy", items: q.data.buy ?? [] },
+        { id: "skip", title: "Skip", items: q.data.skip ?? [] },
+        { id: "swap", title: "Swap", items: q.data.swap ?? [] },
+      ]
+    : [];
+  const empty = sections.every((s) => s.items.length === 0);
   return (
     <div className="pantry-page">
       <header className="pantry-top">
@@ -117,34 +53,67 @@ export function PantryScreen() {
         <img className="pantry-profile" src={profilePic} alt="Profile" />
       </header>
 
+      {q.isLoading && <p className="dim" style={{ padding: 16 }}>Loading…</p>}
+      {q.isError && (
+        <p className="error" style={{ padding: 16 }}>
+          Couldn't load. Load the demo pantry from the home screen first.
+        </p>
+      )}
+      {q.data && empty && (
+        <p className="dim" style={{ padding: 16 }}>
+          Pantry is empty. Load the demo pantry or scan a receipt.
+        </p>
+      )}
+
       <div className="pantry-sections">
-        {SECTIONS.map((section) => (
-          <section className="pantry-section" key={section.id}>
-            <div className="pantry-section-head">
-              <h2 className="pantry-section-title">{section.title}</h2>
-              <Link to="/briefing" className="pantry-see-all">
-                See all
-              </Link>
-            </div>
-            <div className="pantry-grid">
-              {section.items.map((item) => (
-                <article className="pantry-card" key={item.id}>
-                  <div className="pantry-card-main">
-                    <div className="pantry-card-art">
-                      <img src={item.art} alt={item.alt} />
-                    </div>
-                    <div className="pantry-card-tags">
-                      <PantryTag kind="money" on={item.tags.money} />
-                      <PantryTag kind="health" on={item.tags.health} />
-                      <PantryTag kind="planet" on={item.tags.planet} />
-                    </div>
-                  </div>
-                  <div className="pantry-card-name">{item.name}</div>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
+        {sections
+          .filter((s) => s.items.length > 0)
+          .map((section) => (
+            <section className="pantry-section" key={section.id}>
+              <div className="pantry-section-head">
+                <h2 className="pantry-section-title">{section.title}</h2>
+                <Link to="/briefing" className="pantry-see-all">
+                  See all
+                </Link>
+              </div>
+              <div className="pantry-grid">
+                {section.items.map((item: any, i: number) => {
+                  const tags = new Set<string>(item.tags ?? []);
+                  const art = iconFor(item.rawName, undefined, icons);
+                  const card = (
+                    <>
+                      <div className="pantry-card-main">
+                        <div className="pantry-card-art">
+                          {art ? <img src={`/${art}`} alt={item.rawName} /> : null}
+                        </div>
+                        <div className="pantry-card-tags">
+                          <PantryTag kind="money" on={tags.has("money")} />
+                          <PantryTag kind="health" on={tags.has("health")} />
+                          <PantryTag kind="planet" on={tags.has("planet")} />
+                        </div>
+                      </div>
+                      <div className="pantry-card-name">{item.rawName}</div>
+                      {item.swapTitle && <div className="dim">→ {item.swapTitle}</div>}
+                    </>
+                  );
+                  return item.productId ? (
+                    <Link
+                      className="pantry-card"
+                      key={`${item.productId}-${i}`}
+                      to="/pantry/$productId"
+                      params={{ productId: item.productId }}
+                    >
+                      {card}
+                    </Link>
+                  ) : (
+                    <article className="pantry-card" key={i}>
+                      {card}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
       </div>
     </div>
   );
