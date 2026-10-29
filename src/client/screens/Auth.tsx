@@ -45,6 +45,7 @@ export function SignUpScreen() {
           <label className="auth-label">Email</label>
           <input
             className="auth-input"
+            data-testid="signup-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -57,6 +58,7 @@ export function SignUpScreen() {
           <label className="auth-label">Password</label>
           <input
             className="auth-input"
+            data-testid="signup-password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -69,6 +71,7 @@ export function SignUpScreen() {
           <label className="auth-label">Verify Password</label>
           <input
             className="auth-input"
+            data-testid="signup-verify"
             type="password"
             value={verify}
             onChange={(e) => setVerify(e.target.value)}
@@ -93,7 +96,7 @@ export function SignUpScreen() {
             Business
           </button>
         </div>
-        <button type="submit" className="auth-btn">Sign Up</button>
+        <button type="submit" className="auth-btn" data-testid="signup-submit">Sign Up</button>
         {submitted && <p className="auth-success">Account created! Redirecting…</p>}
       </form>
       <p className="auth-footer">
@@ -138,6 +141,7 @@ export function LoginScreen() {
           <label className="auth-label">Email</label>
           <input
             className="auth-input"
+            data-testid="login-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -153,12 +157,13 @@ export function LoginScreen() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            data-testid="login-password"
             placeholder="••••••••"
             autoComplete="current-password"
           />
           {errors.password && <span className="auth-error">{errors.password}</span>}
         </div>
-        <button type="submit" className="auth-btn">Log In</button>
+        <button type="submit" className="auth-btn" data-testid="login-submit">Log In</button>
         {submitted && <p className="auth-success">Welcome back! Redirecting…</p>}
       </form>
       <p className="auth-footer">
