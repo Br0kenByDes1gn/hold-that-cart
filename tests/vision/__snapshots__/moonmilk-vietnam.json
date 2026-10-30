@@ -1,0 +1,14 @@
+{
+  "fixture": "moonmilk-vietnam",
+  "expectedKind": "receipt",
+  "kind": "receipt",
+  "itemCount": 5,
+  "totalQty": 302.34,
+  "prices": [
+    5280,
+    7875,
+    18000,
+    18000,
+    50000
+  ]
+}

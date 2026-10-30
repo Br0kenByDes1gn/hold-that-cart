@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · walmart-san-angelo</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+       white-space: nowrap; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; vertical-align: top; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+  tr.json-row td { border-bottom: 1px solid #10283d; padding-bottom: 8px; }
+  details summary { cursor: pointer; color: #8aa4c0; font-size: 11px; }
+  pre { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+        padding: 10px; overflow: auto; font-size: 11px; margin: 6px 0 0; }
+  code { font-size: 11px; color: #8aa4c0; }
+</style>
+</head>
+<body>
+  <h1>walmart-san-angelo</h1>
+  <div class="meta">Screenshot_2026-10-28_at_9.29.29_AM.png · 708×1256 · 180 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/Screenshot_2026-10-28_at_9.29.29_AM.png" alt="walmart-san-angelo source image">
+      <p class="note"><strong>What to check:</strong> Clean US receipt screenshot, 10 items, tax line, barcode.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>10</b></span>
+        <span>total qty <b>10</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ mango yogurt</li>
+<li class="ok">✓ banana yogurt</li>
+<li class="bad">✗ potatoes</li>
+<li class="bad">✗ lemons</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>autodrive</td>
+      <td class="num">4.47</td>
+    </tr>
+<tr>
+      <td>autodrive</td>
+      <td class="num">4.47</td>
+    </tr>
+<tr>
+      <td>banana yogurt</td>
+      <td class="num">0.50</td>
+    </tr>
+<tr>
+      <td>bulk lemon</td>
+      <td class="num">0.48</td>
+    </tr>
+<tr>
+      <td>dutch oven</td>
+      <td class="num">19.94</td>
+    </tr>
+<tr>
+      <td>granulated sugar</td>
+      <td class="num">4.98</td>
+    </tr>
+<tr>
+      <td>hawk night</td>
+      <td class="num">2.78</td>
+    </tr>
+<tr>
+      <td>healthchoice</td>
+      <td class="num">2.98</td>
+    </tr>
+<tr>
+      <td>mango yogurt</td>
+      <td class="num">0.50</td>
+    </tr>
+<tr>
+      <td>potato</td>
+      <td class="num">2.94</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>All extracted properties (last run — not asserted)</h2>
+      <table>
+        <thead><tr><th class="">rawName</th><th class="">normalizedName</th><th class="num">qty</th><th class="num">price</th><th class="">store</th><th class="num">confidence</th></tr></thead>
+        <tbody>
+<tr><td class="">AUTODRIVE 20</td><td class="">autodrive</td><td class="num">1</td><td class="num">4.47</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;AUTODRIVE 20&quot;,
+  &quot;normalizedName&quot;: &quot;autodrive&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.47,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">AUTODRIVE 20</td><td class="">autodrive</td><td class="num">1</td><td class="num">4.47</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;AUTODRIVE 20&quot;,
+  &quot;normalizedName&quot;: &quot;autodrive&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.47,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">BANAN YOGURT</td><td class="">banana yogurt</td><td class="num">1</td><td class="num">0.5</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;BANAN YOGURT&quot;,
+  &quot;normalizedName&quot;: &quot;banana yogurt&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.5,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">BULK LEMONS</td><td class="">bulk lemon</td><td class="num">1</td><td class="num">0.48</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;BULK LEMONS&quot;,
+  &quot;normalizedName&quot;: &quot;bulk lemon&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.48,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">DUTCH OVEN</td><td class="">dutch oven</td><td class="num">1</td><td class="num">19.94</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;DUTCH OVEN&quot;,
+  &quot;normalizedName&quot;: &quot;dutch oven&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 19.94,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">SUGAR GRANU</td><td class="">sugar granulated</td><td class="num">1</td><td class="num">4.98</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SUGAR GRANU&quot;,
+  &quot;normalizedName&quot;: &quot;sugar granulated&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.98,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">NIGHT HAWK</td><td class="">night hawk</td><td class="num">1</td><td class="num">2.78</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;NIGHT HAWK&quot;,
+  &quot;normalizedName&quot;: &quot;night hawk&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.78,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">HEALTHCHOICE</td><td class="">healthchoice</td><td class="num">1</td><td class="num">2.98</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;HEALTHCHOICE&quot;,
+  &quot;normalizedName&quot;: &quot;healthchoice&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.98,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">MANGO YOGURT</td><td class="">mango yogurt</td><td class="num">1</td><td class="num">0.5</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;MANGO YOGURT&quot;,
+  &quot;normalizedName&quot;: &quot;mango yogurt&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.5,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">POTATOES</td><td class="">potato</td><td class="num">1</td><td class="num">2.94</td><td class="">Walmart</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="6">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;POTATOES&quot;,
+  &quot;normalizedName&quot;: &quot;potato&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.94,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

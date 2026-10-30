@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · supermart-india</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+       white-space: nowrap; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; vertical-align: top; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+  tr.json-row td { border-bottom: 1px solid #10283d; padding-bottom: 8px; }
+  details summary { cursor: pointer; color: #8aa4c0; font-size: 11px; }
+  pre { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+        padding: 10px; overflow: auto; font-size: 11px; margin: 6px 0 0; }
+  code { font-size: 11px; color: #8aa4c0; }
+</style>
+</head>
+<body>
+  <h1>supermart-india</h1>
+  <div class="meta">IMG_1437.jpg · 1200×1600 · 202 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/IMG_1437.jpg" alt="supermart-india source image">
+      <p class="note"><strong>What to check:</strong> Phone photo. Indian receipt, MRP vs our-price columns, qty in decimals, GST table.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>3</b></span>
+        <span>total qty <b>741</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ cream</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>chocolate</td>
+      <td class="num">250.00</td>
+    </tr>
+<tr>
+      <td>chocolate</td>
+      <td class="num">275.00</td>
+    </tr>
+<tr>
+      <td>cream fresh</td>
+      <td class="num">75.00</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>All extracted properties (last run — not asserted)</h2>
+      <table>
+        <thead><tr><th class="">rawName</th><th class="">normalizedName</th><th class="">brand</th><th class="num">qty</th><th class="num">packQty</th><th class="">packUnit</th><th class="num">price</th><th class="">store</th><th class="num">confidence</th></tr></thead>
+        <tbody>
+<tr><td class="">CADBURY 5STAR 9.8GM</td><td class="">5star</td><td class="">Cadbury</td><td class="num">50</td><td class="num">9.8</td><td class="">g</td><td class="num">250</td><td class="">SUPERMART</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="9">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;CADBURY 5STAR 9.8GM&quot;,
+  &quot;normalizedName&quot;: &quot;5star&quot;,
+  &quot;brand&quot;: &quot;Cadbury&quot;,
+  &quot;qty&quot;: 50,
+  &quot;packQty&quot;: 9.8,
+  &quot;packUnit&quot;: &quot;g&quot;,
+  &quot;price&quot;: 250,
+  &quot;store&quot;: &quot;SUPERMART&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">CADBURY CELEBRATIONS163</td><td class="">celebration</td><td class="">Cadbury</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">275</td><td class="">SUPERMART</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="9">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;CADBURY CELEBRATIONS163&quot;,
+  &quot;normalizedName&quot;: &quot;celebration&quot;,
+  &quot;brand&quot;: &quot;Cadbury&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 275,
+  &quot;store&quot;: &quot;SUPERMART&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">AMUL FRESH CREAM 250ML</td><td class="">fresh cream</td><td class="">Amul</td><td class="num">1</td><td class="num">250</td><td class="">ml</td><td class="num">75</td><td class="">SUPERMART</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="9">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;AMUL FRESH CREAM 250ML&quot;,
+  &quot;normalizedName&quot;: &quot;fresh cream&quot;,
+  &quot;brand&quot;: &quot;Amul&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 250,
+  &quot;packUnit&quot;: &quot;ml&quot;,
+  &quot;price&quot;: 75,
+  &quot;store&quot;: &quot;SUPERMART&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

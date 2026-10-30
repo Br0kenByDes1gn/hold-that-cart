@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · trader-joes-nyc</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+       white-space: nowrap; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; vertical-align: top; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+  tr.json-row td { border-bottom: 1px solid #10283d; padding-bottom: 8px; }
+  details summary { cursor: pointer; color: #8aa4c0; font-size: 11px; }
+  pre { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+        padding: 10px; overflow: auto; font-size: 11px; margin: 6px 0 0; }
+  code { font-size: 11px; color: #8aa4c0; }
+</style>
+</head>
+<body>
+  <h1>trader-joes-nyc</h1>
+  <div class="meta">Screenshot_2026-10-28_at_9.30.27_AM.png · 566×976 · 88 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/Screenshot_2026-10-28_at_9.30.27_AM.png" alt="trader-joes-nyc source image">
+      <p class="note"><strong>What to check:</strong> Yogurt variants with sizes (6oz), tax suffix 'T', cash change lines.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>12</b></span>
+        <span>total qty <b>41</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="bad">✗ hamburger buns</li>
+<li class="bad">✗ peanuts</li>
+<li class="ok">✓ yogurt</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>and bread butter pickle</td>
+      <td class="num">3.49</td>
+    </tr>
+<tr>
+      <td>black cherry nonfat yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>blueberry nonfat yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>breaded chicken drummella meat</td>
+      <td class="num">3.79</td>
+    </tr>
+<tr>
+      <td>breaded cutlet eggplant entree</td>
+      <td class="num">2.49</td>
+    </tr>
+<tr>
+      <td>bun hamburger wheat whole</td>
+      <td class="num">1.99</td>
+    </tr>
+<tr>
+      <td>cheese jack jalapeno monterey</td>
+      <td class="num">3.39</td>
+    </tr>
+<tr>
+      <td>green onion</td>
+      <td class="num">1.29</td>
+    </tr>
+<tr>
+      <td>honey peanut roasted</td>
+      <td class="num">3.99</td>
+    </tr>
+<tr>
+      <td>nonfat raspberry yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>nonfat strawberry yogurt</td>
+      <td class="num">0.79</td>
+    </tr>
+<tr>
+      <td>on the tomato vine</td>
+      <td class="num">2.29</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>All extracted properties (last run — not asserted)</h2>
+      <table>
+        <thead><tr><th class="">rawName</th><th class="">normalizedName</th><th class="num">qty</th><th class="num">packQty</th><th class="">packUnit</th><th class="num">price</th><th class="">store</th><th class="num">confidence</th></tr></thead>
+        <tbody>
+<tr><td class="">PICKLES ORG BREAD AND BUTTER</td><td class="">organic bread and butter pickle</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.49</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;PICKLES ORG BREAD AND BUTTER&quot;,
+  &quot;normalizedName&quot;: &quot;organic bread and butter pickle&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.49,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">YOG NONFAT TJ BLACK CHERRY.</td><td class="">nonfat black cherry yogurt</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.79</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;YOG NONFAT TJ BLACK CHERRY.&quot;,
+  &quot;normalizedName&quot;: &quot;nonfat black cherry yogurt&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.79,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">YOGURT BLUEBERRY NON FAT 6OZ</td><td class="">blueberry nonfat yogurt</td><td class="num">1</td><td class="num">6</td><td class="">oz</td><td class="num">0.79</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;YOGURT BLUEBERRY NON FAT 6OZ&quot;,
+  &quot;normalizedName&quot;: &quot;blueberry nonfat yogurt&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 6,
+  &quot;packUnit&quot;: &quot;oz&quot;,
+  &quot;price&quot;: 0.79,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">MEAT CHICKEN BREADED DRUMMELLA</td><td class="">meat chicken breaded drummella</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.79</td><td class="">Trader Joe's</td><td class="num">0.93</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;MEAT CHICKEN BREADED DRUMMELLA&quot;,
+  &quot;normalizedName&quot;: &quot;meat chicken breaded drummella&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.79,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.93
+}</pre></details>
+      </td></tr>
+<tr><td class="">ENTREE EGGPLANT CUTLET BREADED</td><td class="">entree eggplant cutlet breaded</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.49</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;ENTREE EGGPLANT CUTLET BREADED&quot;,
+  &quot;normalizedName&quot;: &quot;entree eggplant cutlet breaded&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.49,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">WHOLE WHEAT HAMBURGER BUNS</td><td class="">whole wheat hamburger bun</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.99</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;WHOLE WHEAT HAMBURGER BUNS&quot;,
+  &quot;normalizedName&quot;: &quot;whole wheat hamburger bun&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.99,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">JALEPENO MONTEREY JACK CHEESE</td><td class="">jalapeno monterey jack cheese</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.39</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;JALEPENO MONTEREY JACK CHEESE&quot;,
+  &quot;normalizedName&quot;: &quot;jalapeno monterey jack cheese&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.39,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">R-GREEN ONIONS 6 OZ</td><td class="">green onion</td><td class="num">1</td><td class="num">6</td><td class="">oz</td><td class="num">1.29</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;R-GREEN ONIONS 6 OZ&quot;,
+  &quot;normalizedName&quot;: &quot;green onion&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 6,
+  &quot;packUnit&quot;: &quot;oz&quot;,
+  &quot;price&quot;: 1.29,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">HONEY ROASTED PEANUTS</td><td class="">honey roasted peanut</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.99</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;HONEY ROASTED PEANUTS&quot;,
+  &quot;normalizedName&quot;: &quot;honey roasted peanut&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.99,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">YOG NONFAT TJ RASPBERRY.</td><td class="">nonfat raspberry yogurt</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.79</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;YOG NONFAT TJ RASPBERRY.&quot;,
+  &quot;normalizedName&quot;: &quot;nonfat raspberry yogurt&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.79,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">YOG NONFAT TJ STRAWBERRY.</td><td class="">nonfat strawberry yogurt</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.79</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;YOG NONFAT TJ STRAWBERRY.&quot;,
+  &quot;normalizedName&quot;: &quot;nonfat strawberry yogurt&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.79,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">A-TOMATOES ON THE VINE 20 OZ</td><td class="">tomato on the vine</td><td class="num">1</td><td class="num">20</td><td class="">oz</td><td class="num">2.29</td><td class="">Trader Joe's</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="8">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;A-TOMATOES ON THE VINE 20 OZ&quot;,
+  &quot;normalizedName&quot;: &quot;tomato on the vine&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 20,
+  &quot;packUnit&quot;: &quot;oz&quot;,
+  &quot;price&quot;: 2.29,
+  &quot;store&quot;: &quot;Trader Joe's&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

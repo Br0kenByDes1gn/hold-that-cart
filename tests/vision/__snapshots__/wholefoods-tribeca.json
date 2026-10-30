@@ -1,0 +1,25 @@
+{
+  "fixture": "wholefoods-tribeca",
+  "expectedKind": "receipt",
+  "kind": "receipt",
+  "itemCount": 16,
+  "totalQty": 18.96,
+  "prices": [
+    0.77,
+    0.91,
+    0.99,
+    1.2,
+    1.69,
+    1.99,
+    2.5,
+    2.98,
+    2.99,
+    2.99,
+    3.16,
+    3.49,
+    3.99,
+    4.99,
+    6.99,
+    7.99
+  ]
+}

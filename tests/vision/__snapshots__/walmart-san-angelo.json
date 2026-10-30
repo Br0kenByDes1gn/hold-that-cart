@@ -1,0 +1,19 @@
+{
+  "fixture": "walmart-san-angelo",
+  "expectedKind": "receipt",
+  "kind": "receipt",
+  "itemCount": 10,
+  "totalQty": 10,
+  "prices": [
+    0.48,
+    0.5,
+    0.5,
+    2.78,
+    2.94,
+    2.98,
+    4.47,
+    4.47,
+    4.98,
+    19.94
+  ]
+}

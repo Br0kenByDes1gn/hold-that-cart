@@ -12,7 +12,13 @@ Rules:
 - list: one entry per list line. No prices (use null) unless a price is written on the list. qty defaults to 1.
 - cart: only items you can actually identify, top layer. price is always null. confidence reflects occlusion (0.4-0.7 typical).
 - normalizedName: lowercase generic product name in English ("olive oil", NOT "Borges Olio Evo 500ml").
-- Omit the brand when unsure (null). NEVER invent prices, brands, or items that are not visible.`;
+- Keep the printed product words, but drop brand names, sizes, percentages, tax letters, HSN/SKU codes and store names.
+- Expand receipt abbreviations into readable words ("BRW" -> "brown", "GRANU" -> "granulated", "CHOC" -> "chocolate", "OG" -> "organic").
+- Use the singular form for countable nouns ("blueberry", not "blueberries").
+- One entry per printed line. Never merge or split receipt lines, even if two lines look similar.
+- Omit the brand when unsure (null).
+- Do not invent descriptors that are not printed. NEVER invent prices, brands, or items that are not visible.
+- Keep dates, store addresses, card numbers and tax/total lines out of items.`;
 
 export function extractionUser(kindHint?: string): string {
   return kindHint && kindHint !== "unknown"
@@ -101,6 +107,7 @@ export class MetaProvider implements AIProvider {
       throw new Error(`Meta API ${res.status}: ${text.slice(0, 300)}`);
     }
     const json = (await res.json()) as any;
+    const finishReason = json?.choices?.[0]?.finish_reason;
     const rawContent = json?.choices?.[0]?.message?.content;
     const content =
       typeof rawContent === "string"
@@ -110,6 +117,11 @@ export class MetaProvider implements AIProvider {
               .map((p: any) => (typeof p?.text === "string" ? p.text : ""))
               .join("")
           : "";
+    if (finishReason === "length") {
+      throw new Error(
+        `model response truncated (max_tokens=${maxTokens}); raise the budget for long receipts`,
+      );
+    }
     if (!content) throw new Error("empty model response");
     return content;
   }
@@ -127,7 +139,9 @@ export class MetaProvider implements AIProvider {
           ],
         },
       ],
-      4000,
+      // Long receipts (25+ lines) need headroom: reasoning tokens count against
+      // max_tokens, and truncation yields invalid JSON.
+      Number(process.env.META_MAX_TOKENS ?? 16000),
     );
     const parsed = JSON.parse(content);
     const kind = parsed.kind ?? "unknown";

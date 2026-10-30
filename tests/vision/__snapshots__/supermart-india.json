@@ -1,0 +1,12 @@
+{
+  "fixture": "supermart-india",
+  "expectedKind": "receipt",
+  "kind": "receipt",
+  "itemCount": 3,
+  "totalQty": 741,
+  "prices": [
+    75,
+    250,
+    275
+  ]
+}

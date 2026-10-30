@@ -1,0 +1,66 @@
+[
+  {
+    "name": "apple gala",
+    "price": 3.16
+  },
+  {
+    "name": "avocado hass",
+    "price": 2.98
+  },
+  {
+    "name": "balsamic vinegar",
+    "price": 2.99
+  },
+  {
+    "name": "banana",
+    "price": 0.91
+  },
+  {
+    "name": "bean black",
+    "price": 0.99
+  },
+  {
+    "name": "brown egg gmo non",
+    "price": 2.99
+  },
+  {
+    "name": "bunch cilantro",
+    "price": 1.99
+  },
+  {
+    "name": "cherry tomato",
+    "price": 2.5
+  },
+  {
+    "name": "chicken plain roti",
+    "price": 7.99
+  },
+  {
+    "name": "cream sour",
+    "price": 1.69
+  },
+  {
+    "name": "fiesta shred",
+    "price": 6.99
+  },
+  {
+    "name": "heart romaine",
+    "price": 3.99
+  },
+  {
+    "name": "light roast",
+    "price": 4.99
+  },
+  {
+    "name": "lime",
+    "price": 1.2
+  },
+  {
+    "name": "onion sweet",
+    "price": 0.77
+  },
+  {
+    "name": "tortilla wheat whole",
+    "price": 3.49
+  }
+]

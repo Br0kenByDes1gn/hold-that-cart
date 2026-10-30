@@ -1,0 +1,46 @@
+[
+  {
+    "name": "avocado hass",
+    "price": 2.99
+  },
+  {
+    "name": "banana",
+    "price": 1.44
+  },
+  {
+    "name": "banana",
+    "price": 3.2
+  },
+  {
+    "name": "bar cookie",
+    "price": 1.95
+  },
+  {
+    "name": "blueberry",
+    "price": 8.29
+  },
+  {
+    "name": "chip salt tortilla",
+    "price": 4.99
+  },
+  {
+    "name": "chunk mango",
+    "price": 5.69
+  },
+  {
+    "name": "gingerade kombucha",
+    "price": 9.29
+  },
+  {
+    "name": "grape red seedless",
+    "price": 7.99
+  },
+  {
+    "name": "packet smoothie",
+    "price": 6.99
+  },
+  {
+    "name": "strawberry",
+    "price": 13.98
+  }
+]

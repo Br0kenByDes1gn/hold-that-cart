@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · wholefoods-north-miami</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+       white-space: nowrap; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; vertical-align: top; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+  tr.json-row td { border-bottom: 1px solid #10283d; padding-bottom: 8px; }
+  details summary { cursor: pointer; color: #8aa4c0; font-size: 11px; }
+  pre { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+        padding: 10px; overflow: auto; font-size: 11px; margin: 6px 0 0; }
+  code { font-size: 11px; color: #8aa4c0; }
+</style>
+</head>
+<body>
+  <h1>wholefoods-north-miami</h1>
+  <div class="meta">Screenshot_2026-10-28_at_9.29.48_AM.png · 490×922 · 108 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/Screenshot_2026-10-28_at_9.29.48_AM.png" alt="wholefoods-north-miami source image">
+      <p class="note"><strong>What to check:</strong> Crumpled receipt, weighed items (lb), discounts, bag refund.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>11</b></span>
+        <span>total qty <b>20.87</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ banana</li>
+<li class="ok">✓ kombucha</li>
+<li class="bad">✗ mango chunks</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>avocado hass</td>
+      <td class="num">2.99</td>
+    </tr>
+<tr>
+      <td>banana</td>
+      <td class="num">1.44</td>
+    </tr>
+<tr>
+      <td>banana</td>
+      <td class="num">3.20</td>
+    </tr>
+<tr>
+      <td>bar cookie</td>
+      <td class="num">1.95</td>
+    </tr>
+<tr>
+      <td>blueberry</td>
+      <td class="num">8.29</td>
+    </tr>
+<tr>
+      <td>chip salt tortilla</td>
+      <td class="num">4.99</td>
+    </tr>
+<tr>
+      <td>chunk mango</td>
+      <td class="num">5.69</td>
+    </tr>
+<tr>
+      <td>gingerade kombucha</td>
+      <td class="num">9.29</td>
+    </tr>
+<tr>
+      <td>grape red seedless</td>
+      <td class="num">7.99</td>
+    </tr>
+<tr>
+      <td>packet smoothie</td>
+      <td class="num">6.99</td>
+    </tr>
+<tr>
+      <td>strawberry</td>
+      <td class="num">13.98</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>All extracted properties (last run — not asserted)</h2>
+      <table>
+        <thead><tr><th class="">rawName</th><th class="">normalizedName</th><th class="">brand</th><th class="num">qty</th><th class="num">packQty</th><th class="">packUnit</th><th class="">unit</th><th class="num">price</th><th class="">store</th><th class="num">confidence</th></tr></thead>
+        <tbody>
+<tr><td class="">HASS AVOCADO BAG 6CT</td><td class="">hass avocado</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num">6</td><td class="">ct</td><td class=""><span class="dim">—</span></td><td class="num">2.99</td><td class="">Whole Foods Market</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;HASS AVOCADO BAG 6CT&quot;,
+  &quot;normalizedName&quot;: &quot;hass avocado&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 6,
+  &quot;packUnit&quot;: &quot;ct&quot;,
+  &quot;price&quot;: 2.99,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">BANANA</td><td class="">banana</td><td class=""><span class="dim">—</span></td><td class="num">2.08</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="">lb</td><td class="num">1.44</td><td class="">Whole Foods Market</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;BANANA&quot;,
+  &quot;normalizedName&quot;: &quot;banana&quot;,
+  &quot;qty&quot;: 2.08,
+  &quot;unit&quot;: &quot;lb&quot;,
+  &quot;price&quot;: 1.44,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">BANANA</td><td class="">banana</td><td class=""><span class="dim">—</span></td><td class="num">4.64</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="">lb</td><td class="num">3.2</td><td class="">Whole Foods Market</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;BANANA&quot;,
+  &quot;normalizedName&quot;: &quot;banana&quot;,
+  &quot;qty&quot;: 4.64,
+  &quot;unit&quot;: &quot;lb&quot;,
+  &quot;price&quot;: 3.2,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">COOKIE BAR</td><td class="">cookie bar</td><td class=""><span class="dim">—</span></td><td class="num">0.15</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="">lb</td><td class="num">1.95</td><td class="">Whole Foods Market</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;COOKIE BAR&quot;,
+  &quot;normalizedName&quot;: &quot;cookie bar&quot;,
+  &quot;qty&quot;: 0.15,
+  &quot;unit&quot;: &quot;lb&quot;,
+  &quot;price&quot;: 1.95,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+<tr><td class="">365WFM OG BLUEBERRY</td><td class="">organic blueberry</td><td class="">365WFM</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">8.29</td><td class="">Whole Foods Market</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;365WFM OG BLUEBERRY&quot;,
+  &quot;normalizedName&quot;: &quot;organic blueberry&quot;,
+  &quot;brand&quot;: &quot;365WFM&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 8.29,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">LTJLY OG SALT TORT CHIPS</td><td class="">organic salt tortilla chip</td><td class="">LTJLY</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.99</td><td class="">Whole Foods Market</td><td class="num">0.9</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;LTJLY OG SALT TORT CHIPS&quot;,
+  &quot;normalizedName&quot;: &quot;organic salt tortilla chip&quot;,
+  &quot;brand&quot;: &quot;LTJLY&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.99,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">365WFM OG MANGO CHUNKS</td><td class="">organic mango chunk</td><td class="">365WFM</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.69</td><td class="">Whole Foods Market</td><td class="num">0.97</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;365WFM OG MANGO CHUNKS&quot;,
+  &quot;normalizedName&quot;: &quot;organic mango chunk&quot;,
+  &quot;brand&quot;: &quot;365WFM&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.69,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.97
+}</pre></details>
+      </td></tr>
+<tr><td class="">GTS GINGERADE KMBCHA</td><td class="">gingerade kombucha</td><td class="">GTS</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">9.29</td><td class="">Whole Foods Market</td><td class="num">0.95</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GTS GINGERADE KMBCHA&quot;,
+  &quot;normalizedName&quot;: &quot;gingerade kombucha&quot;,
+  &quot;brand&quot;: &quot;GTS&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 9.29,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">RED SDL GRAPES</td><td class="">red seedless grape</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">7.99</td><td class="">Whole Foods Market</td><td class="num">0.9</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;RED SDL GRAPES&quot;,
+  &quot;normalizedName&quot;: &quot;red seedless grape&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 7.99,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">PTYPLS OG SMOOTHIE PCKT</td><td class="">organic smoothie packet</td><td class="">PTYPLS</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">6.99</td><td class="">Whole Foods Market</td><td class="num">0.9</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;PTYPLS OG SMOOTHIE PCKT&quot;,
+  &quot;normalizedName&quot;: &quot;organic smoothie packet&quot;,
+  &quot;brand&quot;: &quot;PTYPLS&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 6.99,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">OG STRAWBERRIES</td><td class="">organic strawberry</td><td class=""><span class="dim">—</span></td><td class="num">2</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="">ea</td><td class="num">13.98</td><td class="">Whole Foods Market</td><td class="num">0.98</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;OG STRAWBERRIES&quot;,
+  &quot;normalizedName&quot;: &quot;organic strawberry&quot;,
+  &quot;qty&quot;: 2,
+  &quot;unit&quot;: &quot;ea&quot;,
+  &quot;price&quot;: 13.98,
+  &quot;store&quot;: &quot;Whole Foods Market&quot;,
+  &quot;confidence&quot;: 0.98
+}</pre></details>
+      </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

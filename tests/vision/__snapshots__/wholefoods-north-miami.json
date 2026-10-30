@@ -1,0 +1,20 @@
+{
+  "fixture": "wholefoods-north-miami",
+  "expectedKind": "receipt",
+  "kind": "receipt",
+  "itemCount": 11,
+  "totalQty": 20.87,
+  "prices": [
+    1.44,
+    1.95,
+    2.99,
+    3.2,
+    4.99,
+    5.69,
+    6.99,
+    7.99,
+    8.29,
+    9.29,
+    13.98
+  ]
+}
