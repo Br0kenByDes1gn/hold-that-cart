@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · marketfresh-riverton</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+       white-space: nowrap; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; vertical-align: top; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+  tr.json-row td { border-bottom: 1px solid #10283d; padding-bottom: 8px; }
+  details summary { cursor: pointer; color: #8aa4c0; font-size: 11px; }
+  pre { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+        padding: 10px; overflow: auto; font-size: 11px; margin: 6px 0 0; }
+  code { font-size: 11px; color: #8aa4c0; }
+</style>
+</head>
+<body>
+  <h1>marketfresh-riverton</h1>
+  <div class="meta">marketfresh.jpeg · 736×1104 · 151 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/marketfresh.jpeg" alt="marketfresh-riverton source image">
+      <p class="note"><strong>What to check:</strong> Clean US receipt photo, 27 items, frozen goods, household items, tax + card lines.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>27</b></span>
+        <span>total qty <b>38</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="bad">✗ ice cream</li>
+<li class="ok">✓ gelato</li>
+<li class="ok">✓ applesauce</li>
+<li class="bad">✗ pizza rolls</li>
+<li class="bad">✗ laundry detergent</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>apple caramel</td>
+      <td class="num">2.48</td>
+    </tr>
+<tr>
+      <td>applesauce</td>
+      <td class="num">5.49</td>
+    </tr>
+<tr>
+      <td>bar</td>
+      <td class="num">5.98</td>
+    </tr>
+<tr>
+      <td>bar cream ice</td>
+      <td class="num">4.49</td>
+    </tr>
+<tr>
+      <td>bottle spray</td>
+      <td class="num">1.28</td>
+    </tr>
+<tr>
+      <td>by foot fruit the</td>
+      <td class="num">3.48</td>
+    </tr>
+<tr>
+      <td>cereal</td>
+      <td class="num">3.98</td>
+    </tr>
+<tr>
+      <td>colored pencil pre sharpened</td>
+      <td class="num">4.28</td>
+    </tr>
+<tr>
+      <td>comfort complete pillow</td>
+      <td class="num">12.97</td>
+    </tr>
+<tr>
+      <td>crayon</td>
+      <td class="num">2.97</td>
+    </tr>
+<tr>
+      <td>cream ice</td>
+      <td class="num">4.99</td>
+    </tr>
+<tr>
+      <td>degree</td>
+      <td class="num">4.48</td>
+    </tr>
+<tr>
+      <td>deodorant men</td>
+      <td class="num">4.48</td>
+    </tr>
+<tr>
+      <td>detergent laundry</td>
+      <td class="num">11.94</td>
+    </tr>
+<tr>
+      <td>drink energy</td>
+      <td class="num">2.48</td>
+    </tr>
+<tr>
+      <td>fiber oat</td>
+      <td class="num">4.48</td>
+    </tr>
+<tr>
+      <td>frozen yogurt</td>
+      <td class="num">3.99</td>
+    </tr>
+<tr>
+      <td>fruit roll up</td>
+      <td class="num">3.48</td>
+    </tr>
+<tr>
+      <td>gelato</td>
+      <td class="num">4.99</td>
+    </tr>
+<tr>
+      <td>jewelry</td>
+      <td class="num">19.99</td>
+    </tr>
+<tr>
+      <td>lickable puree</td>
+      <td class="num">4.99</td>
+    </tr>
+<tr>
+      <td>lickable spoon</td>
+      <td class="num">4.99</td>
+    </tr>
+<tr>
+      <td>oat protein</td>
+      <td class="num">4.98</td>
+    </tr>
+<tr>
+      <td>pizza roll</td>
+      <td class="num">3.98</td>
+    </tr>
+<tr>
+      <td>popcorn</td>
+      <td class="num">3.48</td>
+    </tr>
+<tr>
+      <td>probiotic soda</td>
+      <td class="num">2.48</td>
+    </tr>
+<tr>
+      <td>salsa verde</td>
+      <td class="num">2.78</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>All extracted properties (last run — not asserted)</h2>
+      <table>
+        <thead><tr><th class="">rawName</th><th class="">normalizedName</th><th class="">brand</th><th class="num">qty</th><th class="num">packQty</th><th class="">packUnit</th><th class="">unit</th><th class="num">price</th><th class="">store</th><th class="num">confidence</th></tr></thead>
+        <tbody>
+<tr><td class="">OLIPOP Caramel Apple</td><td class="">caramel apple</td><td class="">OLIPOP</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;OLIPOP Caramel Apple&quot;,
+  &quot;normalizedName&quot;: &quot;caramel apple&quot;,
+  &quot;brand&quot;: &quot;OLIPOP&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Mott's Applesauce</td><td class="">applesauce</td><td class="">Mott's</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.49</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Mott's Applesauce&quot;,
+  &quot;normalizedName&quot;: &quot;applesauce&quot;,
+  &quot;brand&quot;: &quot;Mott's&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.49,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Klondike Bars</td><td class="">bar</td><td class="">Klondike</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.98</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Klondike Bars&quot;,
+  &quot;normalizedName&quot;: &quot;bar&quot;,
+  &quot;brand&quot;: &quot;Klondike&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.98,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Magnum Ice Cream Bars</td><td class="">ice cream bar</td><td class="">Magnum</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.49</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Magnum Ice Cream Bars&quot;,
+  &quot;normalizedName&quot;: &quot;ice cream bar&quot;,
+  &quot;brand&quot;: &quot;Magnum&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.49,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Great Value Spray Bottle</td><td class="">spray bottle</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.28</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Great Value Spray Bottle&quot;,
+  &quot;normalizedName&quot;: &quot;spray bottle&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.28,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Fruit By The Foot</td><td class="">fruit by the foot</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Fruit By The Foot&quot;,
+  &quot;normalizedName&quot;: &quot;fruit by the foot&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">General Mills Cereal</td><td class="">cereal</td><td class="">General Mills</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.98</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;General Mills Cereal&quot;,
+  &quot;normalizedName&quot;: &quot;cereal&quot;,
+  &quot;brand&quot;: &quot;General Mills&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.98,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Crayola 12ct Pre-sharpened Colored Pencils</td><td class="">pre-sharpened colored pencil</td><td class="">Crayola</td><td class="num">1</td><td class="num">12</td><td class="">ct</td><td class=""><span class="dim">—</span></td><td class="num">4.28</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Crayola 12ct Pre-sharpened Colored Pencils&quot;,
+  &quot;normalizedName&quot;: &quot;pre-sharpened colored pencil&quot;,
+  &quot;brand&quot;: &quot;Crayola&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 12,
+  &quot;packUnit&quot;: &quot;ct&quot;,
+  &quot;price&quot;: 4.28,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Mainstays Comfort Complete Pillow</td><td class="">comfort complete pillow</td><td class="">Mainstays</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">12.97</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Mainstays Comfort Complete Pillow&quot;,
+  &quot;normalizedName&quot;: &quot;comfort complete pillow&quot;,
+  &quot;brand&quot;: &quot;Mainstays&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 12.97,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Crayola Crayons</td><td class="">crayon</td><td class="">Crayola</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.97</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Crayola Crayons&quot;,
+  &quot;normalizedName&quot;: &quot;crayon&quot;,
+  &quot;brand&quot;: &quot;Crayola&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.97,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Ben &amp; Jerry's Ice Cream</td><td class="">ice cream</td><td class="">Ben &amp; Jerry's</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.99</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Ben &amp; Jerry's Ice Cream&quot;,
+  &quot;normalizedName&quot;: &quot;ice cream&quot;,
+  &quot;brand&quot;: &quot;Ben &amp; Jerry's&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.99,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Degree</td><td class="">degree</td><td class="">Degree</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Degree&quot;,
+  &quot;normalizedName&quot;: &quot;degree&quot;,
+  &quot;brand&quot;: &quot;Degree&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Degree Men Deodorant</td><td class="">men deodorant</td><td class="">Degree</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Degree Men Deodorant&quot;,
+  &quot;normalizedName&quot;: &quot;men deodorant&quot;,
+  &quot;brand&quot;: &quot;Degree&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Dreft Laundry Detergent</td><td class="">laundry detergent</td><td class="">Dreft</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">11.94</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Dreft Laundry Detergent&quot;,
+  &quot;normalizedName&quot;: &quot;laundry detergent&quot;,
+  &quot;brand&quot;: &quot;Dreft&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 11.94,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">ZOA Energy Drink</td><td class="">energy drink</td><td class="">ZOA</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;ZOA Energy Drink&quot;,
+  &quot;normalizedName&quot;: &quot;energy drink&quot;,
+  &quot;brand&quot;: &quot;ZOA&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Quaker Fiber Oats</td><td class="">fiber oat</td><td class="">Quaker</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Quaker Fiber Oats&quot;,
+  &quot;normalizedName&quot;: &quot;fiber oat&quot;,
+  &quot;brand&quot;: &quot;Quaker&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Yasso Frozen Yogurt</td><td class="">frozen yogurt</td><td class="">Yasso</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.99</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Yasso Frozen Yogurt&quot;,
+  &quot;normalizedName&quot;: &quot;frozen yogurt&quot;,
+  &quot;brand&quot;: &quot;Yasso&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.99,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Fruit Roll-Ups</td><td class="">fruit roll-up</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Fruit Roll-Ups&quot;,
+  &quot;normalizedName&quot;: &quot;fruit roll-up&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Talenti Gelato</td><td class="">gelato</td><td class="">Talenti</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.99</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Talenti Gelato&quot;,
+  &quot;normalizedName&quot;: &quot;gelato&quot;,
+  &quot;brand&quot;: &quot;Talenti&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.99,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Cate &amp; Chloe Jewelry</td><td class="">jewelry</td><td class="">Cate &amp; Chloe</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">19.99</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Cate &amp; Chloe Jewelry&quot;,
+  &quot;normalizedName&quot;: &quot;jewelry&quot;,
+  &quot;brand&quot;: &quot;Cate &amp; Chloe&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 19.99,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">TEMPTATIONS Lickable Puree</td><td class="">lickable puree</td><td class="">Temptations</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.99</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;TEMPTATIONS Lickable Puree&quot;,
+  &quot;normalizedName&quot;: &quot;lickable puree&quot;,
+  &quot;brand&quot;: &quot;Temptations&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.99,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">TEMPTATIONS Lickable Spoons</td><td class="">lickable spoon</td><td class="">Temptations</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.99</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;TEMPTATIONS Lickable Spoons&quot;,
+  &quot;normalizedName&quot;: &quot;lickable spoon&quot;,
+  &quot;brand&quot;: &quot;Temptations&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.99,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Quaker Protein Oats</td><td class="">protein oat</td><td class="">Quaker</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">4.98</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Quaker Protein Oats&quot;,
+  &quot;normalizedName&quot;: &quot;protein oat&quot;,
+  &quot;brand&quot;: &quot;Quaker&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 4.98,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Totino's Pizza Rolls</td><td class="">pizza roll</td><td class="">Totino's</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.98</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Totino's Pizza Rolls&quot;,
+  &quot;normalizedName&quot;: &quot;pizza roll&quot;,
+  &quot;brand&quot;: &quot;Totino's&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.98,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Smartfood Popcorn</td><td class="">popcorn</td><td class="">Smartfood</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Smartfood Popcorn&quot;,
+  &quot;normalizedName&quot;: &quot;popcorn&quot;,
+  &quot;brand&quot;: &quot;Smartfood&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Culture Pop Probiotic Soda</td><td class="">probiotic soda</td><td class="">Culture Pop</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.48</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Culture Pop Probiotic Soda&quot;,
+  &quot;normalizedName&quot;: &quot;probiotic soda&quot;,
+  &quot;brand&quot;: &quot;Culture Pop&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.48,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+<tr><td class="">Herdez Salsa Verde</td><td class="">salsa verde</td><td class="">Herdez</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.78</td><td class="">MarketFresh</td><td class="num">0.99</td></tr>
+      <tr class="json-row"><td colspan="10">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;Herdez Salsa Verde&quot;,
+  &quot;normalizedName&quot;: &quot;salsa verde&quot;,
+  &quot;brand&quot;: &quot;Herdez&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.78,
+  &quot;store&quot;: &quot;MarketFresh&quot;,
+  &quot;confidence&quot;: 0.99
+}</pre></details>
+      </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
