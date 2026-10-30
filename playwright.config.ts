@@ -18,7 +18,7 @@ export default defineConfig({
     browserName: "chromium",
   },
   webServer: {
-    command: `pnpm build && PORT=${PORT} PGLITE_DIR=.data/e2e node dist-server/index.js`,
+    command: `pnpm build && PORT=${PORT} PGLITE_DIR=.data/e2e PANTRY_CLASSIFY=off node dist-server/index.js`,
     url: `http://127.0.0.1:${PORT}/api/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

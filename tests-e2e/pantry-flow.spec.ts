@@ -20,6 +20,12 @@ test.describe("seeded pantry flow", () => {
     await expect(page.getByRole("heading", { name: "Skip" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Swap" })).toBeVisible();
 
+    const firstArt = page.locator(".pantry-card-art img").first();
+    await expect(firstArt).toBeVisible();
+    await expect
+      .poll(() => firstArt.evaluate((img) => (img as HTMLImageElement).naturalWidth))
+      .toBeGreaterThan(0);
+
     await page.getByRole("link", { name: /Rice/ }).first().click();
     await expect(page).toHaveURL(/\/pantry\/[0-9a-f-]+$/);
     await expect(page.getByRole("heading", { name: "Rice" })).toBeVisible();

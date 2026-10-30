@@ -1,5 +1,15 @@
-import { extractedItemSchema, productEnrichmentSchema } from "../../shared/schemas.js";
-import type { AIProvider, ProductEnrichmentLike } from "./provider.js";
+import {
+  extractedItemSchema,
+  pantryInsightResponseSchema,
+  productEnrichmentSchema,
+} from "../../shared/schemas.js";
+import { normalizeName } from "../domain/normalize.js";
+import type {
+  AIProvider,
+  PantryClassifyInput,
+  PantryClassifyResult,
+  ProductEnrichmentLike,
+} from "./provider.js";
 
 // ── Prompt builders (exported for tests / tuning) ──
 
@@ -41,6 +51,32 @@ export function enrichmentUser(name: string, brand?: string, form?: string): str
   if (brand) s += ` | Brand: ${brand}`;
   if (form) s += ` | Form/packaging: ${form}`;
   return s + "\nReturn the knowledge JSON.";
+}
+
+export const PANTRY_CLASSIFY_SYSTEM = `You classify grocery items already extracted from a receipt for a pantry app.
+Output JSON ONLY, no markdown, no commentary, with this shape:
+{"items":[{"normalizedName":string,"savesMoney":verdict,"healthy":verdict,"sustainable":verdict,"swap":false | {"name":string,"savesMoney":verdict,"healthy":verdict,"sustainable":verdict}}]}
+Each verdict is: {"verdict": true | false | null, "confidence": number 0-1, "reason": string}
+Rules:
+- Only return items from the input, one per input item, using the same normalizedName.
+- savesMoney: likely cheaper than a typical alternative. Be conservative.
+- healthy: generally healthier for a person. Be conservative and do not give medical advice.
+- sustainable: lower environmental impact. Be conservative.
+- Use verdict null when the item name does not provide enough information. Confidence must reflect how certain you are from the name alone.
+- reason: one short sentence grounded only in the product name/category. Do not claim certifications, origin, nutrition facts, or packaging you cannot know.
+- swap: a generic product type or form that is clearly better than the original because it has MORE confidently true verdicts among savesMoney, healthy, sustainable. Use false when there is no clearly better option.
+- The swap must never be a brand, SKU, store name, or price. It is a product type/form such as "store-brand version", "larger pack", "refill", "wholegrain version", or "plant-based alternative".
+- Never invent items that are not in the input. Never include prices or savings figures.`;
+
+export function pantryClassifyUser(items: PantryClassifyInput[]): string {
+  return `Classify these items:\n${JSON.stringify(
+    items.map((item) => ({
+      rawName: item.rawName,
+      normalizedName: item.normalizedName,
+      brand: item.brand ?? null,
+      qty: item.qty ?? 1,
+    })),
+  )}\nReturn the pantry insight JSON.`;
 }
 
 // ── Meta Model API client (OpenAI-compatible Chat Completions) ──
@@ -177,6 +213,39 @@ export class MetaProvider implements AIProvider {
       modelName: this.model,
       promptVersion: "v1",
       generatedAt: new Date().toISOString(),
+    };
+  }
+
+  async classifyPantryItems(items: PantryClassifyInput[]): Promise<PantryClassifyResult> {
+    const content = await this.chat(
+      [
+        { role: "system", content: PANTRY_CLASSIFY_SYSTEM },
+        { role: "user", content: pantryClassifyUser(items) },
+      ],
+      4000,
+    );
+    const raw = JSON.parse(content);
+    assertNoPrices(raw);
+    const parsed = pantryInsightResponseSchema.parse(raw);
+
+    const allowed = new Set(
+      items.map((item) => normalizeName(item.normalizedName || item.rawName)),
+    );
+    const seen = new Set<string>();
+    const filtered = parsed.items.filter((item) => {
+      const key = normalizeName(item.normalizedName);
+      if (!allowed.has(key) || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    return {
+      items: filtered,
+      rawItems: Array.isArray((raw as { items?: unknown[] }).items)
+        ? (raw as { items: unknown[] }).items
+        : [],
+      modelName: this.model,
+      promptVersion: "pantry-v1",
     };
   }
 }

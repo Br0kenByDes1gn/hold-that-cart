@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "../api";
 
@@ -240,6 +240,7 @@ function ActionIcon({ action }: { action: ActionKind }) {
 
 export function ScannerScreen() {
   const nav = useNavigate();
+  const qc = useQueryClient();
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const requestIdRef = useRef(0);
@@ -462,6 +463,7 @@ export function ScannerScreen() {
       return api.confirmScan(scanId, detectedKind, payload);
     },
     onSuccess: (data: any) => {
+      qc.invalidateQueries();
       if (data.listId) nav({ to: "/lists/$listId", params: { listId: data.listId } });
       else nav({ to: "/pantry" });
     },
@@ -631,7 +633,19 @@ export function ScannerScreen() {
                 <input
                   value={it.rawName}
                   onChange={(e) =>
-                    setExtracted(extracted.map((x, j) => (j === i ? { ...x, rawName: e.target.value } : x)))
+                    setExtracted(
+                      extracted.map((x, j) =>
+                        j === i
+                          ? {
+                              ...x,
+                              rawName: e.target.value,
+                              normalizedName: e.target.value,
+                              productId: null,
+                              match: undefined,
+                            }
+                          : x,
+                      ),
+                    )
                   }
                 />
                 <div className="dim">
@@ -653,7 +667,9 @@ export function ScannerScreen() {
             </button>
             <button onClick={() => confirm.mutate()} disabled={confirm.isPending}>
               {confirm.isPending
-                ? "Saving…"
+                ? detectedKind === "receipt"
+                  ? "Classifying items…"
+                  : "Saving…"
                 : detectedKind === "receipt"
                   ? "Confirm → add to pantry"
                   : "Confirm → make list"}

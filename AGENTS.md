@@ -26,6 +26,11 @@ that file are explicitly **out of scope**, see "Not built yet").
 3. **Money tags only from the user's own receipts** — median unit prices,
    ≥10% difference, same base unit (€/kg, €/L, €/each, €/wash).
    Unverified model swaps never display a € figure or light the money tag.
+   **Pantry exception:** the Pantry section view may use the pantry
+   classification prompt's `savesMoney` / `healthy` / `sustainable` / `swap`
+   fields as **AI estimates**. Code still validates the swap
+   and decides SWAP/BUY/SKIP. These estimates never drive € figures or the
+   receipt-derived money evidence used by the briefing.
 4. **Shelf-life policy** (class comes from enrichment, user-editable):
    perishables never SKIP; staples soft-SKIP; household SKIP; durables get
    the strongest hold alert and never auto-BUY. Unknown items get no rhythm
@@ -59,7 +64,7 @@ Zod schemas in `src/shared/schemas.ts` are the single API/AI contract.
 ```bash
 pnpm install
 pnpm run dev        # Hono API :3001 + Vite :5173 (Vite proxies /api), Ctrl-C stops both
-pnpm test           # 43 Vitest tests, must stay green
+pnpm test           # 54 Vitest tests, must stay green
 pnpm run test:e2e   # 9 Playwright tests (prod bundle, Chromium mobile) — UI, auth, pantry flow
 pnpm test:vision    # LIVE vision goldens (costs credits; needs MODEL_API_KEY)
 pnpm vision:render  # rebuild HTML previews from the last run (free, no model calls)
@@ -99,7 +104,8 @@ src/server/domain/           PURE deterministic core — no I/O except demo.ts f
   money.ts                   cheaper-variant + larger-pack evidence from receipts
   tags.ts                    tag gating (evidence-only)
   suggestions.ts             BUY/SWAP/SKIP grouping, ordering, caps
-  demo.ts                    fixture enrichments + demo purchase plan (dates relative to now)
+  pantrySection.ts           pantry insight → SWAP/BUY/SKIP section + tag mapping
+  demo.ts                    fixture enrichments, demo insights, purchase plan (dates relative to now)
 src/server/ai/provider.ts    AIProvider interface; Stub until MODEL_API_KEY set
 src/server/ai/meta.ts        Muse prompts, Meta API client, price guard
 src/client/router.tsx        routes: / (=Mode) /mode /briefing /scanner /pantry /pantry/:id /lists/:id /quick-view /analyse (stub) /signup /login (visuals only)
@@ -147,9 +153,10 @@ the cross-household enrichment cache keyed by name(+brand/form).
 POST /api/households            device upsert (anonymous id; email attachable via PATCH /api/households/me)
 GET  /api/catalog               demo catalogue + household products (autocomplete)
 POST /api/scans                 store ExtractedItem[] JSON, returns product matches
-POST /api/scans/:id/confirm     receipt → purchases; list/cart → shopping list (or ?listId= to tick)
+POST /api/scans/:id/confirm     receipt → purchases + pantry insights; list/cart → shopping list
 POST /api/purchases/manual      single-item purchase entry
 GET  /api/pantry  GET /api/pantry/:id     derived state, history, enrichment, suggestions
+GET  /api/pantry/sections       scanned-item pantry insights grouped BUY/SKIP/SWAP
 PATCH /api/products/:id         rename, reclassify shelf-life class, mute, icon
 POST /api/products/:id/corrections        { type: im_out | never_remind }
 POST /api/products/:id/enrich          manual enrichment (validated, price-rejecting)
@@ -175,6 +182,12 @@ GET  /api/health
 - Enrichment is generated once per knowledge key and cached; briefings never
   call the model inline. No personal data (history, prices) is ever sent —
   name/brand/form only.
+- The pantry classification prompt (`classifyPantryItems`) runs on confirmed
+  receipt items only. The model returns AI estimates for `savesMoney`,
+  `healthy`, `sustainable`, and `swap` as `{ verdict, confidence, reason }`.
+  `domain/pantrySection.ts` only counts a parameter when `verdict: true` has
+  confidence ≥0.5, validates the swap, and chooses the Pantry section. Set
+  `PANTRY_CLASSIFY=off` for deterministic tests.
 - Tests mock `fetch` (`tests/ai.test.ts`). Never call the live API in tests —
   it costs credits and is non-deterministic.
 

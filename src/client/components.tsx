@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { productArtFor } from "./lib/productArt";
 
 export interface IconEntry {
   slug: string;
@@ -61,7 +62,9 @@ export function Tags({ tags }: { tags: string[] }) {
 }
 
 export function ProductArt({ name, icon, icons, size = 56 }: { name: string; icon?: string | null; icons: IconEntry[]; size?: number }) {
-  const src = iconFor(name, icon, icons);
+  const local = productArtFor(name, icon);
+  const registrySrc = local ? null : iconFor(name, icon, icons);
+  const src = local ?? (registrySrc ? `/${registrySrc}` : null);
   if (!src) return <div className="art-fallback" style={{ width: size, height: size }}>📦</div>;
-  return <img src={`/${src}`} alt={name} width={size} height={size} className="art" loading="lazy" />;
+  return <img src={src} alt={name} width={size} height={size} className="art" loading="lazy" />;
 }

@@ -57,6 +57,29 @@ CREATE TABLE IF NOT EXISTS purchases (
   scan_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+CREATE TABLE IF NOT EXISTS product_insights (
+  id TEXT PRIMARY KEY,
+  household_id TEXT NOT NULL REFERENCES households(id),
+  product_id TEXT NOT NULL REFERENCES products(id),
+  scan_id TEXT,
+  saves_money BOOLEAN NOT NULL DEFAULT FALSE,
+  healthy BOOLEAN NOT NULL DEFAULT FALSE,
+  sustainable BOOLEAN NOT NULL DEFAULT FALSE,
+  swap_name TEXT,
+  swap_saves_money BOOLEAN,
+  swap_healthy BOOLEAN,
+  swap_sustainable BOOLEAN,
+  assessment JSONB,
+  source TEXT NOT NULL DEFAULT 'scan',
+  model_name TEXT,
+  prompt_version TEXT,
+  classification_error TEXT,
+  raw_json JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+ALTER TABLE product_insights ADD COLUMN IF NOT EXISTS raw_json JSONB;
+ALTER TABLE product_insights ADD COLUMN IF NOT EXISTS assessment JSONB;
+ALTER TABLE product_insights ADD COLUMN IF NOT EXISTS classification_error TEXT;
 CREATE TABLE IF NOT EXISTS scans (
   id TEXT PRIMARY KEY,
   household_id TEXT NOT NULL REFERENCES households(id),

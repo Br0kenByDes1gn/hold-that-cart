@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { api } from "../api";
-import { ProductArt, Tags, iconFor, useIconRegistry } from "../components";
+import { ProductArt, Tags, useIconRegistry } from "../components";
+import { productArtFor } from "../lib/productArt";
 
 import profilePic from "../../../assets/page-icons/profilepic.png";
 import pantryBoxArt from "../../../assets/page-icons/businesspantry.png";
@@ -29,10 +30,9 @@ function PantryTag({ kind, on }: { kind: TagKind; on: boolean }) {
 }
 
 export function PantryScreen() {
-  const icons = useIconRegistry();
   const q = useQuery({
-    queryKey: ["briefing", "pantry"],
-    queryFn: () => api.briefing({ buy: 50, swap: 50, skip: 50 }),
+    queryKey: ["pantry", "sections"],
+    queryFn: api.pantrySections,
   });
   const sections: PantrySection[] = q.data
     ? [
@@ -56,12 +56,12 @@ export function PantryScreen() {
       {q.isLoading && <p className="dim" style={{ padding: 16 }}>Loading…</p>}
       {q.isError && (
         <p className="error" style={{ padding: 16 }}>
-          Couldn't load. Load the demo pantry from the home screen first.
+          Couldn't load your pantry. Try again in a moment.
         </p>
       )}
       {q.data && empty && (
         <p className="dim" style={{ padding: 16 }}>
-          Pantry is empty. Load the demo pantry or scan a receipt.
+          Pantry is empty. Scan a receipt to add items.
         </p>
       )}
 
@@ -79,12 +79,12 @@ export function PantryScreen() {
               <div className="pantry-grid">
                 {section.items.map((item: any, i: number) => {
                   const tags = new Set<string>(item.tags ?? []);
-                  const art = iconFor(item.rawName, undefined, icons);
+                  const art = productArtFor(item.rawName, item.icon);
                   const card = (
                     <>
                       <div className="pantry-card-main">
                         <div className="pantry-card-art">
-                          {art ? <img src={`/${art}`} alt={item.rawName} /> : null}
+                          {art ? <img src={art} alt={item.rawName} /> : null}
                         </div>
                         <div className="pantry-card-tags">
                           <PantryTag kind="money" on={tags.has("money")} />

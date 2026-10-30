@@ -1,3 +1,5 @@
+import type { PantryItemInsight } from "../../shared/schemas.js";
+
 export interface ExtractedItemLike {
   rawName: string;
   normalizedName: string;
@@ -23,6 +25,21 @@ export interface ProductEnrichmentLike {
   generatedAt?: string;
 }
 
+export interface PantryClassifyInput {
+  rawName: string;
+  normalizedName: string;
+  brand?: string;
+  qty?: number;
+}
+
+export interface PantryClassifyResult {
+  items: PantryItemInsight[];
+  /** Raw per-item JSON exactly as parsed from the model response. */
+  rawItems?: unknown[];
+  modelName?: string;
+  promptVersion?: string;
+}
+
 export interface AIProvider {
   name: string;
   extractItems(image: Buffer, mimeType: string): Promise<unknown>;
@@ -31,6 +48,7 @@ export interface AIProvider {
     brand?: string;
     form?: string;
   }): Promise<ProductEnrichmentLike>;
+  classifyPantryItems(items: PantryClassifyInput[]): Promise<PantryClassifyResult>;
 }
 
 export class StubAIProvider implements AIProvider {
@@ -40,6 +58,9 @@ export class StubAIProvider implements AIProvider {
   }
   async enrichProduct(): Promise<never> {
     throw new Error("AI enrichment not configured");
+  }
+  async classifyPantryItems(): Promise<never> {
+    throw new Error("AI pantry classification not configured");
   }
 }
 

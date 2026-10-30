@@ -48,7 +48,7 @@ to enable photo extraction + AI enrichment. Everything else works without it.
 ## Tests
 
 ```bash
-pnpm test           # 43 unit/API tests (offline)
+pnpm test           # 54 tests: rhythm, matching, money, suggestions, pantry sectioning, canonical pooling, API, AI contracts
 pnpm run test:e2e   # 9 Playwright tests (prod bundle)
 pnpm test:vision    # LIVE vision goldens — costs credits
 ```

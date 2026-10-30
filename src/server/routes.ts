@@ -7,13 +7,16 @@ import {
   getHouseholdByDevice,
   getOrCreateProduct,
   loadAllProductViews,
+  loadLatestProductInsights,
   loadProductView,
+  saveProductInsight,
   upsertKnowledge,
 } from "./db/repo.js";
 import {
   corrections,
   households,
   listItems,
+  productInsights,
   products,
   purchases,
   scans,
@@ -31,10 +34,22 @@ import {
 } from "../shared/schemas.js";
 import { matchProduct } from "./domain/match.js";
 import { suggestForProducts } from "./domain/suggestions.js";
-import { DEMO_ITEMS, DEMO_PURCHASES, demoKnowledgeKey } from "./domain/demo.js";
+import {
+  DEMO_INSIGHTS,
+  DEMO_ITEMS,
+  DEMO_PURCHASES,
+  demoKnowledgeKey,
+} from "./domain/demo.js";
+import {
+  hasBetterSwap,
+  pantrySectionFor,
+  pantryTagsFor,
+  verdictIsYes,
+} from "./domain/pantrySection.js";
 import { knowledgeKey, normalizeName } from "./domain/normalize.js";
 import { variantStats } from "./domain/money.js";
-import { getAIProvider } from "./ai/provider.js";
+import { getAIProvider, type PantryClassifyInput } from "./ai/provider.js";
+import type { PantryItemInsight } from "../shared/schemas.js";
 
 export const routes = new Hono();
 
@@ -47,6 +62,109 @@ async function household(c: any) {
 function needHH(c: any, hh: any) {
   if (!hh) return c.json({ error: "unknown device (POST /api/households first)" }, 401);
   return null;
+}
+
+interface InsightTarget extends PantryClassifyInput {
+  productId: string;
+}
+
+function emptyVerdict() {
+  return {
+    verdict: null,
+    confidence: 0,
+    reason: "No reliable signal from the product name.",
+  };
+}
+
+function emptyInsight(normalizedName: string): PantryItemInsight {
+  return {
+    normalizedName,
+    savesMoney: emptyVerdict(),
+    healthy: emptyVerdict(),
+    sustainable: emptyVerdict(),
+    swap: false,
+  };
+}
+
+/**
+ * Run the pantry classification prompt on the final confirmed items, then
+ * store one insight per product. Classification failure is non-fatal: items
+ * still enter the pantry with conservative false values (→ SKIP).
+ */
+async function classifyAndStoreInsights(
+  householdId: string,
+  scanId: string,
+  targets: InsightTarget[],
+) {
+  if (targets.length === 0) {
+    return { classified: 0, fallback: 0, error: null as string | null };
+  }
+
+  const byKey = new Map<string, PantryItemInsight>();
+  const rawByKey = new Map<string, unknown>();
+  let modelName: string | null = null;
+  let promptVersion: string | null = null;
+  let error: string | null = null;
+
+  if (process.env.PANTRY_CLASSIFY === "off") {
+    error = "Pantry classification disabled (PANTRY_CLASSIFY=off)";
+  } else {
+    try {
+      const provider = getAIProvider();
+      const result = await provider.classifyPantryItems(
+        targets.map(({ productId: _productId, ...item }) => item),
+      );
+      modelName = result.modelName ?? provider.name;
+      promptVersion = result.promptVersion ?? "pantry-v1";
+      for (const insight of result.items) {
+        byKey.set(normalizeName(insight.normalizedName), insight);
+      }
+      for (const rawItem of result.rawItems ?? []) {
+        if (
+          rawItem &&
+          typeof rawItem === "object" &&
+          typeof (rawItem as { normalizedName?: unknown }).normalizedName === "string"
+        ) {
+          const key = normalizeName(
+            (rawItem as { normalizedName: string }).normalizedName,
+          );
+          if (!rawByKey.has(key)) rawByKey.set(key, rawItem);
+        }
+      }
+    } catch (e: any) {
+      error = String(e?.message ?? e).slice(0, 200);
+    }
+  }
+
+  for (const target of targets) {
+    const key = normalizeName(target.normalizedName);
+    const insight = byKey.get(key) ?? emptyInsight(target.normalizedName);
+    const validSwap = hasBetterSwap(insight) ? insight.swap : false;
+    await saveProductInsight({
+      householdId,
+      productId: target.productId,
+      scanId,
+      savesMoney: verdictIsYes(insight.savesMoney),
+      healthy: verdictIsYes(insight.healthy),
+      sustainable: verdictIsYes(insight.sustainable),
+      swapName: validSwap ? validSwap.name : null,
+      swapSavesMoney: validSwap ? verdictIsYes(validSwap.savesMoney) : null,
+      swapHealthy: validSwap ? verdictIsYes(validSwap.healthy) : null,
+      swapSustainable: validSwap ? verdictIsYes(validSwap.sustainable) : null,
+      assessment: insight,
+      source: byKey.has(key) ? "scan" : "fallback",
+      modelName,
+      promptVersion,
+      classificationError: byKey.has(key) ? null : error,
+      raw: rawByKey.get(key) ?? null,
+    });
+  }
+
+  return {
+    classified: byKey.size,
+    fallback: targets.length - byKey.size,
+    error,
+  };
 }
 
 // ── Catalog (autocomplete for manual add) ──
@@ -129,6 +247,7 @@ routes.post("/api/scans/:id/confirm", async (c) => {
   const purchasedAt = parsed.data.purchasedAt ? new Date(parsed.data.purchasedAt) : new Date();
   const listId = c.req.query("listId") ?? null;
   const committed: string[] = [];
+  const insightTargets = new Map<string, InsightTarget>();
 
   if (parsed.data.kind === "receipt") {
     for (const it of parsed.data.items) {
@@ -155,7 +274,24 @@ routes.post("/api/scans/:id/confirm", async (c) => {
         scanId: srows[0].id,
       });
       committed.push(prod.id);
+      if (!insightTargets.has(prod.id)) {
+        insightTargets.set(prod.id, {
+          productId: prod.id,
+          rawName: it.rawName,
+          normalizedName: canonical,
+          brand: it.brand,
+          qty: it.qty,
+        });
+      }
     }
+
+    const classification = await classifyAndStoreInsights(
+      hh!.id,
+      srows[0].id,
+      [...insightTargets.values()],
+    );
+    await db.update(scans).set({ confirmedAt: new Date() }).where(eq(scans.id, srows[0].id));
+    return c.json({ ok: true, products: committed, classification });
   } else {
     // list/cart → shopping-list items (new list, or tick existing via ?listId=)
     let targetList = listId;
@@ -193,9 +329,6 @@ routes.post("/api/scans/:id/confirm", async (c) => {
       .where(eq(scans.id, srows[0].id));
     return c.json({ ok: true, listId: targetList });
   }
-
-  await db.update(scans).set({ confirmedAt: new Date() }).where(eq(scans.id, srows[0].id));
-  return c.json({ ok: true, products: committed });
 });
 
 // ── Manual purchase ──
@@ -242,6 +375,143 @@ routes.get("/api/pantry", async (c) => {
       },
       tags: undefined,
     })),
+  });
+});
+
+/** Pantry view built only from confirmed receipt-scan insights. */
+routes.get("/api/pantry/sections", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const db = await getDb();
+  const insights = await loadLatestProductInsights(hh!.id);
+  const prows = await db
+    .select()
+    .from(products)
+    .where(eq(products.householdId, hh!.id));
+  const byId = new Map(prows.map((product) => [product.id, product]));
+
+  const grouped: Record<"buy" | "skip" | "swap", any[]> = {
+    buy: [],
+    skip: [],
+    swap: [],
+  };
+
+  for (const row of insights) {
+    const product = byId.get(row.productId);
+    if (!product) continue;
+    const stored = row.assessment as PantryItemInsight | null;
+    const storedVerdict = (value: boolean | null) => ({
+      verdict: value,
+      confidence: value === null ? 0 : 1,
+      reason: "Stored insight.",
+    });
+    const insight: PantryItemInsight =
+      stored && typeof stored === "object" && "normalizedName" in stored
+        ? stored
+        : {
+            normalizedName: normalizeName(product.name),
+            savesMoney: storedVerdict(row.savesMoney),
+            healthy: storedVerdict(row.healthy),
+            sustainable: storedVerdict(row.sustainable),
+            swap: row.swapName
+              ? {
+                  name: row.swapName,
+                  savesMoney: storedVerdict(row.swapSavesMoney),
+                  healthy: storedVerdict(row.swapHealthy),
+                  sustainable: storedVerdict(row.swapSustainable),
+                }
+              : false,
+          };
+    const section = pantrySectionFor(insight);
+    const swap = hasBetterSwap(insight) ? insight.swap : false;
+    grouped[section].push({
+      productId: product.id,
+      rawName: product.name,
+      icon: product.icon,
+      tags: pantryTagsFor(insight),
+      swapTitle: swap ? swap.name : null,
+      swapTags: swap ? pantryTagsFor(swap) : [],
+      source: row.source,
+      scanId: row.scanId,
+    });
+  }
+
+  return c.json({
+    ...grouped,
+    total: grouped.buy.length + grouped.skip.length + grouped.swap.length,
+  });
+});
+
+/** Dev-only inspection of the raw pantry classification data. */
+routes.get("/api/dev/pantry-insights", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const db = await getDb();
+  const insights = await loadLatestProductInsights(hh!.id);
+  const prows = await db
+    .select()
+    .from(products)
+    .where(eq(products.householdId, hh!.id));
+  const byId = new Map(prows.map((product) => [product.id, product]));
+
+  return c.json({
+    items: insights
+      .map((row) => {
+        const product = byId.get(row.productId);
+        if (!product) return null;
+        const stored = row.assessment as PantryItemInsight | null;
+        const storedVerdict = (value: boolean | null) => ({
+          verdict: value,
+          confidence: value === null ? 0 : 1,
+          reason: "Stored insight.",
+        });
+        const assessment: PantryItemInsight =
+          stored && typeof stored === "object" && "normalizedName" in stored
+            ? stored
+            : {
+                normalizedName: normalizeName(product.name),
+                savesMoney: storedVerdict(row.savesMoney),
+                healthy: storedVerdict(row.healthy),
+                sustainable: storedVerdict(row.sustainable),
+                swap: row.swapName
+                  ? {
+                      name: row.swapName,
+                      savesMoney: storedVerdict(row.swapSavesMoney),
+                      healthy: storedVerdict(row.swapHealthy),
+                      sustainable: storedVerdict(row.swapSustainable),
+                    }
+                  : false,
+              };
+        return {
+          productId: row.productId,
+          rawName: product.name,
+          icon: product.icon,
+          scanId: row.scanId,
+          source: row.source,
+          modelName: row.modelName,
+          promptVersion: row.promptVersion,
+          classificationError: row.classificationError,
+          createdAt: row.createdAt,
+          assessment,
+          classification: {
+            savesMoney: row.savesMoney,
+            healthy: row.healthy,
+            sustainable: row.sustainable,
+            swap: row.swapName
+              ? {
+                  name: row.swapName,
+                  savesMoney: row.swapSavesMoney ?? false,
+                  healthy: row.swapHealthy ?? false,
+                  sustainable: row.swapSustainable ?? false,
+                }
+              : false,
+          },
+          raw: row.raw ?? null,
+        };
+      })
+      .filter(Boolean),
   });
 });
 
@@ -662,6 +932,7 @@ routes.post("/api/demo/seed", async (c) => {
   for (const item of DEMO_ITEMS) {
     await upsertKnowledge(demoKnowledgeKey(item.name), item.enrichment);
   }
+  const seededInsights = new Set<string>();
   for (const p of DEMO_PURCHASES) {
     const demo = DEMO_ITEMS.find((d) => d.name === p.item);
     const prod = await getOrCreateProduct(hh!.id, p.item, { icon: demo?.icon });
@@ -676,6 +947,28 @@ routes.post("/api/demo/seed", async (c) => {
           icon: demo.icon,
         })
         .where(eq(products.id, prod.id));
+    }
+    const insight = DEMO_INSIGHTS[p.item];
+    if (insight && !seededInsights.has(prod.id)) {
+      seededInsights.add(prod.id);
+      const swap = insight.swap;
+      await saveProductInsight({
+        householdId: hh!.id,
+        productId: prod.id,
+        scanId: null,
+        savesMoney: verdictIsYes(insight.savesMoney),
+        healthy: verdictIsYes(insight.healthy),
+        sustainable: verdictIsYes(insight.sustainable),
+        swapName: swap?.name ?? null,
+        swapSavesMoney: swap ? verdictIsYes(swap.savesMoney) : null,
+        swapHealthy: swap ? verdictIsYes(swap.healthy) : null,
+        swapSustainable: swap ? verdictIsYes(swap.sustainable) : null,
+        assessment: { normalizedName: p.item, ...insight },
+        source: "demo",
+        modelName: "fixture",
+        promptVersion: "demo-v1",
+        raw: { normalizedName: p.item, ...insight },
+      });
     }
     const purchasedAt = new Date(now.getTime() - p.daysAgo * 86_400_000);
     await addPurchase({
@@ -705,6 +998,7 @@ routes.post("/api/demo/reset", async (c) => {
     await db.delete(listItems).where(eq(listItems.listId, l.id));
   }
   await db.delete(shoppingLists).where(eq(shoppingLists.householdId, hh!.id));
+  await db.delete(productInsights).where(eq(productInsights.householdId, hh!.id));
   await db.delete(purchases).where(eq(purchases.householdId, hh!.id));
   await db.delete(corrections).where(eq(corrections.householdId, hh!.id));
   await db.delete(scans).where(eq(scans.householdId, hh!.id));

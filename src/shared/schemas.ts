@@ -92,6 +92,41 @@ export const productEnrichmentSchema = z.object({
 });
 export type ProductEnrichment = z.infer<typeof productEnrichmentSchema>;
 
+// ── Pantry classification (model-provided estimates) ──
+// The model classifies already-extracted receipt items. The server validates
+// the swap and deterministically decides the pantry section.
+
+export const pantryVerdictSchema = z.object({
+  verdict: z.boolean().nullable(),
+  confidence: z.number().min(0).max(1),
+  reason: z.string().min(1).max(280),
+});
+export type PantryVerdict = z.infer<typeof pantryVerdictSchema>;
+
+export const pantrySwapSchema = z.object({
+  name: z.string().min(1).max(120),
+  savesMoney: pantryVerdictSchema,
+  healthy: pantryVerdictSchema,
+  sustainable: pantryVerdictSchema,
+});
+
+export const pantryItemInsightSchema = z.object({
+  normalizedName: z.string().min(1),
+  savesMoney: pantryVerdictSchema,
+  healthy: pantryVerdictSchema,
+  sustainable: pantryVerdictSchema,
+  swap: z
+    .union([z.literal(false), pantrySwapSchema])
+    .nullish()
+    .transform((value) => value ?? false),
+});
+export type PantryItemInsight = z.infer<typeof pantryItemInsightSchema>;
+
+export const pantryInsightResponseSchema = z.object({
+  items: z.array(pantryItemInsightSchema),
+});
+export type PantryInsightResponse = z.infer<typeof pantryInsightResponseSchema>;
+
 // ── Suggestions (engine output) ──
 
 export const tagKindSchema = z.enum(["money", "health", "planet"]);
