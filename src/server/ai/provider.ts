@@ -28,6 +28,7 @@ export interface ProductEnrichmentLike {
 export interface PantryClassifyInput {
   rawName: string;
   normalizedName: string;
+  category?: string;
   brand?: string;
   qty?: number;
 }

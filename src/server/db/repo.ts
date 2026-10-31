@@ -238,6 +238,7 @@ export interface ProductInsightInput {
   householdId: string;
   productId: string;
   scanId?: string | null;
+  category?: string | null;
   savesMoney: boolean;
   healthy: boolean;
   sustainable: boolean;
@@ -269,6 +270,7 @@ export async function saveProductInsight(input: ProductInsightInput) {
     householdId: input.householdId,
     productId: input.productId,
     scanId: input.scanId ?? null,
+    category: input.category ?? null,
     savesMoney: input.savesMoney,
     healthy: input.healthy,
     sustainable: input.sustainable,

@@ -64,6 +64,7 @@ export const productInsights = pgTable("product_insights", {
     .notNull()
     .references(() => products.id),
   scanId: text("scan_id"),
+  category: text("category"),
   savesMoney: boolean("saves_money").notNull().default(false),
   healthy: boolean("healthy").notNull().default(false),
   sustainable: boolean("sustainable").notNull().default(false),

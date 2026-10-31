@@ -328,6 +328,7 @@ export function ScannerScreen() {
       const payload = extracted.map((it) => ({
         rawName: it.rawName,
         normalizedName: it.normalizedName,
+        category: it.category,
         productId: it.match?.productId ?? it.productId ?? null,
         qty: it.qty ?? 1,
         packQty: it.packQty,

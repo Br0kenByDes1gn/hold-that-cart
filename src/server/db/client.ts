@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS product_insights (
   household_id TEXT NOT NULL REFERENCES households(id),
   product_id TEXT NOT NULL REFERENCES products(id),
   scan_id TEXT,
+  category TEXT,
   saves_money BOOLEAN NOT NULL DEFAULT FALSE,
   healthy BOOLEAN NOT NULL DEFAULT FALSE,
   sustainable BOOLEAN NOT NULL DEFAULT FALSE,
@@ -80,6 +81,7 @@ CREATE TABLE IF NOT EXISTS product_insights (
 ALTER TABLE product_insights ADD COLUMN IF NOT EXISTS raw_json JSONB;
 ALTER TABLE product_insights ADD COLUMN IF NOT EXISTS assessment JSONB;
 ALTER TABLE product_insights ADD COLUMN IF NOT EXISTS classification_error TEXT;
+ALTER TABLE product_insights ADD COLUMN IF NOT EXISTS category TEXT;
 CREATE TABLE IF NOT EXISTS scans (
   id TEXT PRIMARY KEY,
   household_id TEXT NOT NULL REFERENCES households(id),

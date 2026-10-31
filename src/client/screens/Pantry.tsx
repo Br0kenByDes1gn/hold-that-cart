@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { api } from "../api";
 import { ProductArt, Tags, useIconRegistry } from "../components";
 import { productArtFor } from "../lib/productArt";
+import { resolveItemArt } from "../lib/itemArt";
 
 import profilePic from "../../../assets/page-icons/profilepic.png";
 import pantryBoxArt from "../../../assets/page-icons/businesspantry.png";
@@ -14,6 +15,11 @@ interface PantrySection {
   title: string;
   items: any[];
 }
+
+const FALLBACK_ART = resolveItemArt({
+  rawName: "item",
+  category: "other",
+}).entry.url;
 
 const TAG_LABEL: Record<TagKind, string> = {
   money: "Saves money",
@@ -79,12 +85,32 @@ export function PantryScreen() {
               <div className="pantry-grid">
                 {section.items.map((item: any, i: number) => {
                   const tags = new Set<string>(item.tags ?? []);
-                  const art = productArtFor(item.rawName, item.icon);
+                  const art = item.category
+                    ? resolveItemArt({
+                        rawName: item.rawName,
+                        normalizedName: item.rawName,
+                        category: item.category,
+                        confidence: 0,
+                      }).entry.url
+                    : productArtFor(item.rawName, item.icon) ??
+                      resolveItemArt({
+                        rawName: item.rawName,
+                        category: "other",
+                      }).entry.url;
                   const card = (
                     <>
                       <div className="pantry-card-main">
                         <div className="pantry-card-art">
-                          {art ? <img src={art} alt={item.rawName} /> : null}
+                          <img
+                            src={art}
+                            alt={item.rawName}
+                            onError={(event) => {
+                              const img = event.currentTarget;
+                              if (img.dataset.fallback === "1") return;
+                              img.dataset.fallback = "1";
+                              img.src = FALLBACK_ART;
+                            }}
+                          />
                         </div>
                         <div className="pantry-card-tags">
                           <PantryTag kind="money" on={tags.has("money")} />

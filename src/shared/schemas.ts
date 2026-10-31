@@ -196,6 +196,7 @@ export const scanConfirmItemSchema = z.object({
   rawName: z.string().min(1),
   /** Canonical generic type ("peanut oil") — product identity. Brand is a variant, never identity. */
   normalizedName: z.string().min(1).optional(),
+  category: itemCategorySchema.optional(),
   productId: z.string().uuid().nullable().default(null),
   qty: z.number().positive().default(1),
   packQty: z.number().positive().optional(),

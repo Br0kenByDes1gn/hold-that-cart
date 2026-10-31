@@ -144,6 +144,7 @@ async function classifyAndStoreInsights(
       householdId,
       productId: target.productId,
       scanId,
+      category: target.category ?? null,
       savesMoney: verdictIsYes(insight.savesMoney),
       healthy: verdictIsYes(insight.healthy),
       sustainable: verdictIsYes(insight.sustainable),
@@ -279,6 +280,7 @@ routes.post("/api/scans/:id/confirm", async (c) => {
           productId: prod.id,
           rawName: it.rawName,
           normalizedName: canonical,
+          category: it.category,
           brand: it.brand,
           qty: it.qty,
         });
@@ -390,6 +392,11 @@ routes.get("/api/pantry/sections", async (c) => {
     .from(products)
     .where(eq(products.householdId, hh!.id));
   const byId = new Map(prows.map((product) => [product.id, product]));
+  const scanRows = await db
+    .select()
+    .from(scans)
+    .where(eq(scans.householdId, hh!.id));
+  const scanById = new Map(scanRows.map((scan) => [scan.id, scan]));
 
   const grouped: Record<"buy" | "skip" | "swap", any[]> = {
     buy: [],
@@ -400,6 +407,27 @@ routes.get("/api/pantry/sections", async (c) => {
   for (const row of insights) {
     const product = byId.get(row.productId);
     if (!product) continue;
+
+    // Backfill category for scans confirmed before categories were persisted.
+    let category = row.category;
+    if (!category && row.scanId) {
+      const scan = scanById.get(row.scanId);
+      const items = ((scan?.rawExtraction as any)?.items ?? []) as any[];
+      const productKey = normalizeName(product.name);
+      const match = items.find(
+        (item) =>
+          normalizeName(item.normalizedName ?? item.rawName ?? "") === productKey ||
+          normalizeName(item.rawName ?? "") === productKey,
+      );
+      category = match?.category ?? null;
+      if (category) {
+        await db
+          .update(productInsights)
+          .set({ category })
+          .where(eq(productInsights.id, row.id));
+      }
+    }
+
     const stored = row.assessment as PantryItemInsight | null;
     const storedVerdict = (value: boolean | null) => ({
       verdict: value,
@@ -429,6 +457,7 @@ routes.get("/api/pantry/sections", async (c) => {
       productId: product.id,
       rawName: product.name,
       icon: product.icon,
+      category,
       tags: pantryTagsFor(insight),
       swapTitle: swap ? swap.name : null,
       swapTags: swap ? pantryTagsFor(swap) : [],
@@ -981,6 +1010,7 @@ routes.post("/api/demo/seed", async (c) => {
         householdId: hh!.id,
         productId: prod.id,
         scanId: null,
+        category: insight.category,
         savesMoney: verdictIsYes(insight.savesMoney),
         healthy: verdictIsYes(insight.healthy),
         sustainable: verdictIsYes(insight.sustainable),

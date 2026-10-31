@@ -1,4 +1,5 @@
 import type { PantryVerdict, ProductEnrichment } from "../../shared/schemas.js";
+import type { ItemCategory } from "../../shared/itemCategories.js";
 import { knowledgeKey } from "./normalize.js";
 
 // Hand-written fixture enrichments for the demo set (stand-ins for the
@@ -162,6 +163,7 @@ function v(
 }
 
 export interface DemoInsight {
+  category: ItemCategory;
   savesMoney: PantryVerdict;
   healthy: PantryVerdict;
   sustainable: PantryVerdict;
@@ -175,26 +177,31 @@ export interface DemoInsight {
 
 export const DEMO_INSIGHTS: Record<string, DemoInsight> = {
   Milk: {
+    category: "dairy",
     savesMoney: v(true, 0.65, "Milk is usually an affordable staple."),
     healthy: v(true, 0.75, "Milk provides protein and calcium."),
     sustainable: v(false, 0.55, "Dairy has a higher environmental footprint."),
   },
   Bread: {
+    category: "bread",
     savesMoney: v(false, 0.55, "Bread prices vary by type and brand."),
     healthy: v(true, 0.65, "Bread can be part of a balanced diet."),
     sustainable: v(true, 0.55, "Plant-based staple with moderate impact."),
   },
   Eggs: {
+    category: "eggs",
     savesMoney: v(true, 0.65, "Eggs are usually a low-cost protein."),
     healthy: v(true, 0.75, "Eggs provide protein and micronutrients."),
     sustainable: v(false, 0.5, "Animal production has a higher footprint."),
   },
   Rice: {
+    category: "grains",
     savesMoney: v(null, 0.4, "Price depends on variety and pack size."),
     healthy: v(false, 0.55, "Refined rice is low in fibre."),
     sustainable: v(true, 0.6, "Plant-based staple with a lower footprint."),
   },
   "Olive oil": {
+    category: "oils",
     savesMoney: v(false, 0.5, "Branded oils often cost more."),
     healthy: v(true, 0.75, "Olive oil is a source of unsaturated fat."),
     sustainable: v(false, 0.45, "Packaging and transport are uncertain."),
@@ -206,16 +213,19 @@ export const DEMO_INSIGHTS: Record<string, DemoInsight> = {
     },
   },
   "Laundry detergent": {
+    category: "cleaning",
     savesMoney: v(true, 0.6, "Concentrated formats can cost less per wash."),
     healthy: v(null, 0.35, "Health impact depends on ingredients."),
     sustainable: v(true, 0.65, "Concentrated or refill formats reduce packaging."),
   },
   "Steel water bottle": {
+    category: "other",
     savesMoney: v(false, 0.6, "Higher upfront cost than disposable bottles."),
     healthy: v(null, 0.4, "Health impact depends on materials and use."),
     sustainable: v(true, 0.8, "Reusable durable replaces disposable bottles."),
   },
   "Toilet paper": {
+    category: "paper",
     savesMoney: v(true, 0.6, "Bulk packs usually cost less per roll."),
     healthy: v(null, 0.3, "No meaningful health signal from the name."),
     sustainable: v(false, 0.5, "Paper consumption and packaging have impact."),
