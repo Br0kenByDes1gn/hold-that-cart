@@ -64,8 +64,8 @@ Zod schemas in `src/shared/schemas.ts` are the single API/AI contract.
 ```bash
 pnpm install
 pnpm run dev        # Hono API :3001 + Vite :5173 (Vite proxies /api), Ctrl-C stops both
-pnpm test           # 63 Vitest tests, must stay green
-pnpm run test:e2e   # 9 Playwright tests (prod bundle, Chromium mobile) — UI, auth, pantry flow
+pnpm test           # 69 Vitest tests, must stay green
+pnpm run test:e2e   # 10 Playwright tests (prod bundle, Chromium mobile) — UI, auth, pantry flow
 pnpm test:vision    # LIVE vision goldens (costs credits; needs MODEL_API_KEY)
 pnpm vision:render  # rebuild HTML previews from the last run (free, no model calls)
 pnpm run typecheck  # tsc --noEmit, must stay clean
