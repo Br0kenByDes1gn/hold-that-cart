@@ -443,6 +443,31 @@ routes.get("/api/pantry/sections", async (c) => {
   });
 });
 
+/** Dev-only inspection of the latest scan extraction. */
+routes.get("/api/dev/scans/latest", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const db = await getDb();
+  const rows = await db
+    .select()
+    .from(scans)
+    .where(eq(scans.householdId, hh!.id))
+    .orderBy(desc(scans.createdAt))
+    .limit(1);
+  const scan = rows[0];
+  if (!scan) return c.json({ scan: null });
+  return c.json({
+    scan: {
+      id: scan.id,
+      kind: scan.kind,
+      rawExtraction: scan.rawExtraction,
+      confirmedAt: scan.confirmedAt,
+      createdAt: scan.createdAt,
+    },
+  });
+});
+
 /** Dev-only inspection of the raw pantry classification data. */
 routes.get("/api/dev/pantry-insights", async (c) => {
   const hh = await household(c);

@@ -267,6 +267,33 @@ describe("seed → briefing flow", () => {
     await api("/api/demo/reset", { method: "POST" });
   });
 
+  it("dev latest scan exposes the model category", async () => {
+    await api("/api/demo/reset", { method: "POST" });
+    const scan = await api("/api/scans", {
+      method: "POST",
+      body: JSON.stringify({
+        kind: "receipt",
+        items: [
+          {
+            rawName: "Steak",
+            normalizedName: "steak",
+            category: "meat",
+            qty: 1,
+            confidence: 1,
+          },
+        ],
+      }),
+    });
+    expect(scan.status).toBe(200);
+    const latest = await api("/api/dev/scans/latest");
+    expect(latest.status).toBe(200);
+    expect(latest.body.scan.rawExtraction.items[0]).toMatchObject({
+      rawName: "Steak",
+      category: "meat",
+    });
+    await api("/api/demo/reset", { method: "POST" });
+  });
+
   it("enrich endpoint validates schema and rejects prices", async () => {
     await api("/api/demo/reset", { method: "POST" });
     const scan = await api("/api/scans", {

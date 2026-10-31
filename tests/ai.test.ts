@@ -18,7 +18,7 @@ describe("meta provider (mocked fetch, no network)", () => {
         JSON.stringify({
           kind: "receipt",
           items: [
-            { rawName: "Milk 1L", normalizedName: "milk", qty: 1, packQty: 1, packUnit: "L", price: 1.4, confidence: 0.9 },
+            { rawName: "Milk 1L", normalizedName: "milk", category: "dairy", qty: 1, packQty: 1, packUnit: "L", price: 1.4, confidence: 0.9 },
           ],
         }),
       ),
@@ -28,6 +28,7 @@ describe("meta provider (mocked fetch, no network)", () => {
     expect(res.kind).toBe("receipt");
     expect(res.items).toHaveLength(1);
     expect(res.items[0].normalizedName).toBe("milk");
+    expect(res.items[0].category).toBe("dairy");
     expect(res.items[0].price).toBe(1.4);
     // request went to chat completions with an image payload
     const init = (fetchFn.mock.calls[0] as unknown[])[1] as any;

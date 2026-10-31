@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ITEM_CATEGORIES } from "./itemCategories.js";
 
 // ── Enums ──────────────────────────────────────────────
 
@@ -39,9 +40,22 @@ export type ListItemDecision = z.infer<typeof listItemDecisionSchema>;
 
 // ── Extraction (what the vision model / fixtures produce) ──
 
+export const itemCategorySchema = z.preprocess(
+  (value) => {
+    if (typeof value !== "string") return "other";
+    const normalized = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+    return (ITEM_CATEGORIES as readonly string[]).includes(normalized)
+      ? normalized
+      : "other";
+  },
+  z.enum(ITEM_CATEGORIES),
+);
+export type ItemCategoryValue = z.infer<typeof itemCategorySchema>;
+
 export const extractedItemSchema = z.object({
   rawName: z.string().min(1),
   normalizedName: z.string().min(1),
+  category: itemCategorySchema.default("other"),
   brand: z.string().optional(),
   qty: z.number().positive().default(1),
   packQty: z.number().positive().optional(),

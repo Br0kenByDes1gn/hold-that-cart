@@ -550,8 +550,8 @@ details summary { cursor: pointer; }
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 132px;
-  min-height: 132px;
+  height: 140px;
+  min-height: 140px;
   padding: 8px;
   border: 1px solid #173b55;
   border-radius: 16px;
@@ -606,6 +606,10 @@ details summary { cursor: pointer; }
   width: 150px;
   height: 150px;
 }
+.cr-frame-category {
+  width: 108px;
+  height: 84px;
+}
 .cr-swap-name {
   width: 100%;
   overflow: hidden;
@@ -613,6 +617,17 @@ details summary { cursor: pointer; }
   font-size: 13px;
   font-weight: 600;
   line-height: 1.1;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cr-swap-category {
+  width: 100%;
+  overflow: hidden;
+  color: var(--cr-dim);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -684,8 +699,8 @@ details summary { cursor: pointer; }
   }
   .cr-swap {
     gap: 5px;
-    height: 120px;
-    min-height: 120px;
+    height: 128px;
+    min-height: 128px;
     padding: 7px;
   }
   .cr-swap-art {
@@ -716,6 +731,10 @@ details summary { cursor: pointer; }
     width: 72px;
     height: 60px;
   }
+  .cr-frame-category {
+    width: 94px;
+    height: 74px;
+  }
   .cr-frame-bread .cr-swap-art {
     width: 132px;
     height: 132px;
@@ -738,8 +757,8 @@ details summary { cursor: pointer; }
   }
   .cr-swap {
     gap: 4px;
-    height: 108px;
-    min-height: 108px;
+    height: 118px;
+    min-height: 118px;
     padding: 6px;
   }
   .cr-swap-art {
@@ -769,6 +788,10 @@ details summary { cursor: pointer; }
   .cr-frame-yogurt {
     width: 64px;
     height: 54px;
+  }
+  .cr-frame-category {
+    width: 84px;
+    height: 64px;
   }
   .cr-frame-bread .cr-swap-art {
     width: 112px;
@@ -1408,4 +1431,22 @@ details summary { cursor: pointer; }
   margin: 0 0 8px;
   color: var(--alert);
   font-size: 11px;
+}
+.devmode-section-title {
+  margin: 14px 0 8px;
+  color: var(--cyan);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.devmode-json-full {
+  max-height: 220px;
+}
+.devmode-image-line {
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-wrap: anywhere;
 }

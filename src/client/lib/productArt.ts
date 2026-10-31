@@ -1,5 +1,5 @@
 // Product images live in assets/item. Vite bundles them and gives us hashed
-// URLs, so the Pantry never depends on the generated public/icons/products
+// URLs, so the app never depends on the generated public/icons/products
 // folder being present.
 
 const modules = import.meta.glob<string>("../../../assets/item/*.png", {
@@ -8,10 +8,14 @@ const modules = import.meta.glob<string>("../../../assets/item/*.png", {
   import: "default",
 });
 
-interface ArtEntry {
+export interface ProductArtEntry {
   slug: string;
-  tokens: Set<string>;
+  file: string;
   url: string;
+}
+
+interface ArtEntry extends ProductArtEntry {
+  tokens: Set<string>;
 }
 
 function toSlug(value: string): string {
@@ -27,7 +31,7 @@ const entries: ArtEntry[] = Object.entries(modules)
   .map(([path, url]) => {
     const file = path.split("/").pop() ?? "";
     const slug = toSlug(file);
-    return { slug, tokens: new Set(slug.split("-").filter(Boolean)), url };
+    return { slug, file, tokens: new Set(slug.split("-").filter(Boolean)), url };
   })
   .filter((entry) => entry.slug.length > 0);
 
@@ -41,23 +45,32 @@ const ALIASES: Record<string, string> = {
   fruit: "fruit-assortment",
 };
 
+function publicEntry(entry: ArtEntry): ProductArtEntry {
+  return { slug: entry.slug, file: entry.file, url: entry.url };
+}
+
+export function productArtEntryBySlug(slug: string): ProductArtEntry | null {
+  const entry = bySlug.get(toSlug(slug));
+  return entry ? publicEntry(entry) : null;
+}
+
 /**
- * Resolve a product name and/or icon slug to a bundled image URL.
+ * Resolve a product name and/or icon slug to a bundled image entry.
  * Tries the explicit icon first, then the product name, then shared tokens.
  */
-export function productArtFor(
+export function productArtEntry(
   name?: string | null,
   icon?: string | null,
-): string | null {
+): ProductArtEntry | null {
   const candidates = [icon, name]
     .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
     .map((value) => toSlug(value));
 
   for (const slug of candidates) {
     const alias = ALIASES[slug];
-    if (alias && bySlug.has(alias)) return bySlug.get(alias)!.url;
+    if (alias && bySlug.has(alias)) return publicEntry(bySlug.get(alias)!);
     const exact = bySlug.get(slug);
-    if (exact) return exact.url;
+    if (exact) return publicEntry(exact);
   }
 
   for (const slug of candidates) {
@@ -76,8 +89,15 @@ export function productArtFor(
         best = { entry, score };
       }
     }
-    if (best) return best.entry.url;
+    if (best) return publicEntry(best.entry);
   }
 
   return null;
+}
+
+export function productArtFor(
+  name?: string | null,
+  icon?: string | null,
+): string | null {
+  return productArtEntry(name, icon)?.url ?? null;
 }

@@ -4,6 +4,7 @@ import {
   productEnrichmentSchema,
 } from "../../shared/schemas.js";
 import { normalizeName } from "../domain/normalize.js";
+import { ITEM_CATEGORIES } from "../../shared/itemCategories.js";
 import type {
   AIProvider,
   PantryClassifyInput,
@@ -16,12 +17,13 @@ import type {
 export const EXTRACTION_SYSTEM = `You extract grocery data from a photo for a pantry-tracking app.
 The photo shows ONE of: a shopping receipt, a shopping list (paper/handwritten/screenshot), or a shopping cart with groceries.
 Output JSON ONLY, no markdown, no commentary, with this shape:
-{"kind": "receipt" | "list" | "cart" | "unknown", "items": [{"rawName": string, "normalizedName": string, "brand": string | null, "qty": number, "packQty": number | null, "packUnit": string | null, "unit": string | null, "price": number | null, "store": string | null, "confidence": number}]}
+{"kind": "receipt" | "list" | "cart" | "unknown", "items": [{"rawName": string, "normalizedName": string, "category": string, "brand": string | null, "qty": number, "packQty": number | null, "packUnit": string | null, "unit": string | null, "price": number | null, "store": string | null, "confidence": number}]}
 Rules:
 - receipt: transcribe EVERY line item. price = total line price as printed. packQty/packUnit from the description when shown (e.g. "500 g" -> 500, "g"). store = merchant name if visible.
 - list: one entry per list line. No prices (use null) unless a price is written on the list. qty defaults to 1.
 - cart: only items you can actually identify, top layer. price is always null. confidence reflects occlusion (0.4-0.7 typical).
 - normalizedName: lowercase generic product name in English ("olive oil", NOT "Borges Olio Evo 500ml").
+- category: choose exactly ONE from this list: ${ITEM_CATEGORIES.join(", ")}. Base it on the product name/type. Examples: any meat product -> meat; wine/beer/whiskey -> alcohol; bread/buns/bagels -> bread; milk/cheese/butter -> dairy. Use "other" when unsure. Never invent a category outside the list.
 - Keep the printed product words, but drop brand names, sizes, percentages, tax letters, HSN/SKU codes and store names.
 - Expand receipt abbreviations into readable words ("BRW" -> "brown", "GRANU" -> "granulated", "CHOC" -> "chocolate", "OG" -> "organic").
 - Use the singular form for countable nouns ("blueberry", not "blueberries").
