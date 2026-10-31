@@ -224,7 +224,7 @@ export class MetaProvider implements AIProvider {
         { role: "system", content: PANTRY_CLASSIFY_SYSTEM },
         { role: "user", content: pantryClassifyUser(items) },
       ],
-      4000,
+      8000,
     );
     const raw = JSON.parse(content);
     assertNoPrices(raw);
