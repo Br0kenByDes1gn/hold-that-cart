@@ -4,6 +4,7 @@ import {
   pantrySectionFor,
   pantryTagsFor,
   scoreIsYes,
+  scoreShowsTag,
   trueCount,
 } from "../src/server/domain/pantrySection.js";
 import type { PantryItemInsight } from "../src/shared/schemas.js";
@@ -83,7 +84,12 @@ describe("pantry sectioning", () => {
     ).toBe("skip");
   });
 
-  it("maps true scores to tag kinds", () => {
+  it("lights tags when the score is strictly above 0.5", () => {
+    expect(scoreShowsTag(0.51)).toBe(true);
+    expect(scoreShowsTag(0.5)).toBe(false);
+    expect(pantryTagsFor(insight({ savesMoney: 0.51, sustainable: 0.5 }))).toEqual([
+      "money",
+    ]);
     expect(pantryTagsFor(insight({ savesMoney: 0.7, sustainable: 0.6 }))).toEqual([
       "money",
       "planet",

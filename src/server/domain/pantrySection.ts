@@ -3,8 +3,10 @@ import type { PantryItemInsight, PantryScore } from "../../shared/schemas.js";
 export type PantrySectionKey = "buy" | "skip" | "swap";
 export type PantryTagKind = "money" | "health" | "planet";
 
-/** A parameter counts as true when its directional score is at least 0.6. */
+/** A parameter counts as true for BUY/SKIP when its score is at least 0.6. */
 export const MIN_SCORE = 0.6;
+/** Tags light up earlier: any value strictly above 0.5. */
+export const TAG_MIN_SCORE = 0.5;
 
 interface ScoreFlags {
   savesMoney: PantryScore;
@@ -14,6 +16,10 @@ interface ScoreFlags {
 
 export function scoreIsYes(value: PantryScore): boolean {
   return value >= MIN_SCORE;
+}
+
+export function scoreShowsTag(value: PantryScore): boolean {
+  return value > TAG_MIN_SCORE;
 }
 
 /** Count how many of the three pantry parameters are above the threshold. */
@@ -39,8 +45,8 @@ export function pantrySectionFor(insight: PantryItemInsight): PantrySectionKey {
 
 export function pantryTagsFor(flags: ScoreFlags): PantryTagKind[] {
   const tags: PantryTagKind[] = [];
-  if (scoreIsYes(flags.savesMoney)) tags.push("money");
-  if (scoreIsYes(flags.healthy)) tags.push("health");
-  if (scoreIsYes(flags.sustainable)) tags.push("planet");
+  if (scoreShowsTag(flags.savesMoney)) tags.push("money");
+  if (scoreShowsTag(flags.healthy)) tags.push("health");
+  if (scoreShowsTag(flags.sustainable)) tags.push("planet");
   return tags;
 }

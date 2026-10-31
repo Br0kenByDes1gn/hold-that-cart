@@ -190,8 +190,9 @@ GET  /api/health
   receipt items only. The model returns AI estimates for `savesMoney`,
   `healthy`, `sustainable`, and `swap` as directional scores from 0 to 1
   (0 = definitely no, 0.5 = unknown, 1 = definitely yes). `domain/pantrySection.ts`
-  counts a parameter only when its score is ≥0.6, validates the swap, and
-  chooses the Pantry section. Set `PANTRY_CLASSIFY=off` for deterministic tests.
+  counts a parameter only when its score is ≥0.6 for BUY/SWAP/SKIP, while the
+  Pantry tag chips light up when the score is strictly above 0.5. Set
+  `PANTRY_CLASSIFY=off` for deterministic tests.
 - Every model call logs one `[ai-usage]` JSON line with request/response
   bytes, image bytes (extraction), prompt/completion/reasoning/cached/total
   tokens, duration, finish reason, item count, and tokens per item. The same
