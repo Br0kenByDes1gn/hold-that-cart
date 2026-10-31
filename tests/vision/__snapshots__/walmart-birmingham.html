@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vision check · walmart-birmingham</title>
+<style>
+  body { margin: 0; padding: 24px; background: #071a29; color: #e6f1ff;
+         font: 14px/1.5 Inter, system-ui, sans-serif; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  h2 { margin: 24px 0 8px; font-size: 12px; text-transform: uppercase;
+       letter-spacing: 1px; color: #8aa4c0; }
+  .meta { color: #8aa4c0; font-size: 12px; }
+  .wrap { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 1100px) { .wrap { grid-template-columns: 1fr; } }
+  img { width: 100%; border: 1px solid #1c3a54; border-radius: 8px; background: #fff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: #8aa4c0; font-weight: 600; border-bottom: 1px solid #1c3a54;
+       padding: 6px 8px; font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+       white-space: nowrap; }
+  td { padding: 6px 8px; border-bottom: 1px solid #10283d; vertical-align: top; }
+  .num { text-align: right; white-space: nowrap; }
+  .dim { color: #8aa4c0; }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: #8aa4c0; margin-top: 8px; flex-wrap: wrap; }
+  .stats b { color: #e6f1ff; }
+  .note { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+          padding: 10px 12px; font-size: 13px; }
+  ul { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  li { padding: 2px 0; }
+  li.ok { color: #22c55e; }
+  li.bad { color: #ff3b5c; }
+  tr.json-row td { border-bottom: 1px solid #10283d; padding-bottom: 8px; }
+  details summary { cursor: pointer; color: #8aa4c0; font-size: 11px; }
+  pre { background: #05141f; border: 1px solid #1c3a54; border-radius: 8px;
+        padding: 10px; overflow: auto; font-size: 11px; margin: 6px 0 0; }
+  code { font-size: 11px; color: #8aa4c0; }
+</style>
+</head>
+<body>
+  <h1>walmart-birmingham</h1>
+  <div class="meta">walmart.jpeg · 554×1079 · 155 KB sent to model</div>
+
+  <div class="wrap">
+    <div>
+      <img src="../../fixtures/receipts/walmart.jpeg" alt="walmart-birmingham source image">
+      <p class="note"><strong>What to check:</strong> US Walmart receipt photo, 30 items, abbreviated names, qty prefixes, tax and cash/change lines.</p>
+      <div class="stats">
+        <span>kind <b>receipt</b> (expected receipt)</span>
+        <span>items <b>28</b></span>
+        <span>total qty <b>83</b></span>
+      </div>
+
+      <h2>Must include</h2>
+      <ul>
+<li class="ok">✓ milk</li>
+<li class="ok">✓ sugar</li>
+<li class="bad">✗ salad bowl</li>
+<li class="ok">✓ shrimp</li>
+<li class="ok">✓ beef broccoli</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Items (canonical name · price) — this is what the golden asserts</h2>
+      <table>
+        <thead><tr><th>Item</th><th class="num">Price</th></tr></thead>
+        <tbody>
+<tr>
+      <td>bag tea</td>
+      <td class="num">1.43</td>
+    </tr>
+<tr>
+      <td>beef broccoli</td>
+      <td class="num">2.52</td>
+    </tr>
+<tr>
+      <td>bowl salad</td>
+      <td class="num">2.98</td>
+    </tr>
+<tr>
+      <td>bowl salad</td>
+      <td class="num">2.98</td>
+    </tr>
+<tr>
+      <td>cheddar sharp</td>
+      <td class="num">5.34</td>
+    </tr>
+<tr>
+      <td>chewy soft</td>
+      <td class="num">2.18</td>
+    </tr>
+<tr>
+      <td>chicken sour sweet</td>
+      <td class="num">2.52</td>
+    </tr>
+<tr>
+      <td>cinnamon roll</td>
+      <td class="num">2.18</td>
+    </tr>
+<tr>
+      <td>clr12 lah sh</td>
+      <td class="num">3.97</td>
+    </tr>
+<tr>
+      <td>color hair</td>
+      <td class="num">10.94</td>
+    </tr>
+<tr>
+      <td>danish</td>
+      <td class="num">2.18</td>
+    </tr>
+<tr>
+      <td>fried shrimp</td>
+      <td class="num">2.52</td>
+    </tr>
+<tr>
+      <td>fried shrimp</td>
+      <td class="num">2.52</td>
+    </tr>
+<tr>
+      <td>granulated sugar</td>
+      <td class="num">3.20</td>
+    </tr>
+<tr>
+      <td>great value</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>great value</td>
+      <td class="num">0.98</td>
+    </tr>
+<tr>
+      <td>great value</td>
+      <td class="num">2.97</td>
+    </tr>
+<tr>
+      <td>great value</td>
+      <td class="num">2.97</td>
+    </tr>
+<tr>
+      <td>great value</td>
+      <td class="num">2.97</td>
+    </tr>
+<tr>
+      <td>great value</td>
+      <td class="num">2.97</td>
+    </tr>
+<tr>
+      <td>gummy</td>
+      <td class="num">5.97</td>
+    </tr>
+<tr>
+      <td>ktx sup tmp</td>
+      <td class="num">5.12</td>
+    </tr>
+<tr>
+      <td>milk</td>
+      <td class="num">2.50</td>
+    </tr>
+<tr>
+      <td>nmgld100 npt</td>
+      <td class="num">17.01</td>
+    </tr>
+<tr>
+      <td>pretzel</td>
+      <td class="num">5.98</td>
+    </tr>
+<tr>
+      <td>wax</td>
+      <td class="num">1.50</td>
+    </tr>
+<tr>
+      <td>wax</td>
+      <td class="num">2.00</td>
+    </tr>
+<tr>
+      <td>wax</td>
+      <td class="num">2.00</td>
+    </tr>
+        </tbody>
+      </table>
+
+      <h2>All extracted properties (last run — not asserted)</h2>
+      <table>
+        <thead><tr><th class="">rawName</th><th class="">normalizedName</th><th class="">brand</th><th class="num">qty</th><th class="num">packQty</th><th class="">packUnit</th><th class="">unit</th><th class="num">price</th><th class="">store</th><th class="num">confidence</th><th class="">category</th></tr></thead>
+        <tbody>
+<tr><td class="">GV TEA BAGS</td><td class="">tea bag</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.43</td><td class="">Walmart</td><td class="num">0.95</td><td class="">coffee_tea</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GV TEA BAGS&quot;,
+  &quot;normalizedName&quot;: &quot;tea bag&quot;,
+  &quot;category&quot;: &quot;coffee_tea&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.43,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">BEEF BROCCO</td><td class="">beef broccoli</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.52</td><td class="">Walmart</td><td class="num">0.9</td><td class="">meat</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;BEEF BROCCO&quot;,
+  &quot;normalizedName&quot;: &quot;beef broccoli&quot;,
+  &quot;category&quot;: &quot;meat&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.52,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">SALAD BOWL</td><td class="">salad bowl</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.98</td><td class="">Walmart</td><td class="num">0.9</td><td class="">vegetables</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SALAD BOWL&quot;,
+  &quot;normalizedName&quot;: &quot;salad bowl&quot;,
+  &quot;category&quot;: &quot;vegetables&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.98,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">SALAD BOWL</td><td class="">salad bowl</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.98</td><td class="">Walmart</td><td class="num">0.9</td><td class="">vegetables</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SALAD BOWL&quot;,
+  &quot;normalizedName&quot;: &quot;salad bowl&quot;,
+  &quot;category&quot;: &quot;vegetables&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.98,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">SHARP CHED</td><td class="">sharp cheddar</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.34</td><td class="">Walmart</td><td class="num">0.9</td><td class="">dairy</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SHARP CHED&quot;,
+  &quot;normalizedName&quot;: &quot;sharp cheddar&quot;,
+  &quot;category&quot;: &quot;dairy&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.34,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">SOFT CHEWY</td><td class="">soft chewy</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.18</td><td class="">Walmart</td><td class="num">0.7</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SOFT CHEWY&quot;,
+  &quot;normalizedName&quot;: &quot;soft chewy&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.18,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.7
+}</pre></details>
+      </td></tr>
+<tr><td class="">CHK SWT SOUR</td><td class="">sweet sour chicken</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.52</td><td class="">Walmart</td><td class="num">0.85</td><td class="">meat</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;CHK SWT SOUR&quot;,
+  &quot;normalizedName&quot;: &quot;sweet sour chicken&quot;,
+  &quot;category&quot;: &quot;meat&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.52,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.85
+}</pre></details>
+      </td></tr>
+<tr><td class="">CINN ROLL</td><td class="">cinnamon roll</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.18</td><td class="">Walmart</td><td class="num">0.95</td><td class="">bread</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;CINN ROLL&quot;,
+  &quot;normalizedName&quot;: &quot;cinnamon roll&quot;,
+  &quot;category&quot;: &quot;bread&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.18,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">LAH SH CLR12</td><td class="">lah sh clr12</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.97</td><td class="">Walmart</td><td class="num">0.65</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;LAH SH CLR12&quot;,
+  &quot;normalizedName&quot;: &quot;lah sh clr12&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.97,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.65
+}</pre></details>
+      </td></tr>
+<tr><td class="">HAIR COLOR</td><td class="">hair color</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">10.94</td><td class="">Walmart</td><td class="num">0.95</td><td class="">personal_care</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;HAIR COLOR&quot;,
+  &quot;normalizedName&quot;: &quot;hair color&quot;,
+  &quot;category&quot;: &quot;personal_care&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 10.94,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">ORG DANISH</td><td class="">organic danish</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.18</td><td class="">Walmart</td><td class="num">0.9</td><td class="">bread</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;ORG DANISH&quot;,
+  &quot;normalizedName&quot;: &quot;organic danish&quot;,
+  &quot;category&quot;: &quot;bread&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.18,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">SHRMP FRIED</td><td class="">fried shrimp</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.52</td><td class="">Walmart</td><td class="num">0.9</td><td class="">seafood</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SHRMP FRIED&quot;,
+  &quot;normalizedName&quot;: &quot;fried shrimp&quot;,
+  &quot;category&quot;: &quot;seafood&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.52,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">SHRMP FRIED</td><td class="">fried shrimp</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.52</td><td class="">Walmart</td><td class="num">0.9</td><td class="">seafood</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SHRMP FRIED&quot;,
+  &quot;normalizedName&quot;: &quot;fried shrimp&quot;,
+  &quot;category&quot;: &quot;seafood&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.52,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">SUGAR GRANU</td><td class="">granulated sugar</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">3.2</td><td class="">Walmart</td><td class="num">0.95</td><td class="">baking</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;SUGAR GRANU&quot;,
+  &quot;normalizedName&quot;: &quot;granulated sugar&quot;,
+  &quot;category&quot;: &quot;baking&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 3.2,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.95
+}</pre></details>
+      </td></tr>
+<tr><td class="">GREAT VALUE</td><td class="">great value</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.98</td><td class="">Walmart</td><td class="num">0.6</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GREAT VALUE&quot;,
+  &quot;normalizedName&quot;: &quot;great value&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.98,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.6
+}</pre></details>
+      </td></tr>
+<tr><td class="">GREAT VALUE</td><td class="">great value</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">0.98</td><td class="">Walmart</td><td class="num">0.6</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GREAT VALUE&quot;,
+  &quot;normalizedName&quot;: &quot;great value&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 0.98,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.6
+}</pre></details>
+      </td></tr>
+<tr><td class="">GRT VALUE</td><td class="">great value</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.97</td><td class="">Walmart</td><td class="num">0.6</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GRT VALUE&quot;,
+  &quot;normalizedName&quot;: &quot;great value&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.97,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.6
+}</pre></details>
+      </td></tr>
+<tr><td class="">GRT VALUE</td><td class="">great value</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.97</td><td class="">Walmart</td><td class="num">0.6</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GRT VALUE&quot;,
+  &quot;normalizedName&quot;: &quot;great value&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.97,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.6
+}</pre></details>
+      </td></tr>
+<tr><td class="">GRT VALUE</td><td class="">great value</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.97</td><td class="">Walmart</td><td class="num">0.6</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GRT VALUE&quot;,
+  &quot;normalizedName&quot;: &quot;great value&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.97,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.6
+}</pre></details>
+      </td></tr>
+<tr><td class="">GRT VALUE</td><td class="">great value</td><td class="">Great Value</td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.97</td><td class="">Walmart</td><td class="num">0.6</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;GRT VALUE&quot;,
+  &quot;normalizedName&quot;: &quot;great value&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;brand&quot;: &quot;Great Value&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.97,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.6
+}</pre></details>
+      </td></tr>
+<tr><td class="">AS GMMY 54CT</td><td class="">gummy</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num">54</td><td class="">ct</td><td class=""><span class="dim">—</span></td><td class="num">5.97</td><td class="">Walmart</td><td class="num">0.85</td><td class="">snacks</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;AS GMMY 54CT&quot;,
+  &quot;normalizedName&quot;: &quot;gummy&quot;,
+  &quot;category&quot;: &quot;snacks&quot;,
+  &quot;qty&quot;: 1,
+  &quot;packQty&quot;: 54,
+  &quot;packUnit&quot;: &quot;ct&quot;,
+  &quot;price&quot;: 5.97,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.85
+}</pre></details>
+      </td></tr>
+<tr><td class="">KTX SUP TMP</td><td class="">ktx sup tmp</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.12</td><td class="">Walmart</td><td class="num">0.6</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;KTX SUP TMP&quot;,
+  &quot;normalizedName&quot;: &quot;ktx sup tmp&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.12,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.6
+}</pre></details>
+      </td></tr>
+<tr><td class="">2 MILK</td><td class="">milk</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2.5</td><td class="">Walmart</td><td class="num">0.9</td><td class="">dairy</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;2 MILK&quot;,
+  &quot;normalizedName&quot;: &quot;milk&quot;,
+  &quot;category&quot;: &quot;dairy&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2.5,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.9
+}</pre></details>
+      </td></tr>
+<tr><td class="">NPT NMGLD100</td><td class="">npt nmgld100</td><td class=""><span class="dim">—</span></td><td class="num">3</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">17.01</td><td class="">Walmart</td><td class="num">0.65</td><td class="">other</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;NPT NMGLD100&quot;,
+  &quot;normalizedName&quot;: &quot;npt nmgld100&quot;,
+  &quot;category&quot;: &quot;other&quot;,
+  &quot;qty&quot;: 3,
+  &quot;price&quot;: 17.01,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.65
+}</pre></details>
+      </td></tr>
+<tr><td class="">PRETZEL SSG</td><td class="">pretzel</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">5.98</td><td class="">Walmart</td><td class="num">0.85</td><td class="">snacks</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;PRETZEL SSG&quot;,
+  &quot;normalizedName&quot;: &quot;pretzel&quot;,
+  &quot;category&quot;: &quot;snacks&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 5.98,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.85
+}</pre></details>
+      </td></tr>
+<tr><td class="">WAX</td><td class="">wax</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">1.5</td><td class="">Walmart</td><td class="num">0.85</td><td class="">personal_care</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;WAX&quot;,
+  &quot;normalizedName&quot;: &quot;wax&quot;,
+  &quot;category&quot;: &quot;personal_care&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 1.5,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.85
+}</pre></details>
+      </td></tr>
+<tr><td class="">WAX</td><td class="">wax</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2</td><td class="">Walmart</td><td class="num">0.85</td><td class="">personal_care</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;WAX&quot;,
+  &quot;normalizedName&quot;: &quot;wax&quot;,
+  &quot;category&quot;: &quot;personal_care&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.85
+}</pre></details>
+      </td></tr>
+<tr><td class="">WAX</td><td class="">wax</td><td class=""><span class="dim">—</span></td><td class="num">1</td><td class="num"><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class=""><span class="dim">—</span></td><td class="num">2</td><td class="">Walmart</td><td class="num">0.85</td><td class="">personal_care</td></tr>
+      <tr class="json-row"><td colspan="11">
+        <details><summary>raw JSON</summary><pre>{
+  &quot;rawName&quot;: &quot;WAX&quot;,
+  &quot;normalizedName&quot;: &quot;wax&quot;,
+  &quot;category&quot;: &quot;personal_care&quot;,
+  &quot;qty&quot;: 1,
+  &quot;price&quot;: 2,
+  &quot;store&quot;: &quot;Walmart&quot;,
+  &quot;confidence&quot;: 0.85
+}</pre></details>
+      </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

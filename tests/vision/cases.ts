@@ -110,4 +110,11 @@ export const VISION_CASES: VisionCase[] = [
       "ice cream sandwich": "sandwich",
     },
   },
+  {
+    id: "walmart-birmingham",
+    file: "walmart.jpeg",
+    kindHint: "receipt",
+    note: "US Walmart receipt photo, 30 items, abbreviated names, qty prefixes, tax and cash/change lines.",
+    mustInclude: ["milk", "sugar", "salad bowl", "shrimp", "beef broccoli"],
+  },
 ];
