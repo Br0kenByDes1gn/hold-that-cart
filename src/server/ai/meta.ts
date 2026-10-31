@@ -224,7 +224,9 @@ export class MetaProvider implements AIProvider {
         { role: "system", content: PANTRY_CLASSIFY_SYSTEM },
         { role: "user", content: pantryClassifyUser(items) },
       ],
-      8000,
+      // Muse Spark 1.3 supports up to 131,072 output tokens. The model still
+      // stops naturally; this is only the truncation ceiling.
+      131_072,
     );
     const raw = JSON.parse(content);
     assertNoPrices(raw);
