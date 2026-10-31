@@ -44,7 +44,7 @@ import {
   hasBetterSwap,
   pantrySectionFor,
   pantryTagsFor,
-  verdictIsYes,
+  scoreIsYes,
 } from "./domain/pantrySection.js";
 import { knowledgeKey, normalizeName } from "./domain/normalize.js";
 import { variantStats } from "./domain/money.js";
@@ -68,20 +68,13 @@ interface InsightTarget extends PantryClassifyInput {
   productId: string;
 }
 
-function emptyVerdict() {
-  return {
-    verdict: null,
-    confidence: 0,
-    reason: "No reliable signal from the product name.",
-  };
-}
-
+/** 0.5 = unknown/neutral; below 0.6 does not count as true. */
 function emptyInsight(normalizedName: string): PantryItemInsight {
   return {
     normalizedName,
-    savesMoney: emptyVerdict(),
-    healthy: emptyVerdict(),
-    sustainable: emptyVerdict(),
+    savesMoney: 0.5,
+    healthy: 0.5,
+    sustainable: 0.5,
     swap: false,
   };
 }
@@ -145,13 +138,13 @@ async function classifyAndStoreInsights(
       productId: target.productId,
       scanId,
       category: target.category ?? null,
-      savesMoney: verdictIsYes(insight.savesMoney),
-      healthy: verdictIsYes(insight.healthy),
-      sustainable: verdictIsYes(insight.sustainable),
+      savesMoney: scoreIsYes(insight.savesMoney),
+      healthy: scoreIsYes(insight.healthy),
+      sustainable: scoreIsYes(insight.sustainable),
       swapName: validSwap ? validSwap.name : null,
-      swapSavesMoney: validSwap ? verdictIsYes(validSwap.savesMoney) : null,
-      swapHealthy: validSwap ? verdictIsYes(validSwap.healthy) : null,
-      swapSustainable: validSwap ? verdictIsYes(validSwap.sustainable) : null,
+      swapSavesMoney: validSwap ? scoreIsYes(validSwap.savesMoney) : null,
+      swapHealthy: validSwap ? scoreIsYes(validSwap.healthy) : null,
+      swapSustainable: validSwap ? scoreIsYes(validSwap.sustainable) : null,
       assessment: insight,
       source: byKey.has(key) ? "scan" : "fallback",
       modelName,
@@ -429,25 +422,26 @@ routes.get("/api/pantry/sections", async (c) => {
     }
 
     const stored = row.assessment as PantryItemInsight | null;
-    const storedVerdict = (value: boolean | null) => ({
-      verdict: value,
-      confidence: value === null ? 0 : 1,
-      reason: "Stored insight.",
-    });
+    const storedScore = (value: boolean | null) =>
+      value === null ? 0.5 : value ? 1 : 0;
+    const hasNumericAssessment =
+      stored &&
+      typeof stored === "object" &&
+      typeof (stored as PantryItemInsight).savesMoney === "number";
     const insight: PantryItemInsight =
-      stored && typeof stored === "object" && "normalizedName" in stored
+      hasNumericAssessment
         ? stored
         : {
             normalizedName: normalizeName(product.name),
-            savesMoney: storedVerdict(row.savesMoney),
-            healthy: storedVerdict(row.healthy),
-            sustainable: storedVerdict(row.sustainable),
+            savesMoney: storedScore(row.savesMoney),
+            healthy: storedScore(row.healthy),
+            sustainable: storedScore(row.sustainable),
             swap: row.swapName
               ? {
                   name: row.swapName,
-                  savesMoney: storedVerdict(row.swapSavesMoney),
-                  healthy: storedVerdict(row.swapHealthy),
-                  sustainable: storedVerdict(row.swapSustainable),
+                  savesMoney: storedScore(row.swapSavesMoney),
+                  healthy: storedScore(row.swapHealthy),
+                  sustainable: storedScore(row.swapSustainable),
                 }
               : false,
           };
@@ -516,25 +510,26 @@ routes.get("/api/dev/pantry-insights", async (c) => {
         const product = byId.get(row.productId);
         if (!product) return null;
         const stored = row.assessment as PantryItemInsight | null;
-        const storedVerdict = (value: boolean | null) => ({
-          verdict: value,
-          confidence: value === null ? 0 : 1,
-          reason: "Stored insight.",
-        });
+        const storedScore = (value: boolean | null) =>
+          value === null ? 0.5 : value ? 1 : 0;
+        const hasNumericAssessment =
+          stored &&
+          typeof stored === "object" &&
+          typeof (stored as PantryItemInsight).savesMoney === "number";
         const assessment: PantryItemInsight =
-          stored && typeof stored === "object" && "normalizedName" in stored
+          hasNumericAssessment
             ? stored
             : {
                 normalizedName: normalizeName(product.name),
-                savesMoney: storedVerdict(row.savesMoney),
-                healthy: storedVerdict(row.healthy),
-                sustainable: storedVerdict(row.sustainable),
+                savesMoney: storedScore(row.savesMoney),
+                healthy: storedScore(row.healthy),
+                sustainable: storedScore(row.sustainable),
                 swap: row.swapName
                   ? {
                       name: row.swapName,
-                      savesMoney: storedVerdict(row.swapSavesMoney),
-                      healthy: storedVerdict(row.swapHealthy),
-                      sustainable: storedVerdict(row.swapSustainable),
+                      savesMoney: storedScore(row.swapSavesMoney),
+                      healthy: storedScore(row.swapHealthy),
+                      sustainable: storedScore(row.swapSustainable),
                     }
                   : false,
               };
@@ -1011,13 +1006,13 @@ routes.post("/api/demo/seed", async (c) => {
         productId: prod.id,
         scanId: null,
         category: insight.category,
-        savesMoney: verdictIsYes(insight.savesMoney),
-        healthy: verdictIsYes(insight.healthy),
-        sustainable: verdictIsYes(insight.sustainable),
+        savesMoney: scoreIsYes(insight.savesMoney),
+        healthy: scoreIsYes(insight.healthy),
+        sustainable: scoreIsYes(insight.sustainable),
         swapName: swap?.name ?? null,
-        swapSavesMoney: swap ? verdictIsYes(swap.savesMoney) : null,
-        swapHealthy: swap ? verdictIsYes(swap.healthy) : null,
-        swapSustainable: swap ? verdictIsYes(swap.sustainable) : null,
+        swapSavesMoney: swap ? scoreIsYes(swap.savesMoney) : null,
+        swapHealthy: swap ? scoreIsYes(swap.healthy) : null,
+        swapSustainable: swap ? scoreIsYes(swap.sustainable) : null,
         assessment: { normalizedName: p.item, ...insight },
         source: "demo",
         modelName: "fixture",

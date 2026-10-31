@@ -143,38 +143,14 @@ describe("seed → briefing flow", () => {
                 items: [
                   {
                     normalizedName: "honey",
-                    savesMoney: {
-                      verdict: false,
-                      confidence: 0.7,
-                      reason: "Price is uncertain.",
-                    },
-                    healthy: {
-                      verdict: true,
-                      confidence: 0.8,
-                      reason: "Generally a simple food.",
-                    },
-                    sustainable: {
-                      verdict: true,
-                      confidence: 0.6,
-                      reason: "Plant-based sweetener.",
-                    },
+                    savesMoney: 0.4,
+                    healthy: 0.8,
+                    sustainable: 0.7,
                     swap: {
                       name: "Raw honey",
-                      savesMoney: {
-                        verdict: true,
-                        confidence: 0.7,
-                        reason: "Less processing.",
-                      },
-                      healthy: {
-                        verdict: true,
-                        confidence: 0.8,
-                        reason: "Minimally processed.",
-                      },
-                      sustainable: {
-                        verdict: true,
-                        confidence: 0.7,
-                        reason: "Less packaging.",
-                      },
+                      savesMoney: 0.7,
+                      healthy: 0.8,
+                      sustainable: 0.7,
                     },
                   },
                 ],
@@ -215,13 +191,13 @@ describe("seed → briefing flow", () => {
       const devHoney = dev.body.items.find((s: any) => s.rawName === "Honey");
       expect(devHoney.raw).toMatchObject({
         normalizedName: "honey",
-        healthy: { verdict: true, confidence: 0.8 },
-        sustainable: { verdict: true, confidence: 0.6 },
+        healthy: 0.8,
+        sustainable: 0.7,
         swap: { name: "Raw honey" },
       });
       expect(devHoney.assessment).toMatchObject({
         normalizedName: "honey",
-        healthy: { verdict: true, confidence: 0.8 },
+        healthy: 0.8,
       });
       expect(devHoney.classification.swap.name).toBe("Raw honey");
     } finally {
@@ -262,9 +238,9 @@ describe("seed → briefing flow", () => {
     const honey = dev.body.items.find((s: any) => s.rawName === "Honey");
     expect(honey.raw).toBeNull();
     expect(honey.assessment).toMatchObject({
-      savesMoney: { verdict: null, confidence: 0 },
-      healthy: { verdict: null, confidence: 0 },
-      sustainable: { verdict: null, confidence: 0 },
+      savesMoney: 0.5,
+      healthy: 0.5,
+      sustainable: 0.5,
       swap: false,
     });
     await api("/api/demo/reset", { method: "POST" });

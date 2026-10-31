@@ -63,34 +63,28 @@ describe("meta provider (mocked fetch, no network)", () => {
     expect((e as any).promptVersion).toBe("v1");
   });
 
-  const verdict = (value: boolean | null, confidence = 0.8) => ({
-    verdict: value,
-    confidence,
-    reason: "Test reason.",
-  });
-
-  it("classifyPantryItems validates structured verdicts, swaps and membership", async () => {
+  it("classifyPantryItems validates scores, swaps and membership", async () => {
     const fetchFn = vi.fn(async () =>
       chatResponse(
         JSON.stringify({
           items: [
             {
               normalizedName: "milk",
-              savesMoney: verdict(true),
-              healthy: verdict(true),
-              sustainable: verdict(false),
+              savesMoney: 0.8,
+              healthy: 0.9,
+              sustainable: 0.3,
               swap: {
                 name: "Oat milk",
-                savesMoney: verdict(true),
-                healthy: verdict(true),
-                sustainable: verdict(true),
+                savesMoney: 0.8,
+                healthy: 0.9,
+                sustainable: 0.8,
               },
             },
             {
               normalizedName: "invented item",
-              savesMoney: verdict(true),
-              healthy: verdict(true),
-              sustainable: verdict(true),
+              savesMoney: 0.8,
+              healthy: 0.9,
+              sustainable: 0.8,
               swap: false,
             },
           ],
@@ -103,10 +97,7 @@ describe("meta provider (mocked fetch, no network)", () => {
     ]);
     expect(res.items).toHaveLength(1);
     expect(res.items[0].normalizedName).toBe("milk");
-    expect(res.items[0].savesMoney).toMatchObject({
-      verdict: true,
-      confidence: 0.8,
-    });
+    expect(res.items[0].savesMoney).toBe(0.8);
     expect(res.items[0].swap).toMatchObject({ name: "Oat milk" });
     expect(res.rawItems).toHaveLength(2);
     expect((res.rawItems?.[0] as any).normalizedName).toBe("milk");
@@ -121,9 +112,9 @@ describe("meta provider (mocked fetch, no network)", () => {
           items: [
             {
               normalizedName: "milk",
-              savesMoney: verdict(null, 0.2),
-              healthy: verdict(true),
-              sustainable: verdict(false),
+              savesMoney: 0.5,
+              healthy: 0.9,
+              sustainable: 0.3,
               price: 2.99,
               swap: false,
             },

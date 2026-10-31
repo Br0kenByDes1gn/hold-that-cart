@@ -5,6 +5,7 @@ import {
 } from "../../shared/schemas.js";
 import { normalizeName } from "../domain/normalize.js";
 import { ITEM_CATEGORIES } from "../../shared/itemCategories.js";
+import { logUsageLine } from "../logger.js";
 import type {
   AIProvider,
   PantryClassifyInput,
@@ -57,16 +58,19 @@ export function enrichmentUser(name: string, brand?: string, form?: string): str
 
 export const PANTRY_CLASSIFY_SYSTEM = `You classify grocery items already extracted from a receipt for a pantry app.
 Output JSON ONLY, no markdown, no commentary, with this shape:
-{"items":[{"normalizedName":string,"savesMoney":verdict,"healthy":verdict,"sustainable":verdict,"swap":false | {"name":string,"savesMoney":verdict,"healthy":verdict,"sustainable":verdict}}]}
-Each verdict is: {"verdict": true | false | null, "confidence": number 0-1, "reason": string}
+{"items":[{"normalizedName":string,"savesMoney":number,"healthy":number,"sustainable":number,"swap":false | {"name":string,"savesMoney":number,"healthy":number,"sustainable":number}}]}
+Every number is a value from 0 to 1:
+- 0 means definitely no / very poor.
+- 0.5 means unknown, neutral, or no reliable signal.
+- 1 means definitely yes / very strong.
 Rules:
 - Only return items from the input, one per input item, using the same normalizedName.
-- savesMoney: likely cheaper than a typical alternative. Be conservative.
-- healthy: generally healthier for a person. Be conservative and do not give medical advice.
-- sustainable: lower environmental impact. Be conservative.
-- Use verdict null when the item name does not provide enough information. Confidence must reflect how certain you are from the name alone.
-- reason: one short sentence grounded only in the product name/category. Do not claim certifications, origin, nutrition facts, or packaging you cannot know.
-- swap: a generic product type or form that is clearly better than the original because it has MORE confidently true verdicts among savesMoney, healthy, sustainable. Use false when there is no clearly better option.
+- savesMoney: how strongly this choice is likely to save money versus a typical alternative.
+- healthy: how strongly this is a healthier choice. Use general knowledge: chips, candy and soft drinks are usually unhealthy; fruit and vegetables are usually healthy.
+- sustainable: how strongly this is a greener/sustainable choice. Reusable, refillable and plant-based options usually score higher; single-use packaging usually scores lower.
+- Do not overthink or demand exact nutrition/supply-chain facts. Use general category knowledge and be reasonably conservative.
+- Use 0.5 when the name genuinely gives no signal.
+- swap: a generic product type or form with MORE values at or above 0.6 than the original. Use false when there is no clearly better option.
 - The swap must never be a brand, SKU, store name, or price. It is a product type/form such as "store-brand version", "larger pack", "refill", "wholegrain version", or "plant-based alternative".
 - Never invent items that are not in the input. Never include prices or savings figures.`;
 
@@ -159,31 +163,28 @@ export class MetaProvider implements AIProvider {
       (items && items > 0 && metrics.totalTokens !== null
         ? Math.round((metrics.totalTokens / items) * 100) / 100
         : null);
-    console.info(
-      "[ai-usage]",
-      JSON.stringify({
-        timestamp: new Date().toISOString(),
-        operation,
-        model: this.model,
-        ...(items !== undefined ? { items } : {}),
-        ...(extra.imageBytes !== undefined ? { imageBytes: extra.imageBytes } : {}),
-        ...(tokensPerItem !== null ? { tokensPerItem } : {}),
-        maxTokens: metrics.maxTokens,
-        requestBytes: metrics.requestBytes,
-        promptBytes: metrics.promptBytes,
-        responseBytes: metrics.responseBytes,
-        apiResponseBytes: metrics.apiResponseBytes,
-        promptTokens: metrics.promptTokens,
-        completionTokens: metrics.completionTokens,
-        reasoningTokens: metrics.reasoningTokens,
-        cachedTokens: metrics.cachedTokens,
-        totalTokens: metrics.totalTokens,
-        durationMs: metrics.durationMs,
-        finishReason: metrics.finishReason,
-        ok: metrics.ok,
-        ...(metrics.error ? { error: metrics.error } : {}),
-      }),
-    );
+    logUsageLine({
+      timestamp: new Date().toISOString(),
+      operation,
+      model: this.model,
+      ...(items !== undefined ? { items } : {}),
+      ...(extra.imageBytes !== undefined ? { imageBytes: extra.imageBytes } : {}),
+      ...(tokensPerItem !== null ? { tokensPerItem } : {}),
+      maxTokens: metrics.maxTokens,
+      requestBytes: metrics.requestBytes,
+      promptBytes: metrics.promptBytes,
+      responseBytes: metrics.responseBytes,
+      apiResponseBytes: metrics.apiResponseBytes,
+      promptTokens: metrics.promptTokens,
+      completionTokens: metrics.completionTokens,
+      reasoningTokens: metrics.reasoningTokens,
+      cachedTokens: metrics.cachedTokens,
+      totalTokens: metrics.totalTokens,
+      durationMs: metrics.durationMs,
+      finishReason: metrics.finishReason,
+      ok: metrics.ok,
+      ...(metrics.error ? { error: metrics.error } : {}),
+    });
   }
 
   private async chat(

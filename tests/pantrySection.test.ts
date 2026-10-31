@@ -3,64 +3,46 @@ import {
   hasBetterSwap,
   pantrySectionFor,
   pantryTagsFor,
+  scoreIsYes,
   trueCount,
-  verdictIsYes,
 } from "../src/server/domain/pantrySection.js";
-import type { PantryItemInsight, PantryVerdict } from "../src/shared/schemas.js";
-
-const no = (confidence = 0.7): PantryVerdict => ({
-  verdict: false,
-  confidence,
-  reason: "No.",
-});
-const yes = (confidence = 0.7): PantryVerdict => ({
-  verdict: true,
-  confidence,
-  reason: "Yes.",
-});
-const unknown = (): PantryVerdict => ({
-  verdict: null,
-  confidence: 0.2,
-  reason: "Unknown.",
-});
+import type { PantryItemInsight } from "../src/shared/schemas.js";
 
 function insight(overrides: Partial<PantryItemInsight> = {}): PantryItemInsight {
   return {
     normalizedName: "item",
-    savesMoney: no(),
-    healthy: no(),
-    sustainable: no(),
+    savesMoney: 0.2,
+    healthy: 0.2,
+    sustainable: 0.2,
     swap: false,
     ...overrides,
   };
 }
 
 describe("pantry sectioning", () => {
-  it("requires a confident positive verdict for a true parameter", () => {
-    expect(verdictIsYes(yes(0.5))).toBe(true);
-    expect(verdictIsYes(yes(0.49))).toBe(false);
-    expect(verdictIsYes({ verdict: true, confidence: 0.4, reason: "unsure" })).toBe(
-      false,
-    );
-    expect(verdictIsYes(unknown())).toBe(false);
+  it("counts a parameter as true only at 0.6 or above", () => {
+    expect(scoreIsYes(0.6)).toBe(true);
+    expect(scoreIsYes(0.59)).toBe(false);
+    expect(scoreIsYes(0)).toBe(false);
+    expect(scoreIsYes(1)).toBe(true);
   });
 
-  it("counts confident true parameters", () => {
+  it("counts true parameters", () => {
     expect(trueCount(insight())).toBe(0);
-    expect(trueCount(insight({ savesMoney: yes(), healthy: yes() }))).toBe(2);
+    expect(trueCount(insight({ savesMoney: 0.7, healthy: 0.65 }))).toBe(2);
     expect(
-      trueCount(insight({ savesMoney: yes(), healthy: yes(0.3), sustainable: unknown() })),
+      trueCount(insight({ savesMoney: 0.7, healthy: 0.5, sustainable: 0.4 })),
     ).toBe(1);
   });
 
   it("a better swap always wins, even with fewer original trues", () => {
     const item = insight({
-      healthy: yes(),
+      healthy: 0.7,
       swap: {
         name: "Oat milk",
-        savesMoney: yes(),
-        healthy: yes(),
-        sustainable: yes(),
+        savesMoney: 0.7,
+        healthy: 0.8,
+        sustainable: 0.7,
       },
     });
     expect(hasBetterSwap(item)).toBe(true);
@@ -69,13 +51,13 @@ describe("pantry sectioning", () => {
 
   it("rejects a swap that is not strictly better", () => {
     const item = insight({
-      savesMoney: yes(),
-      healthy: yes(),
+      savesMoney: 0.7,
+      healthy: 0.7,
       swap: {
         name: "Similar item",
-        savesMoney: yes(),
-        healthy: yes(),
-        sustainable: no(),
+        savesMoney: 0.7,
+        healthy: 0.7,
+        sustainable: 0.2,
       },
     });
     expect(hasBetterSwap(item)).toBe(false);
@@ -83,26 +65,26 @@ describe("pantry sectioning", () => {
   });
 
   it("2+ true parameters → BUY", () => {
-    expect(pantrySectionFor(insight({ savesMoney: yes(), sustainable: yes() }))).toBe(
+    expect(pantrySectionFor(insight({ savesMoney: 0.7, sustainable: 0.61 }))).toBe(
       "buy",
     );
     expect(
       pantrySectionFor(
-        insight({ savesMoney: yes(), healthy: yes(), sustainable: yes() }),
+        insight({ savesMoney: 0.7, healthy: 0.9, sustainable: 0.8 }),
       ),
     ).toBe("buy");
   });
 
   it("0–1 true parameters → SKIP", () => {
     expect(pantrySectionFor(insight())).toBe("skip");
-    expect(pantrySectionFor(insight({ healthy: yes() }))).toBe("skip");
-    expect(pantrySectionFor(insight({ healthy: unknown(), sustainable: yes(0.2) }))).toBe(
-      "skip",
-    );
+    expect(pantrySectionFor(insight({ healthy: 0.7 }))).toBe("skip");
+    expect(
+      pantrySectionFor(insight({ healthy: 0.5, sustainable: 0.59 })),
+    ).toBe("skip");
   });
 
-  it("maps confident booleans to tag kinds", () => {
-    expect(pantryTagsFor(insight({ savesMoney: yes(), sustainable: yes() }))).toEqual([
+  it("maps true scores to tag kinds", () => {
+    expect(pantryTagsFor(insight({ savesMoney: 0.7, sustainable: 0.6 }))).toEqual([
       "money",
       "planet",
     ]);

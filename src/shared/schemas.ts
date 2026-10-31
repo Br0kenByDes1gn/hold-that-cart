@@ -110,25 +110,22 @@ export type ProductEnrichment = z.infer<typeof productEnrichmentSchema>;
 // The model classifies already-extracted receipt items. The server validates
 // the swap and deterministically decides the pantry section.
 
-export const pantryVerdictSchema = z.object({
-  verdict: z.boolean().nullable(),
-  confidence: z.number().min(0).max(1),
-  reason: z.string().min(1).max(280),
-});
-export type PantryVerdict = z.infer<typeof pantryVerdictSchema>;
+/** Directional score: 0 = definitely no, 0.5 = unknown, 1 = definitely yes. */
+export const pantryScoreSchema = z.number().min(0).max(1);
+export type PantryScore = z.infer<typeof pantryScoreSchema>;
 
 export const pantrySwapSchema = z.object({
   name: z.string().min(1).max(120),
-  savesMoney: pantryVerdictSchema,
-  healthy: pantryVerdictSchema,
-  sustainable: pantryVerdictSchema,
+  savesMoney: pantryScoreSchema,
+  healthy: pantryScoreSchema,
+  sustainable: pantryScoreSchema,
 });
 
 export const pantryItemInsightSchema = z.object({
   normalizedName: z.string().min(1),
-  savesMoney: pantryVerdictSchema,
-  healthy: pantryVerdictSchema,
-  sustainable: pantryVerdictSchema,
+  savesMoney: pantryScoreSchema,
+  healthy: pantryScoreSchema,
+  sustainable: pantryScoreSchema,
   swap: z
     .union([z.literal(false), pantrySwapSchema])
     .nullish()

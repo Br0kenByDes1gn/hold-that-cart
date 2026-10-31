@@ -1,24 +1,24 @@
-import type { PantryItemInsight, PantryVerdict } from "../../shared/schemas.js";
+import type { PantryItemInsight, PantryScore } from "../../shared/schemas.js";
 
 export type PantrySectionKey = "buy" | "skip" | "swap";
 export type PantryTagKind = "money" | "health" | "planet";
 
-export const MIN_VERDICT_CONFIDENCE = 0.5;
+/** A parameter counts as true when its directional score is at least 0.6. */
+export const MIN_SCORE = 0.6;
 
-interface VerdictFlags {
-  savesMoney: PantryVerdict;
-  healthy: PantryVerdict;
-  sustainable: PantryVerdict;
+interface ScoreFlags {
+  savesMoney: PantryScore;
+  healthy: PantryScore;
+  sustainable: PantryScore;
 }
 
-/** A tag lights only for a positive verdict with reasonable confidence. */
-export function verdictIsYes(verdict: PantryVerdict): boolean {
-  return verdict.verdict === true && verdict.confidence >= MIN_VERDICT_CONFIDENCE;
+export function scoreIsYes(value: PantryScore): boolean {
+  return value >= MIN_SCORE;
 }
 
-/** Count how many of the three pantry parameters are confidently true. */
-export function trueCount(flags: VerdictFlags): number {
-  return [flags.savesMoney, flags.healthy, flags.sustainable].filter(verdictIsYes)
+/** Count how many of the three pantry parameters are above the threshold. */
+export function trueCount(flags: ScoreFlags): number {
+  return [flags.savesMoney, flags.healthy, flags.sustainable].filter(scoreIsYes)
     .length;
 }
 
@@ -37,10 +37,10 @@ export function pantrySectionFor(insight: PantryItemInsight): PantrySectionKey {
   return trueCount(insight) >= 2 ? "buy" : "skip";
 }
 
-export function pantryTagsFor(flags: VerdictFlags): PantryTagKind[] {
+export function pantryTagsFor(flags: ScoreFlags): PantryTagKind[] {
   const tags: PantryTagKind[] = [];
-  if (verdictIsYes(flags.savesMoney)) tags.push("money");
-  if (verdictIsYes(flags.healthy)) tags.push("health");
-  if (verdictIsYes(flags.sustainable)) tags.push("planet");
+  if (scoreIsYes(flags.savesMoney)) tags.push("money");
+  if (scoreIsYes(flags.healthy)) tags.push("health");
+  if (scoreIsYes(flags.sustainable)) tags.push("planet");
   return tags;
 }
