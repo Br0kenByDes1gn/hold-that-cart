@@ -32,18 +32,50 @@ describe("item categories", () => {
     }
   });
 
-  it("uses the model category image when available", () => {
-    const art = resolveItemArt({ rawName: "Mystery pack", category: "meat" });
-    expect(art.category).toBe("meat");
-    expect(art.categoryLabel).toBe("Meat");
+  it("uses the category image when confidence is not above 0.93", () => {
+    const art = resolveItemArt({
+      rawName: "Chips bag",
+      normalizedName: "chips",
+      category: "snacks",
+      confidence: 0.93,
+    });
+    expect(art.category).toBe("snacks");
     expect(art.usedCategory).toBe(true);
-    expect(art.entry.file).toContain("beef_steak");
+    expect(art.entry.file).toContain("crackers");
   });
 
-  it("falls back to the product name for other/unknown categories", () => {
-    const art = resolveItemArt({ rawName: "Chips bag", category: "other" });
-    expect(art.category).toBe("other");
+  it("uses the exact model-name image when confidence is above 0.93", () => {
+    const art = resolveItemArt({
+      rawName: "Chips bag",
+      normalizedName: "chips",
+      category: "snacks",
+      confidence: 0.95,
+    });
+    expect(art.category).toBe("snacks");
     expect(art.usedCategory).toBe(false);
     expect(art.entry.file).toContain("chips");
+  });
+
+  it("uses the food-container image for unknown/other categories", () => {
+    const art = resolveItemArt({ rawName: "Mystery pack", category: "other" });
+    expect(art.category).toBe("other");
+    expect(art.usedCategory).toBe(true);
+    expect(art.entry.file).toContain("food_container");
+  });
+
+  it("uses the dedicated alcohol and pet images", () => {
+    const alcohol = resolveItemArt({
+      rawName: "Prosecco",
+      category: "alcohol",
+      confidence: 0.5,
+    });
+    expect(alcohol.entry.file).toContain("alcohol_bottle_icon");
+
+    const pet = resolveItemArt({
+      rawName: "Dog food",
+      category: "pet",
+      confidence: 0.5,
+    });
+    expect(pet.entry.file).toContain("pet_food_icon");
   });
 });

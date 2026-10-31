@@ -23,7 +23,7 @@ Rules:
 - list: one entry per list line. No prices (use null) unless a price is written on the list. qty defaults to 1.
 - cart: only items you can actually identify, top layer. price is always null. confidence reflects occlusion (0.4-0.7 typical).
 - normalizedName: lowercase generic product name in English ("olive oil", NOT "Borges Olio Evo 500ml").
-- category: choose exactly ONE from this list: ${ITEM_CATEGORIES.join(", ")}. Base it on the product name/type. Examples: any meat product -> meat; wine/beer/whiskey -> alcohol; bread/buns/bagels -> bread; milk/cheese/butter -> dairy. Use "other" when unsure. Never invent a category outside the list.
+- category: choose exactly ONE from this list: ${ITEM_CATEGORIES.join(", ")}. Base it on the product name/type. Examples: any meat product -> meat; wine/beer/whiskey -> alcohol; pet food/treats -> pet; bread/buns/bagels -> bread; milk/cheese/butter -> dairy. Use "other" when unsure. Never invent a category outside the list.
 - Keep the printed product words, but drop brand names, sizes, percentages, tax letters, HSN/SKU codes and store names.
 - Expand receipt abbreviations into readable words ("BRW" -> "brown", "GRANU" -> "granulated", "CHOC" -> "chocolate", "OG" -> "organic").
 - Use the singular form for countable nouns ("blueberry", not "blueberries").

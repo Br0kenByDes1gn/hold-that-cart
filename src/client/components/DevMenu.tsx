@@ -190,7 +190,7 @@ export function DevMenu() {
                         </div>
                         <div className="devmode-image-line">
                           Image: {art.entry.file}
-                          {!art.usedCategory ? " (name fallback)" : ""}
+                          {art.usedCategory ? " (category fallback)" : " (model image)"}
                         </div>
                         <pre className="devmode-json">
                           {JSON.stringify(item, null, 2)}

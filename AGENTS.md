@@ -64,7 +64,7 @@ Zod schemas in `src/shared/schemas.ts` are the single API/AI contract.
 ```bash
 pnpm install
 pnpm run dev        # Hono API :3001 + Vite :5173 (Vite proxies /api), Ctrl-C stops both
-pnpm test           # 61 Vitest tests, must stay green
+pnpm test           # 63 Vitest tests, must stay green
 pnpm run test:e2e   # 9 Playwright tests (prod bundle, Chromium mobile) — UI, auth, pantry flow
 pnpm test:vision    # LIVE vision goldens (costs credits; needs MODEL_API_KEY)
 pnpm vision:render  # rebuild HTML previews from the last run (free, no model calls)
@@ -91,7 +91,7 @@ Gotchas:
 
 ```
 src/shared/schemas.ts        Zod enums + contracts (ExtractedItem, ProductEnrichment, Suggestion, API payloads)
-src/shared/itemCategories.ts Fixed 30+1 category pool + display labels for scan items
+src/shared/itemCategories.ts Fixed category pool + display labels for scan items
 src/server/index.ts          Hono app: household routes, static SPA serving (prod)
 src/server/dev.ts            server entry point (listens on PORT, default 3001)
 src/server/routes.ts         all /api routes (scans, pantry, briefing, lists, AI, demo)

@@ -43,6 +43,42 @@ const ALIASES: Record<string, string> = {
   banana: "fruit-assortment",
   bananas: "fruit-assortment",
   fruit: "fruit-assortment",
+  bread: "bread-loaf",
+  rice: "rice-grains-bowl",
+  chicken: "raw-chicken",
+  beef: "beef-steak",
+  steak: "beef-steak",
+  salmon: "salmon-fillet",
+  coffee: "coffee-jar",
+  tea: "tea-box",
+  honey: "honey-jar",
+  "peanut-butter": "peanut-butter",
+  "olive-oil": "olive-oil",
+  "laundry-detergent": "laundry-detergent",
+  "toilet-paper": "toilet-paper",
+  wine: "alcohol-bottle-icon",
+  beer: "alcohol-bottle-icon",
+  whiskey: "alcohol-bottle-icon",
+  whisky: "alcohol-bottle-icon",
+  vodka: "alcohol-bottle-icon",
+  rum: "alcohol-bottle-icon",
+  gin: "alcohol-bottle-icon",
+  prosecco: "alcohol-bottle-icon",
+  champagne: "alcohol-bottle-icon",
+  liqueur: "alcohol-bottle-icon",
+  seedlip: "alcohol-bottle-icon",
+  "pet-food": "pet-food-icon",
+  "dog-food": "pet-food-icon",
+  "cat-food": "pet-food-icon",
+  cola: "cola-bottle",
+  pepsi: "cola-bottle",
+  sprite: "cola-bottle",
+  soda: "cola-bottle",
+  "soft-drink": "cola-bottle",
+  water: "plastic-water-bottle",
+  juice: "juice-carton",
+  "orange-juice": "orange-juice-carton",
+  "apple-juice": "apple-juice-carton",
 };
 
 function publicEntry(entry: ArtEntry): ProductArtEntry {
@@ -92,6 +128,24 @@ export function productArtEntry(
     if (best) return publicEntry(best.entry);
   }
 
+  return null;
+}
+
+/** Exact/alias lookup only — no fuzzy token matching. */
+export function productArtExact(
+  name?: string | null,
+  icon?: string | null,
+): ProductArtEntry | null {
+  const candidates = [icon, name]
+    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+    .map((value) => toSlug(value));
+
+  for (const slug of candidates) {
+    const alias = ALIASES[slug];
+    if (alias && bySlug.has(alias)) return publicEntry(bySlug.get(alias)!);
+    const exact = bySlug.get(slug);
+    if (exact) return publicEntry(exact);
+  }
   return null;
 }
 

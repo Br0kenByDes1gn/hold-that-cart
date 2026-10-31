@@ -4,8 +4,8 @@ import {
   type ItemCategory,
 } from "../../shared/itemCategories";
 import {
-  productArtEntry,
   productArtEntryBySlug,
+  productArtExact,
   type ProductArtEntry,
 } from "./productArt";
 
@@ -37,7 +37,8 @@ const CATEGORY_IMAGE_SLUGS: Record<ItemCategory, string> = {
   soda: "cola-bottle",
   water: "plastic-water-bottle",
   juice: "juice-carton",
-  alcohol: "cola-bottle",
+  alcohol: "alcohol-bottle-icon",
+  pet: "pet-food-icon",
   cleaning: "laundry-detergent",
   paper: "toilet-paper",
   personal_care: "toothpaste",
@@ -48,7 +49,7 @@ export interface ItemArt {
   category: ItemCategory;
   categoryLabel: string;
   entry: ProductArtEntry;
-  /** True when the category image was used, false when name fallback won. */
+  /** True when the category image was used instead of an exact model-name image. */
   usedCategory: boolean;
 }
 
@@ -63,35 +64,31 @@ function normalizeCategory(value: unknown): ItemCategory {
 
 /**
  * Resolve the image for a detected item:
- * 1. model-returned category representative image
- * 2. name/brand asset fallback
- * 3. generic "other" image
+ * 1. exact image from the model's product name when confidence > 0.93
+ * 2. representative image for the model-returned category
  */
 export function resolveItemArt(item: {
   rawName?: string | null;
   normalizedName?: string | null;
   brand?: string | null;
   category?: unknown;
+  confidence?: number | null;
 }): ItemArt {
   const category = normalizeCategory(item.category);
-  const categoryEntry =
-    category === "other"
-      ? null
-      : productArtEntryBySlug(CATEGORY_IMAGE_SLUGS[category]);
-  const fallback = productArtEntry(
-    item.rawName ?? item.normalizedName ?? null,
-    item.brand ?? null,
-  );
-  const entry =
-    categoryEntry ??
-    fallback ??
-    productArtEntryBySlug(CATEGORY_IMAGE_SLUGS.other)!;
+  const categoryEntry = productArtEntryBySlug(CATEGORY_IMAGE_SLUGS[category])!;
+  const highConfidence =
+    typeof item.confidence === "number" && item.confidence > 0.93;
+  const modelEntry = highConfidence
+    ? productArtExact(item.normalizedName ?? null) ??
+      productArtExact(item.rawName ?? null)
+    : null;
+  const entry = modelEntry ?? categoryEntry;
 
   return {
     category,
     categoryLabel: ITEM_CATEGORY_LABELS[category],
     entry,
-    usedCategory: !!categoryEntry,
+    usedCategory: !modelEntry,
   };
 }
 
