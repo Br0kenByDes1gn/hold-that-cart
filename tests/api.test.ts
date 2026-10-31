@@ -58,9 +58,13 @@ describe("seed → briefing flow", () => {
     expect(sections.status).toBe(200);
     expect(sections.body.buy.map((s: any) => s.rawName)).toContain("Milk");
     expect(sections.body.buy.map((s: any) => s.rawName)).toContain("Bread");
-    expect(
-      sections.body.buy.find((s: any) => s.rawName === "Milk").category,
-    ).toBe("dairy");
+    const milk = sections.body.buy.find((s: any) => s.rawName === "Milk");
+    expect(milk.category).toBe("dairy");
+    expect(milk.scores).toMatchObject({
+      savesMoney: 0.7,
+      healthy: 0.8,
+      sustainable: 0.35,
+    });
     expect(sections.body.skip.map((s: any) => s.rawName)).toContain("Rice");
     expect(sections.body.swap.map((s: any) => s.rawName)).toContain("Olive oil");
     expect(sections.body.swap[0].swapTitle).toBeTruthy();

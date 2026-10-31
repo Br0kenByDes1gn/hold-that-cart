@@ -452,6 +452,11 @@ routes.get("/api/pantry/sections", async (c) => {
       rawName: product.name,
       icon: product.icon,
       category,
+      scores: {
+        savesMoney: insight.savesMoney,
+        healthy: insight.healthy,
+        sustainable: insight.sustainable,
+      },
       tags: pantryTagsFor(insight),
       swapTitle: swap ? swap.name : null,
       swapTags: swap ? pantryTagsFor(swap) : [],

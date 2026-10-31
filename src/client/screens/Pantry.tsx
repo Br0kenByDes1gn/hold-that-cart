@@ -85,6 +85,10 @@ export function PantryScreen() {
               <div className="pantry-grid">
                 {section.items.map((item: any, i: number) => {
                   const tags = new Set<string>(item.tags ?? []);
+                  const tagOn = (kind: TagKind) => {
+                    const score = item.scores?.[kind];
+                    return typeof score === "number" ? score > 0.5 : tags.has(kind);
+                  };
                   const art = item.category
                     ? resolveItemArt({
                         rawName: item.rawName,
@@ -113,9 +117,9 @@ export function PantryScreen() {
                           />
                         </div>
                         <div className="pantry-card-tags">
-                          <PantryTag kind="money" on={tags.has("money")} />
-                          <PantryTag kind="health" on={tags.has("health")} />
-                          <PantryTag kind="planet" on={tags.has("planet")} />
+                          <PantryTag kind="money" on={tagOn("money")} />
+                          <PantryTag kind="health" on={tagOn("health")} />
+                          <PantryTag kind="planet" on={tagOn("planet")} />
                         </div>
                       </div>
                       <div className="pantry-card-name">{item.rawName}</div>
