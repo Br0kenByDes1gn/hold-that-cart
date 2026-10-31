@@ -192,6 +192,9 @@ GET  /api/health
   `domain/pantrySection.ts` only counts a parameter when `verdict: true` has
   confidence ≥0.5, validates the swap, and chooses the Pantry section. Set
   `PANTRY_CLASSIFY=off` for deterministic tests.
+- Every model call logs one `[ai-usage]` JSON line with request/response
+  bytes, image bytes (extraction), prompt/completion/reasoning/cached/total
+  tokens, duration, finish reason, item count, and tokens per item.
 - Tests mock `fetch` (`tests/ai.test.ts`). Never call the live API in tests —
   it costs credits and is non-deterministic.
 
