@@ -26,6 +26,9 @@ export const api = {
     return req(`/api/briefing${s ? `?${s}` : ""}`);
   },
   pantry: () => req("/api/pantry"),
+  pantrySections: () => req("/api/pantry/sections"),
+  devPantryInsights: () => req("/api/dev/pantry-insights"),
+  devLatestScan: () => req("/api/dev/scans/latest"),
   product: (id: string) => req(`/api/pantry/${id}`),
   patchProduct: (id: string, patch: Record<string, unknown>) =>
     req(`/api/products/${id}`, { method: "PATCH", body: JSON.stringify(patch) }),

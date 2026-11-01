@@ -18,7 +18,7 @@ describe("meta provider (mocked fetch, no network)", () => {
         JSON.stringify({
           kind: "receipt",
           items: [
-            { rawName: "Milk 1L", normalizedName: "milk", qty: 1, packQty: 1, packUnit: "L", price: 1.4, confidence: 0.9 },
+            { rawName: "Milk 1L", normalizedName: "milk", category: "dairy", qty: 1, packQty: 1, packUnit: "L", price: 1.4, confidence: 0.9 },
           ],
         }),
       ),
@@ -28,6 +28,7 @@ describe("meta provider (mocked fetch, no network)", () => {
     expect(res.kind).toBe("receipt");
     expect(res.items).toHaveLength(1);
     expect(res.items[0].normalizedName).toBe("milk");
+    expect(res.items[0].category).toBe("dairy");
     expect(res.items[0].price).toBe(1.4);
     // request went to chat completions with an image payload
     const init = (fetchFn.mock.calls[0] as unknown[])[1] as any;
@@ -60,6 +61,71 @@ describe("meta provider (mocked fetch, no network)", () => {
     expect(e.shelfLifeClass).toBe("staple");
     expect((e as any).modelName).toBe("muse-spark-1.3");
     expect((e as any).promptVersion).toBe("v1");
+  });
+
+  it("classifyPantryItems validates scores, swaps and membership", async () => {
+    const fetchFn = vi.fn(async () =>
+      chatResponse(
+        JSON.stringify({
+          items: [
+            {
+              normalizedName: "milk",
+              savesMoney: 0.8,
+              healthy: 0.9,
+              sustainable: 0.3,
+              swap: {
+                name: "Oat milk",
+                savesMoney: 0.8,
+                healthy: 0.9,
+                sustainable: 0.8,
+              },
+            },
+            {
+              normalizedName: "invented item",
+              savesMoney: 0.8,
+              healthy: 0.9,
+              sustainable: 0.8,
+              swap: false,
+            },
+          ],
+        }),
+      ),
+    );
+    const p = new MetaProvider({ apiKey: "test", fetchFn: fetchFn as any });
+    const res = await p.classifyPantryItems([
+      { rawName: "Milk 1L", normalizedName: "milk" },
+    ]);
+    expect(res.items).toHaveLength(1);
+    expect(res.items[0].normalizedName).toBe("milk");
+    expect(res.items[0].savesMoney).toBe(0.8);
+    expect(res.items[0].swap).toMatchObject({ name: "Oat milk" });
+    expect(res.rawItems).toHaveLength(2);
+    expect((res.rawItems?.[0] as any).normalizedName).toBe("milk");
+    expect(res.modelName).toBe("muse-spark-1.3");
+    expect(res.promptVersion).toBe("pantry-v1");
+  });
+
+  it("classifyPantryItems rejects price-bearing output", async () => {
+    const fetchFn = vi.fn(async () =>
+      chatResponse(
+        JSON.stringify({
+          items: [
+            {
+              normalizedName: "milk",
+              savesMoney: 0.5,
+              healthy: 0.9,
+              sustainable: 0.3,
+              price: 2.99,
+              swap: false,
+            },
+          ],
+        }),
+      ),
+    );
+    const p = new MetaProvider({ apiKey: "test", fetchFn: fetchFn as any });
+    await expect(
+      p.classifyPantryItems([{ rawName: "Milk", normalizedName: "milk" }]),
+    ).rejects.toThrow(/must not contain prices/);
   });
 
   it("enrichment containing prices fails validation", () => {

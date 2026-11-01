@@ -13,6 +13,7 @@ import { Boxes, CircleUser, Home, ScanLine } from "lucide-react";
 import { BriefingScreen } from "./screens/Home";
 import { ScannerScreen } from "./screens/Scanner";
 import { PantryScreen, ProductScreen } from "./screens/Pantry";
+import { PantrySectionScreen } from "./screens/PantrySection";
 import { ListScreen } from "./screens/Lists";
 import { ModeScreen } from "./screens/Mode";
 import { QuickViewScreen } from "./screens/QuickView";
@@ -38,6 +39,7 @@ function Shell() {
     location.pathname === "/signup" ||
     location.pathname === "/scanner" ||
     location.pathname === "/pantry" ||
+    location.pathname.startsWith("/pantry/section/") ||
     location.pathname === "/quick-view";
   const homeTarget = "/mode";
   const homeActive =
@@ -110,6 +112,14 @@ const homeRoute = createRoute({
 const briefingRoute = createRoute({ getParentRoute: () => rootRoute, path: "/briefing", component: BriefingScreen });
 const scannerRoute = createRoute({ getParentRoute: () => rootRoute, path: "/scanner", component: ScannerScreen });
 const pantryRoute = createRoute({ getParentRoute: () => rootRoute, path: "/pantry", component: PantryScreen });
+const pantrySectionRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/pantry/section/$section",
+  component: function PantrySectionRoute() {
+    const { section } = pantrySectionRoute.useParams();
+    return <PantrySectionScreen section={section} />;
+  },
+});
 const productRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pantry/$productId",
@@ -168,6 +178,7 @@ const routeTree = rootRoute.addChildren([
   briefingRoute,
   scannerRoute,
   pantryRoute,
+  pantrySectionRoute,
   productRoute,
   listRoute,
   modeRoute,

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ITEM_CATEGORIES } from "./itemCategories.js";
 
 // ── Enums ──────────────────────────────────────────────
 
@@ -39,9 +40,22 @@ export type ListItemDecision = z.infer<typeof listItemDecisionSchema>;
 
 // ── Extraction (what the vision model / fixtures produce) ──
 
+export const itemCategorySchema = z.preprocess(
+  (value) => {
+    if (typeof value !== "string") return "other";
+    const normalized = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+    return (ITEM_CATEGORIES as readonly string[]).includes(normalized)
+      ? normalized
+      : "other";
+  },
+  z.enum(ITEM_CATEGORIES),
+);
+export type ItemCategoryValue = z.infer<typeof itemCategorySchema>;
+
 export const extractedItemSchema = z.object({
   rawName: z.string().min(1),
   normalizedName: z.string().min(1),
+  category: itemCategorySchema.default("other"),
   brand: z.string().optional(),
   qty: z.number().positive().default(1),
   packQty: z.number().positive().optional(),
@@ -91,6 +105,38 @@ export const productEnrichmentSchema = z.object({
   generatedAt: z.string().optional(),
 });
 export type ProductEnrichment = z.infer<typeof productEnrichmentSchema>;
+
+// ── Pantry classification (model-provided estimates) ──
+// The model classifies already-extracted receipt items. The server validates
+// the swap and deterministically decides the pantry section.
+
+/** Directional score: 0 = definitely no, 0.5 = unknown, 1 = definitely yes. */
+export const pantryScoreSchema = z.number().min(0).max(1);
+export type PantryScore = z.infer<typeof pantryScoreSchema>;
+
+export const pantrySwapSchema = z.object({
+  name: z.string().min(1).max(120),
+  savesMoney: pantryScoreSchema,
+  healthy: pantryScoreSchema,
+  sustainable: pantryScoreSchema,
+});
+
+export const pantryItemInsightSchema = z.object({
+  normalizedName: z.string().min(1),
+  savesMoney: pantryScoreSchema,
+  healthy: pantryScoreSchema,
+  sustainable: pantryScoreSchema,
+  swap: z
+    .union([z.literal(false), pantrySwapSchema])
+    .nullish()
+    .transform((value) => value ?? false),
+});
+export type PantryItemInsight = z.infer<typeof pantryItemInsightSchema>;
+
+export const pantryInsightResponseSchema = z.object({
+  items: z.array(pantryItemInsightSchema),
+});
+export type PantryInsightResponse = z.infer<typeof pantryInsightResponseSchema>;
 
 // ── Suggestions (engine output) ──
 
@@ -147,6 +193,7 @@ export const scanConfirmItemSchema = z.object({
   rawName: z.string().min(1),
   /** Canonical generic type ("peanut oil") — product identity. Brand is a variant, never identity. */
   normalizedName: z.string().min(1).optional(),
+  category: itemCategorySchema.optional(),
   productId: z.string().uuid().nullable().default(null),
   qty: z.number().positive().default(1),
   packQty: z.number().positive().optional(),

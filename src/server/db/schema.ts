@@ -55,6 +55,32 @@ export const purchases = pgTable("purchases", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const productInsights = pgTable("product_insights", {
+  id: text("id").primaryKey(),
+  householdId: text("household_id")
+    .notNull()
+    .references(() => households.id),
+  productId: text("product_id")
+    .notNull()
+    .references(() => products.id),
+  scanId: text("scan_id"),
+  category: text("category"),
+  savesMoney: boolean("saves_money").notNull().default(false),
+  healthy: boolean("healthy").notNull().default(false),
+  sustainable: boolean("sustainable").notNull().default(false),
+  swapName: text("swap_name"),
+  swapSavesMoney: boolean("swap_saves_money"),
+  swapHealthy: boolean("swap_healthy"),
+  swapSustainable: boolean("swap_sustainable"),
+  assessment: jsonb("assessment"),
+  source: text("source").notNull().default("scan"),
+  modelName: text("model_name"),
+  promptVersion: text("prompt_version"),
+  classificationError: text("classification_error"),
+  raw: jsonb("raw_json"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const scans = pgTable("scans", {
   id: text("id").primaryKey(),
   householdId: text("household_id")

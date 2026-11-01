@@ -5,6 +5,7 @@ import {
   corrections,
   households,
   listItems,
+  productInsights,
   productKnowledge,
   products,
   purchases,
@@ -233,4 +234,79 @@ export async function loadAllProductViews(
   return views;
 }
 
-export { scans, shoppingLists, listItems, corrections, products, purchases, households };
+export interface ProductInsightInput {
+  householdId: string;
+  productId: string;
+  scanId?: string | null;
+  category?: string | null;
+  savesMoney: boolean;
+  healthy: boolean;
+  sustainable: boolean;
+  swapName?: string | null;
+  swapSavesMoney?: boolean | null;
+  swapHealthy?: boolean | null;
+  swapSustainable?: boolean | null;
+  assessment?: unknown;
+  source?: string;
+  modelName?: string | null;
+  promptVersion?: string | null;
+  classificationError?: string | null;
+  raw?: unknown;
+}
+
+/** Replace the current insight for a product (latest scan wins). */
+export async function saveProductInsight(input: ProductInsightInput) {
+  const db = await getDb();
+  await db
+    .delete(productInsights)
+    .where(
+      and(
+        eq(productInsights.householdId, input.householdId),
+        eq(productInsights.productId, input.productId),
+      ),
+    );
+  const row = {
+    id: randomUUID(),
+    householdId: input.householdId,
+    productId: input.productId,
+    scanId: input.scanId ?? null,
+    category: input.category ?? null,
+    savesMoney: input.savesMoney,
+    healthy: input.healthy,
+    sustainable: input.sustainable,
+    swapName: input.swapName ?? null,
+    swapSavesMoney: input.swapSavesMoney ?? null,
+    swapHealthy: input.swapHealthy ?? null,
+    swapSustainable: input.swapSustainable ?? null,
+    assessment: input.assessment ?? null,
+    source: input.source ?? "scan",
+    modelName: input.modelName ?? null,
+    promptVersion: input.promptVersion ?? null,
+    classificationError: input.classificationError ?? null,
+    raw: input.raw ?? null,
+    createdAt: new Date(),
+  };
+  await db.insert(productInsights).values(row);
+  return row;
+}
+
+export type ProductInsightRow = typeof productInsights.$inferSelect;
+
+/** Latest insight per product for a household. */
+export async function loadLatestProductInsights(
+  householdId: string,
+): Promise<ProductInsightRow[]> {
+  const db = await getDb();
+  const rows = await db
+    .select()
+    .from(productInsights)
+    .where(eq(productInsights.householdId, householdId))
+    .orderBy(desc(productInsights.createdAt));
+  const byProduct = new Map<string, ProductInsightRow>();
+  for (const row of rows) {
+    if (!byProduct.has(row.productId)) byProduct.set(row.productId, row);
+  }
+  return [...byProduct.values()];
+}
+
+export { scans, shoppingLists, listItems, corrections, products, purchases, households, productInsights };

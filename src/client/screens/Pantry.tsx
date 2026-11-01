@@ -1,49 +1,104 @@
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { api } from "../api";
-import { ProductArt, Tags, iconFor, useIconRegistry } from "../components";
+import { ProductArt, Tags, useIconRegistry } from "../components";
+import { PantryCard } from "../components/PantryCard";
+import {
+  allocateVisibleCards,
+  sortSectionItems,
+  type PantrySectionId,
+} from "../lib/pantryVisibility";
 
 import profilePic from "../../../assets/page-icons/profilepic.png";
 import pantryBoxArt from "../../../assets/page-icons/businesspantry.png";
 
-type TagKind = "money" | "health" | "planet";
-
 interface PantrySection {
-  id: string;
+  id: PantrySectionId;
   title: string;
   items: any[];
 }
 
-const TAG_LABEL: Record<TagKind, string> = {
-  money: "Saves money",
-  health: "Healthier",
-  planet: "Sustainable",
-};
-
-function PantryTag({ kind, on }: { kind: TagKind; on: boolean }) {
-  return (
-    <span className={`pantry-tag pantry-tag-${kind} ${on ? "is-on" : ""}`}>
-      {TAG_LABEL[kind]}
-    </span>
-  );
-}
-
 export function PantryScreen() {
-  const icons = useIconRegistry();
   const q = useQuery({
-    queryKey: ["briefing", "pantry"],
-    queryFn: () => api.briefing({ buy: 50, swap: 50, skip: 50 }),
+    queryKey: ["pantry", "sections"],
+    queryFn: api.pantrySections,
   });
+  const pageRef = useRef<HTMLDivElement>(null);
+  const overflowAtRef = useRef<Set<number>>(new Set());
+  const [visibleTotal, setVisibleTotal] = useState(7);
+  const [fitNonce, setFitNonce] = useState(0);
+
   const sections: PantrySection[] = q.data
     ? [
-        { id: "buy", title: "Buy", items: q.data.buy ?? [] },
-        { id: "skip", title: "Skip", items: q.data.skip ?? [] },
-        { id: "swap", title: "Swap", items: q.data.swap ?? [] },
-      ]
+        { id: "buy" as PantrySectionId, title: "Buy", items: sortSectionItems("buy", q.data.buy ?? []) },
+        { id: "skip" as PantrySectionId, title: "Skip", items: sortSectionItems("skip", q.data.skip ?? []) },
+        { id: "swap" as PantrySectionId, title: "Swap", items: sortSectionItems("swap", q.data.swap ?? []) },
+      ].filter((section) => section.items.length > 0)
     : [];
-  const empty = sections.every((s) => s.items.length === 0);
+  const totalCount = sections.reduce((sum, section) => sum + section.items.length, 0);
+  const dataKey = q.data
+    ? `${q.data.buy?.length ?? 0}:${q.data.skip?.length ?? 0}:${q.data.swap?.length ?? 0}`
+    : "none";
+
+  useEffect(() => {
+    overflowAtRef.current = new Set();
+    setVisibleTotal(7);
+  }, [dataKey]);
+
+  useEffect(() => {
+    const onResize = () => {
+      overflowAtRef.current = new Set();
+      setFitNonce((value) => value + 1);
+    };
+    window.addEventListener("resize", onResize);
+    window.visualViewport?.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    document.fonts?.ready.then(() => {
+      if (cancelled) return;
+      overflowAtRef.current = new Set();
+      setFitNonce((value) => value + 1);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!q.data || totalCount === 0) return;
+    const page = pageRef.current;
+    if (!page) return;
+    const shell = page.parentElement;
+    const shellPad = shell ? parseFloat(getComputedStyle(shell).paddingBottom) || 0 : 0;
+    const available = window.innerHeight - shellPad;
+    const fits = page.scrollHeight <= available + 1;
+
+    setVisibleTotal((current) => {
+      const capped = Math.min(current, totalCount);
+      if (fits) {
+        if (capped < totalCount && !overflowAtRef.current.has(capped + 1)) {
+          return capped + 1;
+        }
+        return capped;
+      }
+      if (capped <= 0) return 0;
+      overflowAtRef.current.add(capped);
+      return capped - 1;
+    });
+  }, [q.data, totalCount, dataKey, visibleTotal, fitNonce]);
+
+  const allocation = allocateVisibleCards(sections, visibleTotal);
+  const empty = sections.length === 0;
+
   return (
-    <div className="pantry-page">
+    <div className="pantry-page" ref={pageRef}>
       <header className="pantry-top">
         <span className="pantry-top-spacer" aria-hidden="true" />
         <div className="pantry-top-title">
@@ -56,64 +111,46 @@ export function PantryScreen() {
       {q.isLoading && <p className="dim" style={{ padding: 16 }}>Loading…</p>}
       {q.isError && (
         <p className="error" style={{ padding: 16 }}>
-          Couldn't load. Load the demo pantry from the home screen first.
+          Couldn't load your pantry. Try again in a moment.
         </p>
       )}
       {q.data && empty && (
         <p className="dim" style={{ padding: 16 }}>
-          Pantry is empty. Load the demo pantry or scan a receipt.
+          Pantry is empty. Scan a receipt to add items.
         </p>
       )}
 
       <div className="pantry-sections">
-        {sections
-          .filter((s) => s.items.length > 0)
-          .map((section) => (
+        {sections.map((section) => {
+          const visibleItems = section.items.slice(0, allocation[section.id]);
+          const hidden = section.items.length - visibleItems.length;
+          return (
             <section className="pantry-section" key={section.id}>
               <div className="pantry-section-head">
                 <h2 className="pantry-section-title">{section.title}</h2>
-                <Link to="/briefing" className="pantry-see-all">
-                  See all
-                </Link>
+                {hidden > 0 && (
+                  <Link
+                    to="/pantry/section/$section"
+                    params={{ section: section.id }}
+                    className="pantry-see-all"
+                  >
+                    See more ({hidden})
+                  </Link>
+                )}
               </div>
-              <div className="pantry-grid">
-                {section.items.map((item: any, i: number) => {
-                  const tags = new Set<string>(item.tags ?? []);
-                  const art = iconFor(item.rawName, undefined, icons);
-                  const card = (
-                    <>
-                      <div className="pantry-card-main">
-                        <div className="pantry-card-art">
-                          {art ? <img src={`/${art}`} alt={item.rawName} /> : null}
-                        </div>
-                        <div className="pantry-card-tags">
-                          <PantryTag kind="money" on={tags.has("money")} />
-                          <PantryTag kind="health" on={tags.has("health")} />
-                          <PantryTag kind="planet" on={tags.has("planet")} />
-                        </div>
-                      </div>
-                      <div className="pantry-card-name">{item.rawName}</div>
-                      {item.swapTitle && <div className="dim">→ {item.swapTitle}</div>}
-                    </>
-                  );
-                  return item.productId ? (
-                    <Link
-                      className="pantry-card"
-                      key={`${item.productId}-${i}`}
-                      to="/pantry/$productId"
-                      params={{ productId: item.productId }}
-                    >
-                      {card}
-                    </Link>
-                  ) : (
-                    <article className="pantry-card" key={i}>
-                      {card}
-                    </article>
-                  );
-                })}
-              </div>
+              {visibleItems.length > 0 && (
+                <div className="pantry-grid">
+                  {visibleItems.map((item: any, i: number) => (
+                    <PantryCard
+                      key={item.productId ?? `${section.id}-${i}`}
+                      item={item}
+                    />
+                  ))}
+                </div>
+              )}
             </section>
-          ))}
+          );
+        })}
       </div>
     </div>
   );

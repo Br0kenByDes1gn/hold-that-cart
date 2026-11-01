@@ -1,4 +1,5 @@
 .env
+log.txt
 node_modules/
 dist/
 dist-server/

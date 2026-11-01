@@ -1,4 +1,5 @@
-import type { ProductEnrichment } from "../../shared/schemas.js";
+import type { PantryScore, ProductEnrichment } from "../../shared/schemas.js";
+import type { ItemCategory } from "../../shared/itemCategories.js";
 import { knowledgeKey } from "./normalize.js";
 
 // Hand-written fixture enrichments for the demo set (stand-ins for the
@@ -150,6 +151,78 @@ export const DEMO_ITEMS: DemoItem[] = [
 export function demoKnowledgeKey(name: string): string {
   return knowledgeKey(name);
 }
+
+// Curated pantry insights keep the demo deterministic while the live flow
+// obtains the same shape from the pantry classification prompt.
+export interface DemoInsight {
+  category: ItemCategory;
+  savesMoney: PantryScore;
+  healthy: PantryScore;
+  sustainable: PantryScore;
+  swap?: {
+    name: string;
+    savesMoney: PantryScore;
+    healthy: PantryScore;
+    sustainable: PantryScore;
+  };
+}
+
+export const DEMO_INSIGHTS: Record<string, DemoInsight> = {
+  Milk: {
+    category: "dairy",
+    savesMoney: 0.7,
+    healthy: 0.8,
+    sustainable: 0.35,
+  },
+  Bread: {
+    category: "bread",
+    savesMoney: 0.45,
+    healthy: 0.65,
+    sustainable: 0.62,
+  },
+  Eggs: {
+    category: "eggs",
+    savesMoney: 0.65,
+    healthy: 0.8,
+    sustainable: 0.35,
+  },
+  Rice: {
+    category: "grains",
+    savesMoney: 0.5,
+    healthy: 0.4,
+    sustainable: 0.65,
+  },
+  "Olive oil": {
+    category: "oils",
+    savesMoney: 0.35,
+    healthy: 0.75,
+    sustainable: 0.45,
+    swap: {
+      name: "Store-brand olive oil",
+      savesMoney: 0.7,
+      healthy: 0.75,
+      sustainable: 0.65,
+    },
+  },
+  "Laundry detergent": {
+    category: "cleaning",
+    savesMoney: 0.65,
+    healthy: 0.5,
+    sustainable: 0.7,
+  },
+  "Steel water bottle": {
+    category: "other",
+    savesMoney: 0.35,
+    healthy: 0.5,
+    sustainable: 0.85,
+  },
+  "Toilet paper": {
+    category: "paper",
+    savesMoney: 0.6,
+    healthy: 0.5,
+    sustainable: 0.4,
+  },
+};
 
 // ── Demo purchase plan (offsets in days before "now") ──
 // Designed so a fresh seed deterministically shows: one stocked (rice),

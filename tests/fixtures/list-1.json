@@ -1,6 +1,6 @@
 [
-  { "rawName": "milk", "normalizedName": "milk", "qty": 1, "confidence": 0.8 },
-  { "rawName": "rice", "normalizedName": "rice", "qty": 1, "confidence": 0.85 },
-  { "rawName": "olive oil", "normalizedName": "olive oil", "qty": 1, "confidence": 0.8 },
-  { "rawName": "steel bottle", "normalizedName": "steel water bottle", "qty": 1, "confidence": 0.6 }
+  { "rawName": "milk", "normalizedName": "milk", "category": "dairy", "qty": 1, "confidence": 0.8 },
+  { "rawName": "rice", "normalizedName": "rice", "category": "grains", "qty": 1, "confidence": 0.85 },
+  { "rawName": "olive oil", "normalizedName": "olive oil", "category": "oils", "qty": 1, "confidence": 0.8 },
+  { "rawName": "steel bottle", "normalizedName": "steel water bottle", "category": "other", "qty": 1, "confidence": 0.6 }
 ]

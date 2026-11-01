@@ -1,15 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "../api";
 
-import chipsArt from "../../../assets/item/chips Background Removed.png";
-import milkGlassArt from "../../../assets/item/milk_glass_and_carton Background Removed.png";
-import breadArt from "../../../assets/item/bread_loaf Background Removed.png";
-import eggsArt from "../../../assets/item/eggs Background Removed.png";
-import bananasArt from "../../../assets/item/fruit_assortment Background Removed.png";
-import yogurtArt from "../../../assets/item/yogurt Background Removed.png";
+import { resolveItemArt } from "../lib/itemArt";
 
 type Facing = "user" | "environment";
 type ScanMode = "list" | "cart" | "receipt";
@@ -100,120 +95,6 @@ function RotateIcon({ size = 25 }: { size?: number }) {
   );
 }
 
-function WarningIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M10.3 3.7 2.2 17.5A2 2 0 0 0 3.9 20.5h16.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path d="M12 9v4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="12" cy="17" r="1.1" fill="currentColor" />
-    </svg>
-  );
-}
-
-function BanIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-      <path d="m5.7 5.7 12.6 12.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function SwapIcon({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M4 8h13m-4-4 4 4-4 4M20 16H7m4 4-4-4 4-4"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-type ActionKind = "warning" | "ban" | "swap";
-
-interface ItemDef {
-  id: string;
-  name: string;
-  art: string;
-  frame: string;
-  alt: string;
-}
-
-interface DetectedItem extends ItemDef {
-  action: ActionKind;
-}
-
-const ITEM_DEFS: ItemDef[] = [
-  {
-    id: "chips",
-    name: "Chips",
-    art: chipsArt,
-    frame: "cr-frame-chips",
-    alt: "Bag of chips",
-  },
-  {
-    id: "milk",
-    name: "Whole milk",
-    art: milkGlassArt,
-    frame: "cr-frame-milk",
-    alt: "Glass and carton of whole milk",
-  },
-  {
-    id: "bread",
-    name: "White bread",
-    art: breadArt,
-    frame: "cr-frame-bread",
-    alt: "Loaf of white bread",
-  },
-  {
-    id: "eggs",
-    name: "Eggs",
-    art: eggsArt,
-    frame: "cr-frame-eggs",
-    alt: "Carton of eggs",
-  },
-  {
-    id: "bananas",
-    name: "Bananas",
-    art: bananasArt,
-    frame: "cr-frame-bananas",
-    alt: "Bunch of bananas",
-  },
-  {
-    id: "yogurt",
-    name: "Yogurt",
-    art: yogurtArt,
-    frame: "cr-frame-yogurt",
-    alt: "Tub of yogurt",
-  },
-];
-
-const ACTION_LABEL: Record<ActionKind, string> = {
-  warning: "Warning",
-  ban: "Skip this item",
-  swap: "Try this swap",
-};
-
-function artFor(name: string): { art: string; frame: string; alt: string } {
-  const n = name.toLowerCase();
-  if (n.includes("chip")) return { art: chipsArt, frame: "cr-frame-chips", alt: "Bag of chips" };
-  if (n.includes("milk") || n.includes("oat")) return { art: milkGlassArt, frame: "cr-frame-milk", alt: "Milk" };
-  if (n.includes("bread")) return { art: breadArt, frame: "cr-frame-bread", alt: "Bread" };
-  if (n.includes("egg")) return { art: eggsArt, frame: "cr-frame-eggs", alt: "Eggs" };
-  if (n.includes("banana") || n.includes("fruit")) return { art: bananasArt, frame: "cr-frame-bananas", alt: "Fruit" };
-  if (n.includes("yogurt") || n.includes("yoghurt")) return { art: yogurtArt, frame: "cr-frame-yogurt", alt: "Yogurt" };
-  return { art: milkGlassArt, frame: "cr-frame-milk", alt: name };
-}
-
 function fileToDataUrl(file: File, maxDim = 1600): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -232,14 +113,9 @@ function fileToDataUrl(file: File, maxDim = 1600): Promise<string> {
   });
 }
 
-function ActionIcon({ action }: { action: ActionKind }) {
-  if (action === "warning") return <WarningIcon size={42} />;
-  if (action === "ban") return <BanIcon size={42} />;
-  return <SwapIcon size={42} />;
-}
-
 export function ScannerScreen() {
   const nav = useNavigate();
+  const qc = useQueryClient();
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const requestIdRef = useRef(0);
@@ -452,6 +328,7 @@ export function ScannerScreen() {
       const payload = extracted.map((it) => ({
         rawName: it.rawName,
         normalizedName: it.normalizedName,
+        category: it.category,
         productId: it.match?.productId ?? it.productId ?? null,
         qty: it.qty ?? 1,
         packQty: it.packQty,
@@ -462,6 +339,7 @@ export function ScannerScreen() {
       return api.confirmScan(scanId, detectedKind, payload);
     },
     onSuccess: (data: any) => {
+      qc.invalidateQueries();
       if (data.listId) nav({ to: "/lists/$listId", params: { listId: data.listId } });
       else nav({ to: "/pantry" });
     },
@@ -607,15 +485,16 @@ export function ScannerScreen() {
       {extracted.length > 0 && (
         <div className="cr-swaps" aria-label="Detected items">
           {extracted.map((it, i) => {
-            const a = artFor(it.rawName ?? it.normalizedName ?? "item");
+            const a = resolveItemArt(it);
             return (
               <article className="cr-swap" key={i}>
-                <div className={`cr-swap-figure ${a.frame}`}>
+                <div className="cr-swap-figure cr-frame-category">
                   <span className="cr-swap-clip">
-                    <img className="cr-swap-art" src={a.art} alt={a.alt} />
+                    <img className="cr-swap-art" src={a.entry.url} alt={a.categoryLabel} />
                   </span>
                 </div>
                 <div className="cr-swap-name">{it.rawName}</div>
+                <div className="cr-swap-category">{a.categoryLabel}</div>
               </article>
             );
           })}
@@ -631,11 +510,24 @@ export function ScannerScreen() {
                 <input
                   value={it.rawName}
                   onChange={(e) =>
-                    setExtracted(extracted.map((x, j) => (j === i ? { ...x, rawName: e.target.value } : x)))
+                    setExtracted(
+                      extracted.map((x, j) =>
+                        j === i
+                          ? {
+                              ...x,
+                              rawName: e.target.value,
+                              normalizedName: e.target.value,
+                              category: "other",
+                              productId: null,
+                              match: undefined,
+                            }
+                          : x,
+                      ),
+                    )
                   }
                 />
                 <div className="dim">
-                  {it.normalizedName} · qty {it.qty ?? 1}
+                  {it.normalizedName} · {resolveItemArt(it).categoryLabel} · qty {it.qty ?? 1}
                   {it.price != null ? ` · €${it.price}` : ""}
                   {it.match?.productId ? " · ✓ matched" : " · new item"}
                 </div>
@@ -646,14 +538,24 @@ export function ScannerScreen() {
           <div className="row">
             <button
               onClick={() =>
-                setExtracted([...extracted, { rawName: "New item", normalizedName: "new item", qty: 1 }])
+                setExtracted([
+                  ...extracted,
+                  {
+                    rawName: "New item",
+                    normalizedName: "new item",
+                    category: "other",
+                    qty: 1,
+                  },
+                ])
               }
             >
               + Add item
             </button>
             <button onClick={() => confirm.mutate()} disabled={confirm.isPending}>
               {confirm.isPending
-                ? "Saving…"
+                ? detectedKind === "receipt"
+                  ? "Classifying items…"
+                  : "Saving…"
                 : detectedKind === "receipt"
                   ? "Confirm → add to pantry"
                   : "Confirm → make list"}

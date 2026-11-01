@@ -1,0 +1,24 @@
+{
+  "fixture": "riverside-market-riverton",
+  "expectedKind": "receipt",
+  "kind": "receipt",
+  "itemCount": 15,
+  "totalQty": 18,
+  "prices": [
+    2.79,
+    3.49,
+    3.87,
+    4.98,
+    4.99,
+    4.99,
+    5.29,
+    5.99,
+    5.99,
+    6.99,
+    10.99,
+    11.99,
+    12.99,
+    16.99,
+    27.99
+  ]
+}

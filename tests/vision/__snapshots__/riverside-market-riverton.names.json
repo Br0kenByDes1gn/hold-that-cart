@@ -1,0 +1,62 @@
+[
+  {
+    "name": "apple caramel",
+    "price": 2.79
+  },
+  {
+    "name": "bar",
+    "price": 5.99
+  },
+  {
+    "name": "crispbread",
+    "price": 3.49
+  },
+  {
+    "name": "dog food wet",
+    "price": 3.87
+  },
+  {
+    "name": "lickable puree",
+    "price": 4.99
+  },
+  {
+    "name": "lickable spoon",
+    "price": 4.99
+  },
+  {
+    "name": "mayonnaise",
+    "price": 5.29
+  },
+  {
+    "name": "meat stick",
+    "price": 6.99
+  },
+  {
+    "name": "pepsi",
+    "price": 4.98
+  },
+  {
+    "name": "prosecco",
+    "price": 16.99
+  },
+  {
+    "name": "sandwich",
+    "price": 5.99
+  },
+  {
+    "name": "seedlip",
+    "price": 27.99
+  },
+  {
+    "name": "wine",
+    "price": 10.99
+  },
+  {
+    "name": "wine",
+    "price": 11.99
+  },
+  {
+    "name": "wine",
+    "price": 12.99
+  }
+]

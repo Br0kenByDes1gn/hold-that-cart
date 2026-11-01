@@ -20,11 +20,39 @@ test.describe("seeded pantry flow", () => {
     await expect(page.getByRole("heading", { name: "Skip" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Swap" })).toBeVisible();
 
-    await page.getByRole("link", { name: /Rice/ }).first().click();
+    const firstArt = page.locator(".pantry-card-art img").first();
+    await expect(firstArt).toBeVisible();
+    await expect
+      .poll(() => firstArt.evaluate((img) => (img as HTMLImageElement).naturalWidth))
+      .toBeGreaterThan(0);
+
+    await page.waitForTimeout(1000);
+    await page.locator(".pantry-card").first().click();
     await expect(page).toHaveURL(/\/pantry\/[0-9a-f-]+$/);
-    await expect(page.getByRole("heading", { name: "Rice" })).toBeVisible();
+    await expect(page.locator("h2").first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "History" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Variants you've bought" })).toBeVisible();
+  });
+
+  test("pantry fits one viewport and See more opens the full section", async ({ page }) => {
+    await useDevice(page, true);
+    await page.goto("/pantry");
+    await page.waitForSelector(".pantry-card");
+    await page.waitForTimeout(800);
+
+    const fitsViewport = await page.evaluate(
+      () => document.documentElement.scrollHeight <= window.innerHeight + 1,
+    );
+    expect(fitsViewport).toBe(true);
+
+    const seeMore = page.getByRole("link", { name: /See more/ }).first();
+    await expect(seeMore).toBeVisible();
+    const href = await seeMore.getAttribute("href");
+    expect(href).toMatch(/^\/pantry\/section\/(buy|skip|swap)$/);
+
+    await seeMore.click();
+    await expect(page).toHaveURL(/\/pantry\/section\/(buy|skip|swap)$/);
+    await expect(page.locator(".pantry-card").first()).toBeVisible();
   });
 
   test("scanner demo receipt: correct and confirm lands in pantry", async ({ page }) => {
