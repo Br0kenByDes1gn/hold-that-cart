@@ -972,6 +972,17 @@ routes.patch("/api/lists/:id/items/:itemId", async (c) => {
   return c.json({ ok: true });
 });
 
+routes.delete("/api/lists/:id/items", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const list = await ownedList(hh!.id, c.req.param("id"));
+  if (!list) return c.json({ error: "not found" }, 404);
+  const db = await getDb();
+  await db.delete(listItems).where(eq(listItems.listId, list.id));
+  return c.json({ ok: true });
+});
+
 routes.delete("/api/lists/:id/items/:itemId", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);

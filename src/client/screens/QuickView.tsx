@@ -80,6 +80,7 @@ export function QuickViewScreen() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetTab, setSheetTab] = useState<AddSource>("voice");
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [clearOpen, setClearOpen] = useState(false);
   const [selectedSuggestions, setSelectedSuggestions] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<{ id: string; value: string } | null>(null);
   const [error, setError] = useState("");
@@ -155,14 +156,19 @@ export function QuickViewScreen() {
     },
   });
 
-  const newList = useMutation({
+  const clearList = useMutation({
     mutationFn: async () => {
-      if (listId) await api.updateList(listId, { status: "done" });
-      const created: any = await api.createList({ title: "Shopping list", source: "manual" });
-      return created.id as string;
+      if (!listId) throw new Error("No list to clear");
+      return api.clearList(listId);
     },
-    onSuccess: () => qc.invalidateQueries(),
-    onError: (mutationError: any) => setError(String(mutationError?.message ?? mutationError)),
+    onSuccess: () => {
+      setClearOpen(false);
+      if (listId) invalidateList(listId);
+    },
+    onError: (mutationError: any) => {
+      setError(String(mutationError?.message ?? mutationError));
+      setClearOpen(false);
+    },
   });
 
   const submitTyped = () => {
@@ -255,14 +261,15 @@ export function QuickViewScreen() {
               Check pantry
             </Link>
           )}
-          <button
-            type="button"
-            className="grocery-new"
-            onClick={() => newList.mutate()}
-            disabled={newList.isPending}
-          >
-            New list
-          </button>
+          {items.length > 0 && (
+            <button
+              type="button"
+              className="grocery-new"
+              onClick={() => setClearOpen(true)}
+            >
+              Clear list
+            </button>
+          )}
         </div>
       </div>
 
@@ -506,6 +513,46 @@ export function QuickViewScreen() {
                       selectedSuggestions.size === 1 ? "" : "s"
                     }`
                   : "Add items"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {clearOpen && (
+        <div
+          className="sheet-backdrop"
+          role="presentation"
+          onClick={() => setClearOpen(false)}
+        >
+          <section
+            className="sheet sheet-confirm"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Clear list"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className="sheet-head">
+              <h2>Clear this list?</h2>
+            </header>
+            <p className="dim sheet-hint">
+              Removes every item from this list. Can’t be undone.
+            </p>
+            <div className="sheet-actions">
+              <button
+                type="button"
+                className="sheet-secondary"
+                onClick={() => setClearOpen(false)}
+              >
+                Keep
+              </button>
+              <button
+                type="button"
+                className="sheet-danger"
+                onClick={() => clearList.mutate()}
+                disabled={clearList.isPending}
+              >
+                {clearList.isPending ? "Clearing…" : "Clear"}
               </button>
             </div>
           </section>

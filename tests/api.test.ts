@@ -382,6 +382,19 @@ describe("grocery list editing", () => {
     list = await api(`/api/lists/${listId}`);
     expect(list.body.items.map((item: any) => item.rawName)).toEqual(["Eggs", "Bread"]);
 
+    // Clear empties the list in place and keeps it open.
+    const cleared = await api(`/api/lists/${listId}/items`, {
+      method: "DELETE",
+    });
+    expect(cleared.status).toBe(200);
+    list = await api(`/api/lists/${listId}`);
+    expect(list.body.items).toHaveLength(0);
+    expect(list.body.list.status).toBe("open");
+
+    // Cleared names are no longer excluded from pantry suggestions.
+    const afterClear = await api(`/api/lists/suggestions?listId=${listId}`);
+    expect(afterClear.body.suggestions.map((s: any) => s.rawName)).toContain("Milk");
+
     const closed = await api(`/api/lists/${listId}`, {
       method: "PATCH",
       body: JSON.stringify({ status: "done" }),
@@ -399,6 +412,12 @@ describe("grocery list editing", () => {
       body: JSON.stringify({ rawName: "Milk" }),
     });
     expect(missing.status).toBe(404);
+
+    const missingClear = await api(
+      "/api/lists/00000000-0000-0000-0000-000000000000/items",
+      { method: "DELETE" },
+    );
+    expect(missingClear.status).toBe(404);
 
     const created = await api("/api/lists", {
       method: "POST",

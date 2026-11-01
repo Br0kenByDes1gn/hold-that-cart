@@ -1591,6 +1591,22 @@ details summary { cursor: pointer; }
 .sheet-actions .sheet-primary {
   flex: 1;
 }
+.sheet-danger {
+  min-height: 46px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 59, 92, 0.55);
+  background: rgba(255, 59, 92, 0.14);
+  color: #ff6b82;
+  font-size: 14px;
+  font-weight: 700;
+}
+.sheet-actions .sheet-danger {
+  flex: 1;
+}
+.sheet-confirm {
+  gap: 10px;
+}
 .camera-btn {
   display: flex;
   flex-direction: column;

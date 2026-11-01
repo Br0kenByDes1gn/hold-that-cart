@@ -38,6 +38,44 @@ test.describe("grocery list editing", () => {
     ).toBeVisible();
   });
 
+  test("clears the current list in place after confirmation", async ({ page }) => {
+    await useDevice(page);
+    await page.goto("/quick-view");
+
+    const input = page.getByLabel("Add an item");
+    await input.fill("Milk");
+    await input.press("Enter");
+    await expect(
+      page.getByRole("button", { name: "Milk", exact: true }),
+    ).toBeVisible();
+
+    await input.fill("Eggs");
+    await input.press("Enter");
+    await expect(page.locator(".grocery-card")).toHaveCount(2);
+
+    await page.getByRole("button", { name: "Clear list" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Clear this list?" }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Removes every item from this list.", { exact: false }),
+    ).toBeVisible();
+
+    await page.getByRole("button", { name: "Clear", exact: true }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(
+      page.getByText("Your grocery list is empty.", { exact: false }),
+    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Clear list" })).toHaveCount(0);
+
+    // Same list, cleared in place — survives a reload.
+    await page.reload();
+    await expect(
+      page.getByText("Your grocery list is empty.", { exact: false }),
+    ).toBeVisible();
+    await expect(page.getByText("Nothing on the list yet")).toBeVisible();
+  });
+
   test("accepts pantry suggestions with the preview label", async ({ page }) => {
     await useDevice(page, true);
     await page.goto("/quick-view");

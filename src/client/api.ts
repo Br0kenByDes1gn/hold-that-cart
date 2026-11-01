@@ -50,8 +50,8 @@ export const api = {
   lists: () => req("/api/lists"),
   createList: (payload: { title?: string; source?: "auto" | "manual" | "scan" } = {}) =>
     req("/api/lists", { method: "POST", body: JSON.stringify(payload) }),
-  updateList: (id: string, patch: Record<string, unknown>) =>
-    req(`/api/lists/${id}`, { method: "PATCH", body: JSON.stringify(patch) }),
+  clearList: (id: string) =>
+    req(`/api/lists/${id}/items`, { method: "DELETE" }),
   listSuggestions: (listId?: string | null) =>
     req(`/api/lists/suggestions${listId ? `?listId=${listId}` : ""}`),
   addListItem: (listId: string, item: Record<string, unknown>) =>

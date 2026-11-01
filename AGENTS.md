@@ -168,6 +168,7 @@ POST /api/ai/parse-list          dictated text → grounded items + pantry match
 POST /api/ai/enrich              { name, brand?, form? } → cached enrichment
 GET  /api/briefing?buy=8&swap=3&skip=5   grouped suggestions + holdCount
 POST /api/lists, GET/PATCH /api/lists/:id, POST/PATCH/DELETE list items, POST /api/lists/:id/evaluate
+DELETE /api/lists/:id/items   clear the whole list in place (confirmation is client-side)
 GET  /api/lists/suggestions?listId=   PREVIEW pantry→list suggestions (rhythm stub; contract final)
 POST /api/demo/seed | /api/demo/reset    demo household (see below)
 GET  /api/health
@@ -261,6 +262,8 @@ are real receipts — check for names/addresses/card fragments before pushing.
   and reads quantities; typed input never calls the model.
 - Items carry `qty`, `brand` and `source` (`manual | voice | camera | scan | auto`).
   Renaming re-matches the canonical product server-side; brand is never identity.
+- “Clear list” empties the current list in place after a confirm sheet. It never
+  archives or creates a list; the same open list stays and suggestions return.
 - Pantry suggestions are **preview only**: `GET /api/lists/suggestions` maps the
   existing rhythm BUY list through `domain/listSuggestions.ts`. The prediction
   service replaces that module; keep the response contract in
