@@ -2,6 +2,8 @@ import {
   extractedItemSchema,
   pantryInsightResponseSchema,
   productEnrichmentSchema,
+  spokenListModelSchema,
+  type SpokenListModel,
 } from "../../shared/schemas.js";
 import { normalizeName } from "../domain/normalize.js";
 import { ITEM_CATEGORIES } from "../../shared/itemCategories.js";
@@ -84,6 +86,24 @@ export function pantryClassifyUser(items: PantryClassifyInput[]): string {
       qty: item.qty ?? 1,
     })),
   )}\nReturn the pantry insight JSON.`;
+}
+
+export const LIST_PARSE_SYSTEM = `You turn a spoken shopping list into separate grocery items.
+Output JSON ONLY, no markdown, no commentary, with this shape:
+{"items":[{"name": string, "brand": string | null, "qty": number | null}]}
+Rules:
+- Split run-on speech into separate products: "milk eggs bread" -> three items.
+- Keep compound product names together: "peanut butter", "olive oil", "ice cream", "toilet paper".
+- name is the lowercase generic grocery type. Remove brand names, pack sizes, weights, volumes and marketing words: "Borges olive oil 500 ml" -> name "olive oil", brand "Borges".
+- brand is the brand the speaker actually said, or null. Never invent a brand.
+- qty is an integer count only when a count is explicitly spoken ("two eggs" -> 2, "a dozen eggs" -> 12). Otherwise null. Ignore weights and volumes ("2 litres of milk" -> qty null).
+- Preserve the speaker's words. Do not translate, substitute synonyms, merge distinct products, or add products that were not said.
+- Never include prices, savings, or currency.
+- Max 30 items. Keep the spoken order.
+- If there are no grocery items, return {"items": []}.`;
+
+export function listParseUser(text: string): string {
+  return `Spoken list:\n${text}\n\nReturn the items JSON.`;
 }
 
 // ── Meta Model API client (OpenAI-compatible Chat Completions) ──
@@ -409,5 +429,21 @@ export class MetaProvider implements AIProvider {
       modelName: this.model,
       promptVersion: "pantry-v1",
     };
+  }
+
+  async parseShoppingList(text: string): Promise<SpokenListModel> {
+    const { content, metrics } = await this.chat(
+      [
+        { role: "system", content: LIST_PARSE_SYSTEM },
+        { role: "user", content: listParseUser(text) },
+      ],
+      Number(process.env.META_LIST_PARSE_MAX_TOKENS ?? 4000),
+      "parseShoppingList",
+    );
+    const raw = JSON.parse(content);
+    assertNoPrices(raw);
+    const parsed = spokenListModelSchema.parse(raw);
+    this.logUsage("parseShoppingList", metrics, { items: parsed.items.length });
+    return parsed;
   }
 }

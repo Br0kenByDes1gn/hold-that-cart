@@ -355,21 +355,25 @@ describe("grocery list editing", () => {
     const excluded = await api(`/api/lists/suggestions?listId=${listId}`);
     expect(excluded.body.suggestions.map((s: any) => s.rawName)).not.toContain("Milk");
 
-    // Bulk add keeps per-item source.
+    // Bulk add keeps per-item source and brand.
     const bulk = await api(`/api/lists/${listId}/items/bulk`, {
       method: "POST",
       body: JSON.stringify({
         items: [
           { rawName: "Eggs", qty: 1, source: "auto" },
-          { rawName: "Bread", qty: 2, source: "camera" },
+          { rawName: "Bread", qty: 2, source: "camera", brand: "Hovis" },
         ],
       }),
     });
     expect(bulk.status).toBe(200);
     expect(bulk.body.items.map((item: any) => item.source)).toEqual(["auto", "camera"]);
+    expect(bulk.body.items[1].brand).toBe("Hovis");
 
     list = await api(`/api/lists/${listId}`);
     expect(list.body.items).toHaveLength(3);
+    expect(
+      list.body.items.find((item: any) => item.rawName === "Bread").brand,
+    ).toBe("Hovis");
 
     const deleted = await api(`/api/lists/${listId}/items/${added.body.id}`, {
       method: "DELETE",
@@ -410,5 +414,110 @@ describe("grocery list editing", () => {
       method: "PATCH",
       body: JSON.stringify({ status: "done" }),
     });
+  });
+});
+
+describe("voice list parsing", () => {
+  it("splits with the model, grounds items and matches the pantry", async () => {
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    await api("/api/demo/seed", { method: "POST" });
+
+    const oldKey = process.env.MODEL_API_KEY;
+    process.env.MODEL_API_KEY = "test-key";
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                items: [
+                  { name: "milk", brand: null, qty: null },
+                  { name: "olive oil", brand: "Borges", qty: null },
+                  { name: "saffron", brand: null, qty: 2 },
+                  { name: "bread", brand: null, qty: null },
+                ],
+              }),
+            },
+          },
+        ],
+      }),
+      text: async () => "",
+    } as any);
+
+    try {
+      const res = await api("/api/ai/parse-list", {
+        method: "POST",
+        body: JSON.stringify({
+          // "bread" is returned by the model but never said → must be dropped.
+          text: "milk, Borges olive oil and two saffron",
+        }),
+      });
+      expect(res.status).toBe(200);
+      expect(res.body.source).toBe("model");
+      expect(res.body.items.map((item: any) => item.name)).toEqual([
+        "Milk",
+        "Olive oil",
+        "Saffron",
+      ]);
+
+      const milk = res.body.items.find((item: any) => item.name === "Milk");
+      expect(milk.match).toMatchObject({
+        productName: "Milk",
+        inPantry: true,
+      });
+      const oil = res.body.items.find((item: any) => item.name === "Olive oil");
+      expect(oil).toMatchObject({ brand: "Borges", qty: 1 });
+      expect(oil.match.productName).toBe("Olive oil");
+      const saffron = res.body.items.find((item: any) => item.name === "Saffron");
+      expect(saffron).toMatchObject({ qty: 2 });
+      expect(saffron.match.inPantry).toBe(false);
+    } finally {
+      fetchSpy.mockRestore();
+      if (oldKey === undefined) delete process.env.MODEL_API_KEY;
+      else process.env.MODEL_API_KEY = oldKey;
+      await api("/api/demo/reset", { method: "POST" });
+    }
+  });
+
+  it("falls back to the deterministic splitter without a model key", async () => {
+    const oldKey = process.env.MODEL_API_KEY;
+    process.env.MODEL_API_KEY = "";
+    try {
+      const res = await api("/api/ai/parse-list", {
+        method: "POST",
+        body: JSON.stringify({ text: "milk, two eggs and bread" }),
+      });
+      expect(res.status).toBe(200);
+      expect(res.body.source).toBe("fallback");
+      expect(res.body.items.map((item: any) => item.name)).toEqual([
+        "Milk",
+        "Eggs",
+        "Bread",
+      ]);
+      expect(res.body.items[1].qty).toBe(2);
+      expect(res.body.items[0].match.inPantry).toBe(false);
+    } finally {
+      if (oldKey === undefined) delete process.env.MODEL_API_KEY;
+      else process.env.MODEL_API_KEY = oldKey;
+    }
+  });
+
+  it("rejects empty or oversized transcripts", async () => {
+    const empty = await api("/api/ai/parse-list", {
+      method: "POST",
+      body: JSON.stringify({ text: "   " }),
+    });
+    expect(empty.status).toBe(400);
+
+    const tooLong = await api("/api/ai/parse-list", {
+      method: "POST",
+      body: JSON.stringify({ text: "a".repeat(2001) }),
+    });
+    expect(tooLong.status).toBe(400);
   });
 });

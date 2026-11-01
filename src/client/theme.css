@@ -1716,6 +1716,83 @@ details summary { cursor: pointer; }
   font-size: 14px;
 }
 
+/* Voice parsing review */
+.grocery-item-brand {
+  color: var(--text-dim);
+  font-size: 11px;
+  line-height: 1.1;
+}
+.voice-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.voice-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(23, 59, 85, 0.8);
+  border-radius: 12px;
+  background: rgba(3, 11, 20, 0.5);
+}
+.voice-item-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.voice-item-fields input {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid rgba(23, 59, 85, 0.8);
+  border-radius: 8px;
+  background: rgba(3, 11, 20, 0.7);
+  color: var(--text);
+  font-size: 14px;
+}
+.voice-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.voice-match {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--text-dim);
+  font-size: 11px;
+}
+.voice-match.in-pantry {
+  background: rgba(34, 255, 130, 0.12);
+  color: var(--cr-green);
+}
+.voice-remove {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  min-height: 28px;
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-dim);
+}
+.voice-remove:hover {
+  color: var(--alert);
+  background: rgba(255, 64, 88, 0.1);
+}
+.sheet-split {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+}
+
 @media (max-width: 380px) {
   .grocery-page {
     padding-left: 12px;

@@ -114,8 +114,8 @@ export function useDictation() {
   }, []);
 
   const stop = useCallback(() => {
+    // Let the browser finalise the last result; `onend` flips `listening`.
     recognitionRef.current?.stop();
-    setListening(false);
   }, []);
 
   const reset = useCallback(() => {

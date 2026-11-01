@@ -1,4 +1,4 @@
-import type { PantryItemInsight } from "../../shared/schemas.js";
+import type { PantryItemInsight, SpokenListModel } from "../../shared/schemas.js";
 
 export interface ExtractedItemLike {
   rawName: string;
@@ -50,6 +50,8 @@ export interface AIProvider {
     form?: string;
   }): Promise<ProductEnrichmentLike>;
   classifyPantryItems(items: PantryClassifyInput[]): Promise<PantryClassifyResult>;
+  /** Split a dictated shopping list into product names. No list decisions. */
+  parseShoppingList(text: string): Promise<SpokenListModel>;
   /**
    * Speech-to-text seam. The app currently dictates in the browser
    * (Web Speech API); implement this when Meta audio transcription is
@@ -68,6 +70,9 @@ export class StubAIProvider implements AIProvider {
   }
   async classifyPantryItems(): Promise<never> {
     throw new Error("AI pantry classification not configured");
+  }
+  async parseShoppingList(): Promise<never> {
+    throw new Error("AI list parsing not configured");
   }
   async transcribe(): Promise<never> {
     throw new Error("Audio transcription not configured");

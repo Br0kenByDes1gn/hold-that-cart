@@ -110,6 +110,7 @@ export const listItems = pgTable("list_items", {
     .references(() => shoppingLists.id),
   productId: text("product_id").references(() => products.id),
   rawName: text("raw_name").notNull(),
+  brand: text("brand"),
   qty: numeric("qty").notNull().default("1"),
   checked: boolean("checked").notNull().default(false),
   decision: text("decision"),

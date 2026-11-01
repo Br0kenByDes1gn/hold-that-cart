@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Check, Mic, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Check, Mic, Minus, Plus, Sparkles, X } from "lucide-react";
 
 import { api } from "../api";
 import { fileToDataUrl } from "../lib/image";
@@ -12,11 +12,27 @@ export interface PendingListItem {
   rawName: string;
   qty: number;
   source: AddSource;
+  brand?: string | null;
+  productId?: string | null;
 }
 
 interface DetectedItem {
   rawName: string;
   selected: boolean;
+}
+
+interface VoiceMatch {
+  productId: string | null;
+  productName: string | null;
+  inPantry: boolean;
+}
+
+interface VoiceRow {
+  id: string;
+  name: string;
+  brand: string | null;
+  qty: number;
+  match: VoiceMatch;
 }
 
 interface AddToListSheetProps {
@@ -26,6 +42,12 @@ interface AddToListSheetProps {
   onClose: () => void;
   onAdd: (items: PendingListItem[]) => void;
 }
+
+const NO_MATCH: VoiceMatch = {
+  productId: null,
+  productName: null,
+  inPantry: false,
+};
 
 export function AddToListSheet({
   open,
@@ -43,11 +65,62 @@ export function AddToListSheet({
   const [detected, setDetected] = useState<DetectedItem[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const parsed = useMemo(() => parseListText(dictation.transcript), [dictation.transcript]);
+  const [voiceRows, setVoiceRows] = useState<VoiceRow[]>([]);
+  const [voiceSource, setVoiceSource] = useState<"model" | "fallback" | null>(
+    null,
+  );
+  const [parsing, setParsing] = useState(false);
+  const [voiceError, setVoiceError] = useState("");
+  const [parsedTranscript, setParsedTranscript] = useState("");
+  const wasListening = useRef(false);
+  const nextRowId = useRef(0);
+
+  const splitVoice = async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    setParsing(true);
+    setVoiceError("");
+    setVoiceRows([]);
+    setVoiceSource(null);
+    try {
+      const data: any = await api.parseList(trimmed);
+      const rows: VoiceRow[] = (data.items ?? [])
+        .map((item: any) => ({
+          id: `voice-${nextRowId.current++}`,
+          name: String(item.name ?? "").trim(),
+          brand: item.brand ? String(item.brand).trim() : null,
+          qty: Math.max(1, Math.min(99, Math.round(Number(item.qty) || 1))),
+          match: item.match ?? NO_MATCH,
+        }))
+        .filter((row: VoiceRow) => row.name.length > 0);
+      setVoiceRows(rows);
+      setVoiceSource(data.source === "model" ? "model" : "fallback");
+      setParsedTranscript(trimmed);
+      if (rows.length === 0) {
+        setVoiceError("I couldn't find any items in that. Try again or type them.");
+      }
+    } catch {
+      const rows: VoiceRow[] = parseListText(trimmed)
+        .map((item) => ({
+          id: `voice-${nextRowId.current++}`,
+          name: item.rawName,
+          brand: null,
+          qty: item.qty,
+          match: NO_MATCH,
+        }));
+      setVoiceRows(rows);
+      setVoiceSource("fallback");
+      setParsedTranscript(trimmed);
+      setVoiceError("Couldn't reach the splitter — check the items.");
+    } finally {
+      setParsing(false);
+    }
+  };
 
   useEffect(() => {
     if (!open) {
       dictation.reset();
+      wasListening.current = false;
       return;
     }
     setTab(initialTab);
@@ -56,8 +129,30 @@ export function AddToListSheet({
     setReading(false);
     setCameraError("");
     setDetected([]);
+    setVoiceRows([]);
+    setVoiceSource(null);
+    setParsing(false);
+    setVoiceError("");
+    setParsedTranscript("");
+    wasListening.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, initialTab]);
+
+  // Parse once, when dictation ends (tap stop or the browser ends on silence).
+  useEffect(() => {
+    if (!open) {
+      wasListening.current = false;
+      return;
+    }
+    if (wasListening.current && !dictation.listening) {
+      wasListening.current = false;
+      const text = dictation.transcript.trim();
+      if (text) void splitVoice(text);
+      return;
+    }
+    wasListening.current = dictation.listening;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, dictation.listening, dictation.transcript]);
 
   useEffect(() => {
     if (!open) return;
@@ -69,6 +164,31 @@ export function AddToListSheet({
   }, [open, onClose]);
 
   if (!open) return null;
+
+  const onTranscriptChange = (value: string) => {
+    dictation.setTranscript(value);
+    // The previous parse no longer matches the text.
+    setVoiceRows([]);
+    setVoiceSource(null);
+    setVoiceError("");
+    setParsedTranscript("");
+  };
+
+  const updateRow = (id: string, patch: Partial<VoiceRow>) => {
+    setVoiceRows((rows) =>
+      rows.map((row) => (row.id === id ? { ...row, ...patch } : row)),
+    );
+  };
+
+  const changeRowQty = (id: string, delta: number) => {
+    setVoiceRows((rows) =>
+      rows.map((row) =>
+        row.id === id
+          ? { ...row, qty: Math.max(1, Math.min(99, row.qty + delta)) }
+          : row,
+      ),
+    );
+  };
 
   const readPhoto = async (dataUrl: string) => {
     setReading(true);
@@ -107,6 +227,14 @@ export function AddToListSheet({
   };
 
   const selectedCameraItems = detected.filter((item) => item.selected);
+  const canAddVoice =
+    voiceRows.length > 0 &&
+    voiceRows.every((row) => row.name.trim().length > 0);
+  const canSplit =
+    !dictation.listening &&
+    dictation.transcript.trim().length > 0 &&
+    (voiceRows.length === 0 ||
+      dictation.transcript.trim() !== parsedTranscript);
 
   return (
     <div className="sheet-backdrop" role="presentation" onClick={onClose}>
@@ -168,41 +296,131 @@ export function AddToListSheet({
             )}
 
             <p className="dim sheet-hint">
-              Say your list: “milk, two eggs and bread”.
+              Just say the products: “milk, two eggs, Borges olive oil”.
             </p>
 
             <label className="sheet-field">
               <span>Your items</span>
               <textarea
                 value={dictation.transcript}
-                onChange={(event) => dictation.setTranscript(event.target.value)}
+                onChange={(event) => onTranscriptChange(event.target.value)}
                 placeholder="Items appear here — edit anything."
                 rows={3}
               />
             </label>
 
-            {parsed.length > 0 && (
-              <div className="parsed-chips" aria-label="Parsed items">
-                {parsed.map((item) => (
-                  <span className="parsed-chip" key={item.rawName}>
-                    {item.rawName} ×{item.qty}
-                  </span>
+            {canSplit && (
+              <button
+                type="button"
+                className="sheet-secondary sheet-split"
+                onClick={() => void splitVoice(dictation.transcript)}
+                disabled={parsing}
+              >
+                <Sparkles size={16} /> Split items
+              </button>
+            )}
+
+            {parsing && <p className="dim">Reading your list…</p>}
+
+            {voiceRows.length > 0 && (
+              <div className="voice-items" aria-label="Parsed items">
+                {voiceRows.map((row, index) => (
+                  <div className="voice-item" key={row.id}>
+                    <div className="voice-item-fields">
+                      <input
+                        value={row.name}
+                        onChange={(event) =>
+                          updateRow(row.id, {
+                            name: event.target.value,
+                            // A renamed item no longer matches the old pantry product.
+                            match: NO_MATCH,
+                          })
+                        }
+                        aria-label={`Item ${index + 1} name`}
+                      />
+                      <input
+                        value={row.brand ?? ""}
+                        onChange={(event) =>
+                          updateRow(row.id, {
+                            brand: event.target.value || null,
+                          })
+                        }
+                        placeholder="Brand (optional)"
+                        aria-label={`Item ${index + 1} brand`}
+                      />
+                    </div>
+                    <div className="voice-item-meta">
+                      <div className="grocery-qty">
+                        <button
+                          type="button"
+                          className="grocery-step"
+                          aria-label={`One less ${row.name}`}
+                          onClick={() => changeRowQty(row.id, -1)}
+                          disabled={row.qty <= 1}
+                        >
+                          <Minus size={13} />
+                        </button>
+                        <span className="grocery-item-qty">Qty {row.qty}</span>
+                        <button
+                          type="button"
+                          className="grocery-step"
+                          aria-label={`One more ${row.name}`}
+                          onClick={() => changeRowQty(row.id, 1)}
+                        >
+                          <Plus size={13} />
+                        </button>
+                      </div>
+                      <span
+                        className={`voice-match ${row.match.inPantry ? "in-pantry" : ""}`}
+                      >
+                        {row.match.inPantry
+                          ? `In pantry: ${row.match.productName ?? row.name}`
+                          : "New item"}
+                      </span>
+                      <button
+                        type="button"
+                        className="voice-remove"
+                        aria-label={`Remove ${row.name}`}
+                        onClick={() =>
+                          setVoiceRows((rows) =>
+                            rows.filter((current) => current.id !== row.id),
+                          )
+                        }
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
 
+            {voiceSource === "fallback" && voiceRows.length > 0 && (
+              <p className="dim sheet-hint">
+                Automatic splitting was unavailable — check the items.
+              </p>
+            )}
             {dictation.error && <p className="error">{dictation.error}</p>}
+            {voiceError && <p className="error">{voiceError}</p>}
 
             <button
               type="button"
               className="sheet-primary"
-              disabled={busy || parsed.length === 0}
+              disabled={busy || parsing || !canAddVoice}
               onClick={() =>
-                onAdd(parsed.map((item) => ({ ...item, source: "voice" as const })))
+                onAdd(
+                  voiceRows.map((row) => ({
+                    rawName: row.name.trim(),
+                    brand: row.brand?.trim() || null,
+                    qty: row.qty,
+                    productId: row.match.productId,
+                    source: "voice" as const,
+                  })),
+                )
               }
             >
-              {parsed.length > 0
-                ? `Add ${parsed.length} item${parsed.length === 1 ? "" : "s"}`
+              {voiceRows.length > 0
+                ? `Add ${voiceRows.length} item${voiceRows.length === 1 ? "" : "s"}`
                 : "Add items"}
             </button>
           </div>
@@ -294,6 +512,8 @@ export function AddToListSheet({
                 onAdd(
                   selectedCameraItems.map((item) => ({
                     rawName: item.rawName,
+                    brand: null,
+                    productId: null,
                     qty: 1,
                     source: "camera" as const,
                   })),

@@ -18,6 +18,7 @@ interface ListItemRow {
   id: string;
   productId: string | null;
   rawName: string;
+  brand: string | null;
   qty: string | number;
   checked: boolean;
   decision: string | null;
@@ -94,7 +95,15 @@ export function QuickViewScreen() {
   };
 
   const addItems = useMutation({
-    mutationFn: async (payload: Array<{ rawName: string; qty: number; source: string }>) => {
+    mutationFn: async (
+      payload: Array<{
+        rawName: string;
+        qty: number;
+        source: string;
+        brand?: string | null;
+        productId?: string | null;
+      }>,
+    ) => {
       let targetId = listId;
       let created = false;
       if (!targetId) {
@@ -328,6 +337,9 @@ export function QuickViewScreen() {
                   >
                     {item.rawName}
                   </button>
+                )}
+                {item.brand && (
+                  <span className="grocery-item-brand">{item.brand}</span>
                 )}
                 <div className="grocery-item-meta">
                   <div className="grocery-qty">

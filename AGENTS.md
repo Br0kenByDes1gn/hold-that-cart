@@ -164,6 +164,7 @@ POST /api/products/:id/corrections        { type: im_out | never_remind }
 POST /api/products/:id/enrich          manual enrichment (validated, price-rejecting)
 POST /api/products/:id/enrich-ai       Muse enrichment for this product
 POST /api/ai/extract             photo (base64/data URL) → items; image not stored
+POST /api/ai/parse-list          dictated text → grounded items + pantry matches (no prices)
 POST /api/ai/enrich              { name, brand?, form? } → cached enrichment
 GET  /api/briefing?buy=8&swap=3&skip=5   grouped suggestions + holdCount
 POST /api/lists, GET/PATCH /api/lists/:id, POST/PATCH/DELETE list items, POST /api/lists/:id/evaluate
@@ -188,6 +189,11 @@ GET  /api/health
 - The extraction prompt also returns a fixed `category` per item from
   `src/shared/itemCategories.ts`; the client uses it to choose the Scanner
   image. Invalid categories fall back to `other` instead of failing the scan.
+- The list-parse prompt (`parseShoppingList`) turns dictated speech into product
+  names only. It must preserve the speaker's words, strip brands/sizes into the
+  `brand` field, and never invent items or prices. `domain/listParse.ts` grounds
+  every name in the transcript afterwards; budget via
+  `META_LIST_PARSE_MAX_TOKENS` (default 4000).
 - The pantry classification prompt (`classifyPantryItems`) runs on confirmed
   receipt items only. The model returns AI estimates for `savesMoney`,
   `healthy`, `sustainable`, and `swap` as directional scores from 0 to 1
@@ -246,10 +252,15 @@ are real receipts — check for names/addresses/card fragments before pushing.
 - Three ways in, all ending in the same item rows: typed bar, voice dictation
   (`src/client/lib/speech.ts`, browser Web Speech API), and a product photo
   (`/api/ai/extract` with `kindHint: "product"` → generic name, user confirms).
-- `parseListText` (`src/shared/listText.ts`) deterministically splits dictated
-  text and reads quantities; no model is involved in list parsing.
-- Items carry `qty` and `source` (`manual | voice | camera | scan | auto`).
-  Renaming re-matches the canonical product server-side.
+- Voice is always split by the model (`POST /api/ai/parse-list`). The model only
+  names/normalises products; `domain/listParse.ts` grounds every name in the
+  transcript, keeps the spoken brand as a note, dedupes, clamps quantities and
+  matches pantry products deterministically. Model failure falls back to
+  `parseListText` with `source: "fallback"` — never a guessed list.
+- `parseListText` (`src/shared/listText.ts`) deterministically splits typed text
+  and reads quantities; typed input never calls the model.
+- Items carry `qty`, `brand` and `source` (`manual | voice | camera | scan | auto`).
+  Renaming re-matches the canonical product server-side; brand is never identity.
 - Pantry suggestions are **preview only**: `GET /api/lists/suggestions` maps the
   existing rhythm BUY list through `domain/listSuggestions.ts`. The prediction
   service replaces that module; keep the response contract in

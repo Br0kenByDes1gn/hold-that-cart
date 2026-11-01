@@ -250,6 +250,11 @@ export const listUpdateSchema = z.object({
 export const listItemCreateSchema = z.object({
   productId: z.string().uuid().nullable().default(null),
   rawName: z.string().min(1).max(120),
+  brand: z
+    .string()
+    .max(80)
+    .nullish()
+    .transform((value) => value?.trim() || null),
   qty: z.number().positive().max(999).default(1),
   decision: listItemDecisionSchema.optional(),
   source: listItemSourceSchema.default("manual"),
@@ -262,11 +267,55 @@ export const listItemsBulkCreateSchema = z.object({
 
 export const listItemPatchSchema = z.object({
   rawName: z.string().min(1).max(120).optional(),
+  brand: z.string().max(80).nullable().optional(),
   qty: z.number().positive().max(999).optional(),
   checked: z.boolean().optional(),
   decision: listItemDecisionSchema.optional(),
 });
 export type ListItemPatch = z.infer<typeof listItemPatchSchema>;
+
+// ── Voice list parsing ──
+// The model only segments and normalizes names. Grounding, quantities,
+// dedupe and pantry matching are deterministic server-side.
+
+export const spokenListItemSchema = z.object({
+  name: z.string().min(1).max(120),
+  brand: z.string().max(80).nullish().transform((value) => value?.trim() || null),
+  qty: z.number().positive().max(99).nullish().transform((value) => value ?? null),
+});
+export type SpokenListItem = z.infer<typeof spokenListItemSchema>;
+
+export const spokenListModelSchema = z.object({
+  items: z.array(spokenListItemSchema).max(60),
+});
+export type SpokenListModel = z.infer<typeof spokenListModelSchema>;
+
+export const listParseRequestSchema = z.object({
+  text: z.string().trim().min(1).max(2000),
+});
+
+export const listParseMatchSchema = z.object({
+  productId: z.string().uuid().nullable(),
+  productName: z.string().nullable(),
+  confidence: z.number().min(0).max(1),
+  inPantry: z.boolean(),
+});
+export type ListParseMatch = z.infer<typeof listParseMatchSchema>;
+
+export const parsedListItemSchema = z.object({
+  name: z.string().min(1).max(120),
+  brand: z.string().max(80).nullable(),
+  qty: z.number().positive().max(99),
+  confidence: z.number().min(0).max(1),
+  match: listParseMatchSchema,
+});
+export type ParsedListItem = z.infer<typeof parsedListItemSchema>;
+
+export const listParseResponseSchema = z.object({
+  source: z.enum(["model", "fallback"]),
+  items: z.array(parsedListItemSchema),
+});
+export type ListParseResponse = z.infer<typeof listParseResponseSchema>;
 
 // ── Pantry-driven list suggestions (interface only) ──
 // PREVIEW: the current server implementation is a rhythm-based stub so the

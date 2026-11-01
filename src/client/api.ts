@@ -37,6 +37,8 @@ export const api = {
   enrichAI: (id: string) => req(`/api/products/${id}/enrich-ai`, { method: "POST", body: "{}" }),
   aiExtract: (image: string, kindHint?: string) =>
     req("/api/ai/extract", { method: "POST", body: JSON.stringify({ image, kindHint }) }),
+  parseList: (text: string) =>
+    req("/api/ai/parse-list", { method: "POST", body: JSON.stringify({ text }) }),
   createScan: (kind: string, items: unknown[]) =>
     req("/api/scans", { method: "POST", body: JSON.stringify({ kind, items }) }),
   confirmScan: (id: string, kind: string, items: unknown[], purchasedAt?: string, listId?: string) =>

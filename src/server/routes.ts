@@ -28,6 +28,7 @@ import {
   listItemCreateSchema,
   listItemPatchSchema,
   listItemsBulkCreateSchema,
+  listParseRequestSchema,
   listUpdateSchema,
   manualPurchaseSchema,
   productEnrichmentSchema,
@@ -38,6 +39,12 @@ import type { ListItemCreate } from "../shared/schemas.js";
 import { matchProduct } from "./domain/match.js";
 import { suggestForProducts } from "./domain/suggestions.js";
 import { suggestionsFromViews } from "./domain/listSuggestions.js";
+import {
+  attachPantryMatches,
+  fallbackVoiceItems,
+  validateSpokenItems,
+  type VoiceItem,
+} from "./domain/listParse.js";
 import {
   DEMO_INSIGHTS,
   DEMO_ITEMS,
@@ -727,6 +734,7 @@ async function insertListItems(
   const created: Array<{
     id: string;
     rawName: string;
+    brand: string | null;
     qty: number;
     source: string;
     productId: string | null;
@@ -744,6 +752,7 @@ async function insertListItems(
       listId,
       productId,
       rawName: item.rawName,
+      brand: item.brand ?? null,
       qty: String(item.qty),
       checked: false,
       decision: item.decision ?? null,
@@ -752,6 +761,7 @@ async function insertListItems(
     created.push({
       id,
       rawName: item.rawName,
+      brand: item.brand ?? null,
       qty: item.qty,
       source: item.source,
       productId,
@@ -941,6 +951,9 @@ routes.patch("/api/lists/:id/items/:itemId", async (c) => {
   if (parsed.data.checked !== undefined) patch.checked = parsed.data.checked;
   if (parsed.data.decision !== undefined) patch.decision = parsed.data.decision;
   if (parsed.data.qty !== undefined) patch.qty = String(parsed.data.qty);
+  if (parsed.data.brand !== undefined) {
+    patch.brand = parsed.data.brand?.trim() || null;
+  }
   if (parsed.data.rawName !== undefined) {
     patch.rawName = parsed.data.rawName;
     // A renamed item must not keep pointing at its old product.
@@ -1051,6 +1064,38 @@ routes.post("/api/lists/:id/evaluate", async (c) => {
 });
 
 // ── AI (Muse via Meta Model API) ──
+
+// POST /api/ai/parse-list { text } → grounded voice items + pantry matches.
+// The model splits/normalises; validation, dedupe and matching stay in code.
+routes.post("/api/ai/parse-list", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = listParseRequestSchema.safeParse(body);
+  if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
+  const text = parsed.data.text.trim();
+
+  let source: "model" | "fallback" = "model";
+  let items: VoiceItem[] = [];
+  try {
+    const provider = getAIProvider();
+    const model = await provider.parseShoppingList(text);
+    items = validateSpokenItems(model.items, text);
+    // No grounded items means the output is unusable — use the fallback.
+    if (items.length === 0) throw new Error("no grounded items");
+  } catch {
+    source = "fallback";
+    items = fallbackVoiceItems(text);
+  }
+
+  const db = await getDb();
+  const prows = await db
+    .select()
+    .from(products)
+    .where(eq(products.householdId, hh!.id));
+  return c.json({ source, items: attachPantryMatches(items, prows) });
+});
 
 // POST /api/ai/extract { image: dataURL|base64, mimeType?, kindHint? }
 // Image is NOT persisted — only the validated extraction JSON is returned.

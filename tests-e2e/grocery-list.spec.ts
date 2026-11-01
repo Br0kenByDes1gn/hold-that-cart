@@ -55,4 +55,62 @@ test.describe("grocery list editing", () => {
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(page.locator(".grocery-card").first()).toBeVisible();
   });
+
+  test("reviews model-split voice items with pantry matches and brand", async ({ page }) => {
+    await useDevice(page, true);
+    await page.route("**/api/ai/parse-list", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          source: "model",
+          items: [
+            {
+              name: "Milk",
+              brand: null,
+              qty: 1,
+              confidence: 0.7,
+              match: {
+                productId: null,
+                productName: "Milk",
+                confidence: 1,
+                inPantry: true,
+              },
+            },
+            {
+              name: "Olive oil",
+              brand: "Borges",
+              qty: 1,
+              confidence: 0.7,
+              match: {
+                productId: null,
+                productName: "Olive oil",
+                confidence: 1,
+                inPantry: true,
+              },
+            },
+          ],
+        }),
+      }),
+    );
+
+    await page.goto("/quick-view");
+    await page.getByLabel("Add by voice").click();
+    await page
+      .getByLabel("Your items")
+      .fill("milk and Borges olive oil");
+    await page.getByRole("button", { name: "Split items" }).click();
+
+    await expect(page.getByLabel("Item 1 name")).toHaveValue("Milk");
+    await expect(page.getByText("In pantry: Milk", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Item 2 brand")).toHaveValue("Borges");
+    await expect(page.getByText("In pantry: Olive oil", { exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Add 2 items" }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Olive oil", exact: true }),
+    ).toBeVisible();
+    await expect(page.locator(".grocery-item-brand", { hasText: "Borges" })).toBeVisible();
+  });
 });

@@ -128,6 +128,48 @@ describe("meta provider (mocked fetch, no network)", () => {
     ).rejects.toThrow(/must not contain prices/);
   });
 
+  it("parseShoppingList validates the split and rejects prices", async () => {
+    const fetchFn = vi.fn(async () =>
+      chatResponse(
+        JSON.stringify({
+          items: [
+            { name: "olive oil", brand: "Borges", qty: null },
+            { name: "eggs", brand: null, qty: 12 },
+          ],
+        }),
+      ),
+    );
+    const p = new MetaProvider({ apiKey: "test", fetchFn: fetchFn as any });
+    const res = await p.parseShoppingList("Borges olive oil and a dozen eggs");
+    expect(res.items).toEqual([
+      { name: "olive oil", brand: "Borges", qty: null },
+      { name: "eggs", brand: null, qty: 12 },
+    ]);
+    const body = JSON.parse(
+      ((fetchFn.mock.calls[0] as unknown[])[1] as any).body,
+    );
+    expect(JSON.stringify(body.messages)).toContain("spoken shopping list");
+
+    const priceFn = vi.fn(async () =>
+      chatResponse(JSON.stringify({ items: [{ name: "milk", brand: null, qty: null, price: 2 }] })),
+    );
+    const priceProvider = new MetaProvider({
+      apiKey: "test",
+      fetchFn: priceFn as any,
+    });
+    await expect(priceProvider.parseShoppingList("milk")).rejects.toThrow(
+      /must not contain prices/,
+    );
+  });
+
+  it("parseShoppingList rejects invented-shape output", async () => {
+    const fetchFn = vi.fn(async () =>
+      chatResponse(JSON.stringify({ items: [{ nope: 1 }] })),
+    );
+    const p = new MetaProvider({ apiKey: "test", fetchFn: fetchFn as any });
+    await expect(p.parseShoppingList("milk")).rejects.toThrow();
+  });
+
   it("enrichment containing prices fails validation", () => {
     expect(() =>
       assertNoPrices({ category: "x", price: 5, alternatives: [{ title: "y", savings: "€2" }] }),
