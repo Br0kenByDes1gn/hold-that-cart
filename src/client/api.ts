@@ -37,6 +37,8 @@ export const api = {
   enrichAI: (id: string) => req(`/api/products/${id}/enrich-ai`, { method: "POST", body: "{}" }),
   aiExtract: (image: string, kindHint?: string) =>
     req("/api/ai/extract", { method: "POST", body: JSON.stringify({ image, kindHint }) }),
+  parseList: (text: string) =>
+    req("/api/ai/parse-list", { method: "POST", body: JSON.stringify({ text }) }),
   createScan: (kind: string, items: unknown[]) =>
     req("/api/scans", { method: "POST", body: JSON.stringify({ kind, items }) }),
   confirmScan: (id: string, kind: string, items: unknown[], purchasedAt?: string, listId?: string) =>
@@ -46,6 +48,21 @@ export const api = {
     }),
   list: (id: string) => req(`/api/lists/${id}`),
   lists: () => req("/api/lists"),
+  createList: (payload: { title?: string; source?: "auto" | "manual" | "scan" } = {}) =>
+    req("/api/lists", { method: "POST", body: JSON.stringify(payload) }),
+  clearList: (id: string) =>
+    req(`/api/lists/${id}/items`, { method: "DELETE" }),
+  listSuggestions: (listId?: string | null) =>
+    req(`/api/lists/suggestions${listId ? `?listId=${listId}` : ""}`),
+  addListItem: (listId: string, item: Record<string, unknown>) =>
+    req(`/api/lists/${listId}/items`, { method: "POST", body: JSON.stringify(item) }),
+  addListItems: (listId: string, items: Array<Record<string, unknown>>) =>
+    req(`/api/lists/${listId}/items/bulk`, {
+      method: "POST",
+      body: JSON.stringify({ items }),
+    }),
+  deleteListItem: (listId: string, itemId: string) =>
+    req(`/api/lists/${listId}/items/${itemId}`, { method: "DELETE" }),
   evaluateList: (id: string) => req(`/api/lists/${id}/evaluate`, { method: "POST", body: "{}" }),
   patchListItem: (listId: string, itemId: string, patch: Record<string, unknown>) =>
     req(`/api/lists/${listId}/items/${itemId}`, { method: "PATCH", body: JSON.stringify(patch) }),

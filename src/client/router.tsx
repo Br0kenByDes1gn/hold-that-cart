@@ -45,7 +45,11 @@ function Shell() {
   const homeActive =
     location.pathname === "/mode" || location.pathname === "/" || location.pathname === "/home";
   return (
-    <div className="shell has-tabbar">
+    <div
+      className={`shell has-tabbar ${
+        location.pathname === "/quick-view" ? "on-grocery" : ""
+      }`}
+    >
       {!hideHeader && (
         <header className="header">
           <Link to="/" className="wordmark wordmark-link">

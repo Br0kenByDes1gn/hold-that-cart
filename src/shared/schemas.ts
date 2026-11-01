@@ -26,7 +26,13 @@ export const swapTypeSchema = z.enum([
 ]);
 export type SwapType = z.infer<typeof swapTypeSchema>;
 
-export const scanKindSchema = z.enum(["receipt", "list", "cart", "unknown"]);
+export const scanKindSchema = z.enum([
+  "receipt",
+  "list",
+  "cart",
+  "product",
+  "unknown",
+]);
 export type ScanKind = z.infer<typeof scanKindSchema>;
 
 export const suggestionActionSchema = z.enum(["BUY", "SWAP", "SKIP"]);
@@ -222,21 +228,123 @@ export const manualPurchaseSchema = z.object({
   store: z.string().optional(),
 });
 
+export const listItemSourceSchema = z.enum([
+  "manual",
+  "voice",
+  "camera",
+  "scan",
+  "auto",
+]);
+export type ListItemSource = z.infer<typeof listItemSourceSchema>;
+
 export const listCreateSchema = z.object({
-  title: z.string().min(1).default("Shopping list"),
+  title: z.string().min(1).max(120).default("Shopping list"),
   source: z.enum(["auto", "manual", "scan"]).default("manual"),
+});
+
+export const listUpdateSchema = z.object({
+  title: z.string().min(1).max(120).optional(),
+  status: z.enum(["open", "done", "archived"]).optional(),
 });
 
 export const listItemCreateSchema = z.object({
   productId: z.string().uuid().nullable().default(null),
-  rawName: z.string().min(1),
+  rawName: z.string().min(1).max(120),
+  brand: z
+    .string()
+    .max(80)
+    .nullish()
+    .transform((value) => value?.trim() || null),
+  qty: z.number().positive().max(999).default(1),
   decision: listItemDecisionSchema.optional(),
+  source: listItemSourceSchema.default("manual"),
+});
+export type ListItemCreate = z.infer<typeof listItemCreateSchema>;
+
+export const listItemsBulkCreateSchema = z.object({
+  items: z.array(listItemCreateSchema).min(1).max(50),
 });
 
 export const listItemPatchSchema = z.object({
+  rawName: z.string().min(1).max(120).optional(),
+  brand: z.string().max(80).nullable().optional(),
+  qty: z.number().positive().max(999).optional(),
   checked: z.boolean().optional(),
   decision: listItemDecisionSchema.optional(),
 });
+export type ListItemPatch = z.infer<typeof listItemPatchSchema>;
+
+// ── Voice list parsing ──
+// The model only segments and normalizes names. Grounding, quantities,
+// dedupe and pantry matching are deterministic server-side.
+
+export const spokenListItemSchema = z.object({
+  name: z.string().min(1).max(120),
+  brand: z.string().max(80).nullish().transform((value) => value?.trim() || null),
+  qty: z.number().positive().max(99).nullish().transform((value) => value ?? null),
+});
+export type SpokenListItem = z.infer<typeof spokenListItemSchema>;
+
+export const spokenListModelSchema = z.object({
+  items: z.array(spokenListItemSchema).max(60),
+});
+export type SpokenListModel = z.infer<typeof spokenListModelSchema>;
+
+export const listParseRequestSchema = z.object({
+  text: z.string().trim().min(1).max(2000),
+});
+
+export const listParseMatchSchema = z.object({
+  productId: z.string().uuid().nullable(),
+  productName: z.string().nullable(),
+  confidence: z.number().min(0).max(1),
+  inPantry: z.boolean(),
+});
+export type ListParseMatch = z.infer<typeof listParseMatchSchema>;
+
+export const parsedListItemSchema = z.object({
+  name: z.string().min(1).max(120),
+  brand: z.string().max(80).nullable(),
+  qty: z.number().positive().max(99),
+  confidence: z.number().min(0).max(1),
+  match: listParseMatchSchema,
+});
+export type ParsedListItem = z.infer<typeof parsedListItemSchema>;
+
+export const listParseResponseSchema = z.object({
+  source: z.enum(["model", "fallback"]),
+  items: z.array(parsedListItemSchema),
+});
+export type ListParseResponse = z.infer<typeof listParseResponseSchema>;
+
+// ── Pantry-driven list suggestions (interface only) ──
+// PREVIEW: the current server implementation is a rhythm-based stub so the
+// grocery-list UI can be built. The prediction service will replace the
+// implementation while keeping this response contract.
+
+export const listSuggestionSchema = z.object({
+  productId: z.string().uuid().nullable(),
+  rawName: z.string().min(1),
+  qty: z.number().positive().default(1),
+  reasonCode: z.string().min(1),
+  reason: z.string().min(1).max(120),
+  confidence: z.number().min(0).max(1),
+  evidence: z.object({
+    daysSince: z.number().nullable(),
+    typicalIntervalDays: z.number().nullable(),
+  }),
+});
+export type ListSuggestion = z.infer<typeof listSuggestionSchema>;
+
+export const listSuggestionsResponseSchema = z.object({
+  source: z.literal("pantry-rhythm-stub"),
+  preview: z.literal(true),
+  generatedAt: z.string(),
+  suggestions: z.array(listSuggestionSchema),
+});
+export type ListSuggestionsResponse = z.infer<
+  typeof listSuggestionsResponseSchema
+>;
 
 export const correctionSchema = z.object({
   type: correctionTypeSchema,

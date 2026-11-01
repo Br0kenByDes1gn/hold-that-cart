@@ -2,6 +2,8 @@ import {
   extractedItemSchema,
   pantryInsightResponseSchema,
   productEnrichmentSchema,
+  spokenListModelSchema,
+  type SpokenListModel,
 } from "../../shared/schemas.js";
 import { normalizeName } from "../domain/normalize.js";
 import { ITEM_CATEGORIES } from "../../shared/itemCategories.js";
@@ -16,13 +18,14 @@ import type {
 // ── Prompt builders (exported for tests / tuning) ──
 
 export const EXTRACTION_SYSTEM = `You extract grocery data from a photo for a pantry-tracking app.
-The photo shows ONE of: a shopping receipt, a shopping list (paper/handwritten/screenshot), or a shopping cart with groceries.
+The photo shows ONE of: a shopping receipt, a shopping list (paper/handwritten/screenshot), a shopping cart with groceries, or a single product/package.
 Output JSON ONLY, no markdown, no commentary, with this shape:
-{"kind": "receipt" | "list" | "cart" | "unknown", "items": [{"rawName": string, "normalizedName": string, "category": string, "brand": string | null, "qty": number, "packQty": number | null, "packUnit": string | null, "unit": string | null, "price": number | null, "store": string | null, "confidence": number}]}
+{"kind": "receipt" | "list" | "cart" | "product" | "unknown", "items": [{"rawName": string, "normalizedName": string, "category": string, "brand": string | null, "qty": number, "packQty": number | null, "packUnit": string | null, "unit": string | null, "price": number | null, "store": string | null, "confidence": number}]}
 Rules:
 - receipt: transcribe EVERY line item. price = total line price as printed. packQty/packUnit from the description when shown (e.g. "500 g" -> 500, "g"). store = merchant name if visible.
 - list: one entry per list line. No prices (use null) unless a price is written on the list. qty defaults to 1.
 - cart: only items you can actually identify, top layer. price is always null. confidence reflects occlusion (0.4-0.7 typical).
+- product: products or packages in the photo. Return ONE entry per DISTINCT product type + brand, never one entry per visible unit when the units are identical. If several identical units are visible, put their count in qty (e.g. four identical beer bottles -> ONE entry with qty 4). If several different products are visible, return one entry per distinct product, each with its own qty. Use the generic type as normalizedName ("beer", "olive oil"), not the marketing copy. Put the printed brand in brand and never in normalizedName. price is always null. category from the list below. confidence reflects how clearly the label can be read.
 - normalizedName: lowercase generic product name in English ("olive oil", NOT "Borges Olio Evo 500ml").
 - category: choose exactly ONE from this list: ${ITEM_CATEGORIES.join(", ")}. Base it on the product name/type. Examples: any meat product -> meat; wine/beer/whiskey -> alcohol; pet food/treats -> pet; bread/buns/bagels -> bread; milk/cheese/butter -> dairy. Use "other" when unsure. Never invent a category outside the list.
 - Keep the printed product words, but drop brand names, sizes, percentages, tax letters, HSN/SKU codes and store names.
@@ -83,6 +86,24 @@ export function pantryClassifyUser(items: PantryClassifyInput[]): string {
       qty: item.qty ?? 1,
     })),
   )}\nReturn the pantry insight JSON.`;
+}
+
+export const LIST_PARSE_SYSTEM = `You turn a spoken shopping list into separate grocery items.
+Output JSON ONLY, no markdown, no commentary, with this shape:
+{"items":[{"name": string, "brand": string | null, "qty": number | null}]}
+Rules:
+- Split run-on speech into separate products: "milk eggs bread" -> three items.
+- Keep compound product names together: "peanut butter", "olive oil", "ice cream", "toilet paper".
+- name is the lowercase generic grocery type. Remove brand names, pack sizes, weights, volumes and marketing words: "Borges olive oil 500 ml" -> name "olive oil", brand "Borges".
+- brand is the brand the speaker actually said, or null. Never invent a brand.
+- qty is an integer count only when a count is explicitly spoken ("two eggs" -> 2, "a dozen eggs" -> 12). Otherwise null. Ignore weights and volumes ("2 litres of milk" -> qty null).
+- Preserve the speaker's words. Do not translate, substitute synonyms, merge distinct products, or add products that were not said.
+- Never include prices, savings, or currency.
+- Max 30 items. Keep the spoken order.
+- If there are no grocery items, return {"items": []}.`;
+
+export function listParseUser(text: string): string {
+  return `Spoken list:\n${text}\n\nReturn the items JSON.`;
 }
 
 // ── Meta Model API client (OpenAI-compatible Chat Completions) ──
@@ -408,5 +429,21 @@ export class MetaProvider implements AIProvider {
       modelName: this.model,
       promptVersion: "pantry-v1",
     };
+  }
+
+  async parseShoppingList(text: string): Promise<SpokenListModel> {
+    const { content, metrics } = await this.chat(
+      [
+        { role: "system", content: LIST_PARSE_SYSTEM },
+        { role: "user", content: listParseUser(text) },
+      ],
+      Number(process.env.META_LIST_PARSE_MAX_TOKENS ?? 4000),
+      "parseShoppingList",
+    );
+    const raw = JSON.parse(content);
+    assertNoPrices(raw);
+    const parsed = spokenListModelSchema.parse(raw);
+    this.logUsage("parseShoppingList", metrics, { items: parsed.items.length });
+    return parsed;
   }
 }

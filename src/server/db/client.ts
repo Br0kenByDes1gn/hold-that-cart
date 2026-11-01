@@ -103,10 +103,14 @@ CREATE TABLE IF NOT EXISTS list_items (
   list_id TEXT NOT NULL REFERENCES shopping_lists(id),
   product_id TEXT REFERENCES products(id),
   raw_name TEXT NOT NULL,
+  brand TEXT,
+  qty NUMERIC NOT NULL DEFAULT 1,
   checked BOOLEAN NOT NULL DEFAULT FALSE,
   decision TEXT,
   source TEXT NOT NULL DEFAULT 'manual'
 );
+ALTER TABLE list_items ADD COLUMN IF NOT EXISTS brand TEXT;
+ALTER TABLE list_items ADD COLUMN IF NOT EXISTS qty NUMERIC NOT NULL DEFAULT 1;
 CREATE TABLE IF NOT EXISTS corrections (
   id TEXT PRIMARY KEY,
   household_id TEXT NOT NULL REFERENCES households(id),
