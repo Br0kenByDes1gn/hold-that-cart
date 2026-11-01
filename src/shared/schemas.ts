@@ -26,7 +26,13 @@ export const swapTypeSchema = z.enum([
 ]);
 export type SwapType = z.infer<typeof swapTypeSchema>;
 
-export const scanKindSchema = z.enum(["receipt", "list", "cart", "unknown"]);
+export const scanKindSchema = z.enum([
+  "receipt",
+  "list",
+  "cart",
+  "product",
+  "unknown",
+]);
 export type ScanKind = z.infer<typeof scanKindSchema>;
 
 export const suggestionActionSchema = z.enum(["BUY", "SWAP", "SKIP"]);
@@ -222,21 +228,74 @@ export const manualPurchaseSchema = z.object({
   store: z.string().optional(),
 });
 
+export const listItemSourceSchema = z.enum([
+  "manual",
+  "voice",
+  "camera",
+  "scan",
+  "auto",
+]);
+export type ListItemSource = z.infer<typeof listItemSourceSchema>;
+
 export const listCreateSchema = z.object({
-  title: z.string().min(1).default("Shopping list"),
+  title: z.string().min(1).max(120).default("Shopping list"),
   source: z.enum(["auto", "manual", "scan"]).default("manual"),
+});
+
+export const listUpdateSchema = z.object({
+  title: z.string().min(1).max(120).optional(),
+  status: z.enum(["open", "done", "archived"]).optional(),
 });
 
 export const listItemCreateSchema = z.object({
   productId: z.string().uuid().nullable().default(null),
-  rawName: z.string().min(1),
+  rawName: z.string().min(1).max(120),
+  qty: z.number().positive().max(999).default(1),
   decision: listItemDecisionSchema.optional(),
+  source: listItemSourceSchema.default("manual"),
+});
+export type ListItemCreate = z.infer<typeof listItemCreateSchema>;
+
+export const listItemsBulkCreateSchema = z.object({
+  items: z.array(listItemCreateSchema).min(1).max(50),
 });
 
 export const listItemPatchSchema = z.object({
+  rawName: z.string().min(1).max(120).optional(),
+  qty: z.number().positive().max(999).optional(),
   checked: z.boolean().optional(),
   decision: listItemDecisionSchema.optional(),
 });
+export type ListItemPatch = z.infer<typeof listItemPatchSchema>;
+
+// ── Pantry-driven list suggestions (interface only) ──
+// PREVIEW: the current server implementation is a rhythm-based stub so the
+// grocery-list UI can be built. The prediction service will replace the
+// implementation while keeping this response contract.
+
+export const listSuggestionSchema = z.object({
+  productId: z.string().uuid().nullable(),
+  rawName: z.string().min(1),
+  qty: z.number().positive().default(1),
+  reasonCode: z.string().min(1),
+  reason: z.string().min(1).max(120),
+  confidence: z.number().min(0).max(1),
+  evidence: z.object({
+    daysSince: z.number().nullable(),
+    typicalIntervalDays: z.number().nullable(),
+  }),
+});
+export type ListSuggestion = z.infer<typeof listSuggestionSchema>;
+
+export const listSuggestionsResponseSchema = z.object({
+  source: z.literal("pantry-rhythm-stub"),
+  preview: z.literal(true),
+  generatedAt: z.string(),
+  suggestions: z.array(listSuggestionSchema),
+});
+export type ListSuggestionsResponse = z.infer<
+  typeof listSuggestionsResponseSchema
+>;
 
 export const correctionSchema = z.object({
   type: correctionTypeSchema,

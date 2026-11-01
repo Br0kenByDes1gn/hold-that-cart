@@ -300,3 +300,115 @@ describe("seed → briefing flow", () => {
     await api("/api/demo/reset", { method: "POST" });
   });
 });
+
+describe("grocery list editing", () => {
+  it("adds, edits, deletes and previews pantry suggestions", async () => {
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    await api("/api/demo/seed", { method: "POST" });
+
+    // Preview contract: pantry-rhythm-stub, never auto-added.
+    const preview = await api("/api/lists/suggestions");
+    expect(preview.status).toBe(200);
+    expect(preview.body).toMatchObject({
+      source: "pantry-rhythm-stub",
+      preview: true,
+    });
+    expect(preview.body.suggestions.map((s: any) => s.rawName)).toContain("Milk");
+    const milkPreview = preview.body.suggestions.find((s: any) => s.rawName === "Milk");
+    expect(milkPreview).toMatchObject({ qty: 1, reasonCode: "due" });
+    expect(milkPreview.evidence.typicalIntervalDays).toBe(5);
+
+    const created = await api("/api/lists", {
+      method: "POST",
+      body: JSON.stringify({ title: "Weekly shop" }),
+    });
+    expect(created.status).toBe(200);
+    const listId = created.body.id;
+
+    const added = await api(`/api/lists/${listId}/items`, {
+      method: "POST",
+      body: JSON.stringify({ rawName: "Bananas", qty: 2, source: "voice" }),
+    });
+    expect(added.status).toBe(200);
+    expect(added.body.item).toMatchObject({ rawName: "Bananas", qty: 2, source: "voice" });
+
+    let list = await api(`/api/lists/${listId}`);
+    expect(list.body.items).toHaveLength(1);
+    expect(Number(list.body.items[0].qty)).toBe(2);
+    expect(list.body.items[0].source).toBe("voice");
+    expect(list.body.items[0].productId).toBeNull();
+
+    // Renaming re-matches the canonical product.
+    await api(`/api/lists/${listId}/items/${added.body.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ rawName: "Milk", qty: 3 }),
+    });
+    list = await api(`/api/lists/${listId}`);
+    expect(list.body.items[0]).toMatchObject({ rawName: "Milk", source: "voice" });
+    expect(Number(list.body.items[0].qty)).toBe(3);
+    expect(list.body.items[0].productId).toBeTruthy();
+
+    // Already-listed items are excluded from suggestions.
+    const excluded = await api(`/api/lists/suggestions?listId=${listId}`);
+    expect(excluded.body.suggestions.map((s: any) => s.rawName)).not.toContain("Milk");
+
+    // Bulk add keeps per-item source.
+    const bulk = await api(`/api/lists/${listId}/items/bulk`, {
+      method: "POST",
+      body: JSON.stringify({
+        items: [
+          { rawName: "Eggs", qty: 1, source: "auto" },
+          { rawName: "Bread", qty: 2, source: "camera" },
+        ],
+      }),
+    });
+    expect(bulk.status).toBe(200);
+    expect(bulk.body.items.map((item: any) => item.source)).toEqual(["auto", "camera"]);
+
+    list = await api(`/api/lists/${listId}`);
+    expect(list.body.items).toHaveLength(3);
+
+    const deleted = await api(`/api/lists/${listId}/items/${added.body.id}`, {
+      method: "DELETE",
+    });
+    expect(deleted.status).toBe(200);
+    list = await api(`/api/lists/${listId}`);
+    expect(list.body.items.map((item: any) => item.rawName)).toEqual(["Eggs", "Bread"]);
+
+    const closed = await api(`/api/lists/${listId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "done" }),
+    });
+    expect(closed.status).toBe(200);
+    const lists = await api("/api/lists");
+    expect(lists.body.lists.find((item: any) => item.id === listId).status).toBe("done");
+
+    await api("/api/demo/reset", { method: "POST" });
+  });
+
+  it("rejects unknown lists and invalid payloads", async () => {
+    const missing = await api("/api/lists/00000000-0000-0000-0000-000000000000/items", {
+      method: "POST",
+      body: JSON.stringify({ rawName: "Milk" }),
+    });
+    expect(missing.status).toBe(404);
+
+    const created = await api("/api/lists", {
+      method: "POST",
+      body: JSON.stringify({ title: "Bad payloads" }),
+    });
+    const listId = created.body.id;
+    const bad = await api(`/api/lists/${listId}/items`, {
+      method: "POST",
+      body: JSON.stringify({ rawName: "", qty: 0, source: "telepathy" }),
+    });
+    expect(bad.status).toBe(400);
+    await api(`/api/lists/${listId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: "done" }),
+    });
+  });
+});

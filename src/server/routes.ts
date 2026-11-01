@@ -27,13 +27,17 @@ import {
   listCreateSchema,
   listItemCreateSchema,
   listItemPatchSchema,
+  listItemsBulkCreateSchema,
+  listUpdateSchema,
   manualPurchaseSchema,
   productEnrichmentSchema,
   scanConfirmSchema,
   scanCreateSchema,
 } from "../shared/schemas.js";
+import type { ListItemCreate } from "../shared/schemas.js";
 import { matchProduct } from "./domain/match.js";
 import { suggestForProducts } from "./domain/suggestions.js";
+import { suggestionsFromViews } from "./domain/listSuggestions.js";
 import {
   DEMO_INSIGHTS,
   DEMO_ITEMS,
@@ -708,6 +712,84 @@ routes.get("/api/briefing", async (c) => {
 });
 
 // ── Lists ──
+
+/** Insert list items, auto-matching each name to a household product. */
+async function insertListItems(
+  householdId: string,
+  listId: string,
+  items: ListItemCreate[],
+) {
+  const db = await getDb();
+  const prows = await db
+    .select()
+    .from(products)
+    .where(eq(products.householdId, householdId));
+  const created: Array<{
+    id: string;
+    rawName: string;
+    qty: number;
+    source: string;
+    productId: string | null;
+  }> = [];
+
+  for (const item of items) {
+    const knownProduct =
+      item.productId && prows.some((p) => p.id === item.productId)
+        ? item.productId
+        : null;
+    const productId = knownProduct ?? matchProduct(item.rawName, prows).productId;
+    const id = randomUUID();
+    await db.insert(listItems).values({
+      id,
+      listId,
+      productId,
+      rawName: item.rawName,
+      qty: String(item.qty),
+      checked: false,
+      decision: item.decision ?? null,
+      source: item.source,
+    });
+    created.push({
+      id,
+      rawName: item.rawName,
+      qty: item.qty,
+      source: item.source,
+      productId,
+    });
+  }
+  return created;
+}
+
+async function ownedList(householdId: string, listId: string) {
+  const db = await getDb();
+  const rows = await db
+    .select()
+    .from(shoppingLists)
+    .where(
+      and(
+        eq(shoppingLists.id, listId),
+        eq(shoppingLists.householdId, householdId),
+      ),
+    );
+  return rows[0] ?? null;
+}
+
+async function latestOpenList(householdId: string) {
+  const db = await getDb();
+  const rows = await db
+    .select()
+    .from(shoppingLists)
+    .where(
+      and(
+        eq(shoppingLists.householdId, householdId),
+        eq(shoppingLists.status, "open"),
+      ),
+    )
+    .orderBy(desc(shoppingLists.createdAt))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
 routes.post("/api/lists", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);
@@ -741,6 +823,69 @@ routes.get("/api/lists", async (c) => {
   return c.json({ lists: rows });
 });
 
+/**
+ * PREVIEW: pantry-driven list suggestions. The response contract is final;
+ * the implementation is a rhythm-based stub until the prediction service lands.
+ */
+routes.get("/api/lists/suggestions", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const db = await getDb();
+
+  let targetListId = c.req.query("listId") ?? null;
+  if (targetListId) {
+    const list = await ownedList(hh!.id, targetListId);
+    if (!list) return c.json({ error: "not found" }, 404);
+  } else {
+    const latest = await latestOpenList(hh!.id);
+    targetListId = latest?.id ?? null;
+  }
+
+  let excludeNames: string[] = [];
+  if (targetListId) {
+    const items = await db
+      .select()
+      .from(listItems)
+      .where(eq(listItems.listId, targetListId));
+    excludeNames = items.map((item) => item.rawName);
+  }
+
+  const views = await loadAllProductViews(hh!.id, hh!.householdSize);
+  const suggestions = suggestionsFromViews(views, {
+    excludeNames,
+    now: new Date(),
+  });
+  return c.json({
+    source: "pantry-rhythm-stub",
+    preview: true,
+    generatedAt: new Date().toISOString(),
+    suggestions,
+  });
+});
+
+routes.patch("/api/lists/:id", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const list = await ownedList(hh!.id, c.req.param("id"));
+  if (!list) return c.json({ error: "not found" }, 404);
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = listUpdateSchema.safeParse(body);
+  if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
+  const patch: Record<string, unknown> = {};
+  if (parsed.data.title !== undefined) patch.title = parsed.data.title;
+  if (parsed.data.status !== undefined) patch.status = parsed.data.status;
+  if (Object.keys(patch).length > 0) {
+    const db = await getDb();
+    await db
+      .update(shoppingLists)
+      .set(patch)
+      .where(eq(shoppingLists.id, list.id));
+  }
+  return c.json({ ok: true });
+});
+
 routes.get("/api/lists/:id", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);
@@ -759,50 +904,71 @@ routes.post("/api/lists/:id/items", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);
   if (err) return err;
-  const db = await getDb();
-  const lrows = await db
-    .select()
-    .from(shoppingLists)
-    .where(and(eq(shoppingLists.id, c.req.param("id")), eq(shoppingLists.householdId, hh!.id)));
-  if (!lrows[0]) return c.json({ error: "not found" }, 404);
+  const list = await ownedList(hh!.id, c.req.param("id"));
+  if (!list) return c.json({ error: "not found" }, 404);
   const body = await c.req.json().catch(() => ({}));
   const parsed = listItemCreateSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
-  const id = randomUUID();
-  await db.insert(listItems).values({
-    id,
-    listId: lrows[0].id,
-    productId: parsed.data.productId,
-    rawName: parsed.data.rawName,
-    checked: false,
-    decision: parsed.data.decision ?? null,
-    source: "manual",
-  });
-  return c.json({ id });
+  const [created] = await insertListItems(hh!.id, list.id, [parsed.data]);
+  return c.json({ id: created.id, item: created });
+});
+
+routes.post("/api/lists/:id/items/bulk", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const list = await ownedList(hh!.id, c.req.param("id"));
+  if (!list) return c.json({ error: "not found" }, 404);
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = listItemsBulkCreateSchema.safeParse(body);
+  if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
+  const created = await insertListItems(hh!.id, list.id, parsed.data.items);
+  return c.json({ items: created });
 });
 
 routes.patch("/api/lists/:id/items/:itemId", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);
   if (err) return err;
-  const db = await getDb();
-  const lrows = await db
-    .select()
-    .from(shoppingLists)
-    .where(and(eq(shoppingLists.id, c.req.param("id")), eq(shoppingLists.householdId, hh!.id)));
-  if (!lrows[0]) return c.json({ error: "not found" }, 404);
+  const list = await ownedList(hh!.id, c.req.param("id"));
+  if (!list) return c.json({ error: "not found" }, 404);
   const body = await c.req.json().catch(() => ({}));
   const parsed = listItemPatchSchema.safeParse(body);
   if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
+
+  const db = await getDb();
   const patch: Record<string, unknown> = {};
   if (parsed.data.checked !== undefined) patch.checked = parsed.data.checked;
   if (parsed.data.decision !== undefined) patch.decision = parsed.data.decision;
+  if (parsed.data.qty !== undefined) patch.qty = String(parsed.data.qty);
+  if (parsed.data.rawName !== undefined) {
+    patch.rawName = parsed.data.rawName;
+    // A renamed item must not keep pointing at its old product.
+    const prows = await db
+      .select()
+      .from(products)
+      .where(eq(products.householdId, hh!.id));
+    patch.productId = matchProduct(parsed.data.rawName, prows).productId;
+  }
   if (Object.keys(patch).length > 0) {
     await db
       .update(listItems)
       .set(patch)
-      .where(and(eq(listItems.id, c.req.param("itemId")), eq(listItems.listId, lrows[0].id)));
+      .where(and(eq(listItems.id, c.req.param("itemId")), eq(listItems.listId, list.id)));
   }
+  return c.json({ ok: true });
+});
+
+routes.delete("/api/lists/:id/items/:itemId", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const list = await ownedList(hh!.id, c.req.param("id"));
+  if (!list) return c.json({ error: "not found" }, 404);
+  const db = await getDb();
+  await db
+    .delete(listItems)
+    .where(and(eq(listItems.id, c.req.param("itemId")), eq(listItems.listId, list.id)));
   return c.json({ ok: true });
 });
 

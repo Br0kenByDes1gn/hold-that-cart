@@ -46,6 +46,21 @@ export const api = {
     }),
   list: (id: string) => req(`/api/lists/${id}`),
   lists: () => req("/api/lists"),
+  createList: (payload: { title?: string; source?: "auto" | "manual" | "scan" } = {}) =>
+    req("/api/lists", { method: "POST", body: JSON.stringify(payload) }),
+  updateList: (id: string, patch: Record<string, unknown>) =>
+    req(`/api/lists/${id}`, { method: "PATCH", body: JSON.stringify(patch) }),
+  listSuggestions: (listId?: string | null) =>
+    req(`/api/lists/suggestions${listId ? `?listId=${listId}` : ""}`),
+  addListItem: (listId: string, item: Record<string, unknown>) =>
+    req(`/api/lists/${listId}/items`, { method: "POST", body: JSON.stringify(item) }),
+  addListItems: (listId: string, items: Array<Record<string, unknown>>) =>
+    req(`/api/lists/${listId}/items/bulk`, {
+      method: "POST",
+      body: JSON.stringify({ items }),
+    }),
+  deleteListItem: (listId: string, itemId: string) =>
+    req(`/api/lists/${listId}/items/${itemId}`, { method: "DELETE" }),
   evaluateList: (id: string) => req(`/api/lists/${id}/evaluate`, { method: "POST", body: "{}" }),
   patchListItem: (listId: string, itemId: string, patch: Record<string, unknown>) =>
     req(`/api/lists/${listId}/items/${itemId}`, { method: "PATCH", body: JSON.stringify(patch) }),

@@ -16,13 +16,14 @@ import type {
 // ── Prompt builders (exported for tests / tuning) ──
 
 export const EXTRACTION_SYSTEM = `You extract grocery data from a photo for a pantry-tracking app.
-The photo shows ONE of: a shopping receipt, a shopping list (paper/handwritten/screenshot), or a shopping cart with groceries.
+The photo shows ONE of: a shopping receipt, a shopping list (paper/handwritten/screenshot), a shopping cart with groceries, or a single product/package.
 Output JSON ONLY, no markdown, no commentary, with this shape:
-{"kind": "receipt" | "list" | "cart" | "unknown", "items": [{"rawName": string, "normalizedName": string, "category": string, "brand": string | null, "qty": number, "packQty": number | null, "packUnit": string | null, "unit": string | null, "price": number | null, "store": string | null, "confidence": number}]}
+{"kind": "receipt" | "list" | "cart" | "product" | "unknown", "items": [{"rawName": string, "normalizedName": string, "category": string, "brand": string | null, "qty": number, "packQty": number | null, "packUnit": string | null, "unit": string | null, "price": number | null, "store": string | null, "confidence": number}]}
 Rules:
 - receipt: transcribe EVERY line item. price = total line price as printed. packQty/packUnit from the description when shown (e.g. "500 g" -> 500, "g"). store = merchant name if visible.
 - list: one entry per list line. No prices (use null) unless a price is written on the list. qty defaults to 1.
 - cart: only items you can actually identify, top layer. price is always null. confidence reflects occlusion (0.4-0.7 typical).
+- product: one product or package. Return ONE entry named by its generic type (e.g. "olive oil"), not the marketing copy. price is always null. category from the list below. confidence reflects how clearly the label can be read. If several distinct products are clearly visible and separable, return one entry per product.
 - normalizedName: lowercase generic product name in English ("olive oil", NOT "Borges Olio Evo 500ml").
 - category: choose exactly ONE from this list: ${ITEM_CATEGORIES.join(", ")}. Base it on the product name/type. Examples: any meat product -> meat; wine/beer/whiskey -> alcohol; pet food/treats -> pet; bread/buns/bagels -> bread; milk/cheese/butter -> dairy. Use "other" when unsure. Never invent a category outside the list.
 - Keep the printed product words, but drop brand names, sizes, percentages, tax letters, HSN/SKU codes and store names.

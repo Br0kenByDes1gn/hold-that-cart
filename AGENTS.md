@@ -64,7 +64,7 @@ Zod schemas in `src/shared/schemas.ts` are the single API/AI contract.
 ```bash
 pnpm install
 pnpm run dev        # Hono API :3001 + Vite :5173 (Vite proxies /api), Ctrl-C stops both
-pnpm test           # 69 Vitest tests, must stay green
+pnpm test           # 80+ Vitest tests, must stay green
 pnpm run test:e2e   # 10 Playwright tests (prod bundle, Chromium mobile) — UI, auth, pantry flow
 pnpm test:vision    # LIVE vision goldens (costs credits; needs MODEL_API_KEY)
 pnpm vision:render  # rebuild HTML previews from the last run (free, no model calls)
@@ -105,6 +105,7 @@ src/server/domain/           PURE deterministic core — no I/O except demo.ts f
   money.ts                   cheaper-variant + larger-pack evidence from receipts
   tags.ts                    tag gating (evidence-only)
   suggestions.ts             BUY/SWAP/SKIP grouping, ordering, caps
+  listSuggestions.ts         PREVIEW stub: rhythm BUY → grocery-list suggestion contract
   pantrySection.ts           pantry insight → SWAP/BUY/SKIP section + tag mapping
   demo.ts                    fixture enrichments, demo insights, purchase plan (dates relative to now)
 src/server/ai/provider.ts    AIProvider interface; Stub until MODEL_API_KEY set
@@ -165,7 +166,8 @@ POST /api/products/:id/enrich-ai       Muse enrichment for this product
 POST /api/ai/extract             photo (base64/data URL) → items; image not stored
 POST /api/ai/enrich              { name, brand?, form? } → cached enrichment
 GET  /api/briefing?buy=8&swap=3&skip=5   grouped suggestions + holdCount
-POST /api/lists, GET/POST/PATCH list items, POST /api/lists/:id/evaluate  per-item suggestion + holdCount
+POST /api/lists, GET/PATCH /api/lists/:id, POST/PATCH/DELETE list items, POST /api/lists/:id/evaluate
+GET  /api/lists/suggestions?listId=   PREVIEW pantry→list suggestions (rhythm stub; contract final)
 POST /api/demo/seed | /api/demo/reset    demo household (see below)
 GET  /api/health
 ```
@@ -239,6 +241,22 @@ are real receipts — check for names/addresses/card fragments before pushing.
 - Alias caveat: manifest filenames use underscores; on-disk files carry a
   ` Background Removed` suffix. The normalize script reconciles them.
 
+## Grocery list editing (`/quick-view`)
+
+- Three ways in, all ending in the same item rows: typed bar, voice dictation
+  (`src/client/lib/speech.ts`, browser Web Speech API), and a product photo
+  (`/api/ai/extract` with `kindHint: "product"` → generic name, user confirms).
+- `parseListText` (`src/shared/listText.ts`) deterministically splits dictated
+  text and reads quantities; no model is involved in list parsing.
+- Items carry `qty` and `source` (`manual | voice | camera | scan | auto`).
+  Renaming re-matches the canonical product server-side.
+- Pantry suggestions are **preview only**: `GET /api/lists/suggestions` maps the
+  existing rhythm BUY list through `domain/listSuggestions.ts`. The prediction
+  service replaces that module; keep the response contract in
+  `listSuggestionsResponseSchema`. Never auto-add suggestions — the user confirms.
+- Voice transcription is a seam (`AIProvider.transcribe?`) for when Meta audio
+  is confirmed; audio currently stays in the browser.
+
 ## Demo & fixtures
 
 `POST /api/demo/seed` creates fixture enrichments plus purchases with dates
@@ -254,7 +272,7 @@ briefing groups; 3 receipts → personal rhythm; `im_out` clears a SKIP;
 ## Not built yet (do not invent)
 
 Analyse/"Your Impact" screen and verified-savings ledger · business-mode
-screens/seed data · shelf-photo stock check · barcode scanning · voice lists ·
+screens/seed data · shelf-photo stock check · barcode scanning ·
 continuous cart video · Open Food Facts (possible later health-score source) ·
 email signup UI (API supports attach; Auth screens are visuals only — see rule 7) · hosting/deployment ·
 real golden-photo prompt-tuning set (fixtures are JSON so far).

@@ -50,6 +50,12 @@ export interface AIProvider {
     form?: string;
   }): Promise<ProductEnrichmentLike>;
   classifyPantryItems(items: PantryClassifyInput[]): Promise<PantryClassifyResult>;
+  /**
+   * Speech-to-text seam. The app currently dictates in the browser
+   * (Web Speech API); implement this when Meta audio transcription is
+   * confirmed, then point the client at POST /api/ai/transcribe.
+   */
+  transcribe?(audio: Buffer, mimeType: string): Promise<string>;
 }
 
 export class StubAIProvider implements AIProvider {
@@ -62,6 +68,9 @@ export class StubAIProvider implements AIProvider {
   }
   async classifyPantryItems(): Promise<never> {
     throw new Error("AI pantry classification not configured");
+  }
+  async transcribe(): Promise<never> {
+    throw new Error("Audio transcription not configured");
   }
 }
 
