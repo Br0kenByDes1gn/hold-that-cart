@@ -252,7 +252,10 @@ are real receipts — check for names/addresses/card fragments before pushing.
 
 - Three ways in, all ending in the same item rows: typed bar, voice dictation
   (`src/client/lib/speech.ts`, browser Web Speech API), and a product photo
-  (`/api/ai/extract` with `kindHint: "product"` → generic name, user confirms).
+  (`/api/ai/extract` with `kindHint: "product"` → generic name + brand, user
+  confirms). Camera detections are grouped by name + brand with summed
+  quantities (`src/shared/detectedProducts.ts`): four identical bottles become
+  one `Beer ×4` line, different brands stay separate.
 - Voice is always split by the model (`POST /api/ai/parse-list`). The model only
   names/normalises products; `domain/listParse.ts` grounds every name in the
   transcript, keeps the spoken brand as a note, dedupes, clamps quantities and

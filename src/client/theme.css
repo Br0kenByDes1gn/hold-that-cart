@@ -1640,12 +1640,26 @@ details summary { cursor: pointer; }
 }
 .detected-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   padding: 8px;
   border: 1px solid rgba(23, 59, 85, 0.8);
   border-radius: 10px;
   background: rgba(3, 11, 20, 0.5);
+}
+.detected-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.detected-qty {
+  flex: none;
+  padding-top: 4px;
+}
+.detected-row .detected-check {
+  margin-top: 4px;
 }
 .detected-row.is-selected {
   border-color: rgba(56, 189, 248, 0.55);
@@ -1669,6 +1683,7 @@ details summary { cursor: pointer; }
 }
 .detected-row input {
   flex: 1;
+  width: 100%;
   min-width: 0;
   min-height: 36px;
   padding: 6px 10px;

@@ -76,6 +76,47 @@ test.describe("grocery list editing", () => {
     await expect(page.getByText("Nothing on the list yet")).toBeVisible();
   });
 
+  test("groups identical camera products into one line with quantity", async ({ page }) => {
+    await useDevice(page);
+    await page.route("**/api/ai/extract", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          kind: "product",
+          items: [
+            { rawName: "Heineken 330ml", normalizedName: "beer", brand: "Heineken", qty: 1, confidence: 0.9 },
+            { rawName: "Heineken 330ml", normalizedName: "beer", brand: "Heineken", qty: 1, confidence: 0.9 },
+            { rawName: "Heineken 330ml", normalizedName: "beer", brand: "Heineken", qty: 1, confidence: 0.9 },
+            { rawName: "Heineken 330ml", normalizedName: "beer", brand: "Heineken", qty: 1, confidence: 0.9 },
+          ],
+        }),
+      }),
+    );
+
+    await page.goto("/quick-view");
+    await page.getByLabel("Add by photo").click();
+    await expect(page.getByText("Take a product photo")).toBeVisible();
+
+    await page
+      .locator('input[type="file"]')
+      .setInputFiles("tests/fixtures/receipts/marketfresh.jpeg");
+
+    await expect(page.getByLabel("Detected item 1 name")).toHaveValue("Beer");
+    await expect(page.getByLabel("Detected item 1 brand")).toHaveValue("Heineken");
+    await expect(page.getByText("Qty 4")).toBeVisible();
+
+    await page.getByRole("button", { name: "Add 1 item" }).click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Beer", exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.locator(".grocery-item-brand", { hasText: "Heineken" }),
+    ).toBeVisible();
+    await expect(page.getByText("Qty 4")).toBeVisible();
+  });
+
   test("accepts pantry suggestions with the preview label", async ({ page }) => {
     await useDevice(page, true);
     await page.goto("/quick-view");

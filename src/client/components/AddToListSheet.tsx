@@ -5,6 +5,7 @@ import { api } from "../api";
 import { fileToDataUrl } from "../lib/image";
 import { useDictation } from "../lib/speech";
 import { parseListText } from "../../shared/listText";
+import { groupDetectedProducts } from "../../shared/detectedProducts";
 
 export type AddSource = "voice" | "camera";
 
@@ -17,7 +18,10 @@ export interface PendingListItem {
 }
 
 interface DetectedItem {
-  rawName: string;
+  id: string;
+  name: string;
+  brand: string | null;
+  qty: number;
   selected: boolean;
 }
 
@@ -196,12 +200,15 @@ export function AddToListSheet({
     setDetected([]);
     try {
       const data: any = await api.aiExtract(dataUrl, "product");
-      const items = (data.items ?? [])
-        .map((item: any) => ({
-          rawName: String(item.normalizedName || item.rawName || "").trim(),
+      const items: DetectedItem[] = groupDetectedProducts(data.items ?? []).map(
+        (item) => ({
+          id: `camera-${nextRowId.current++}`,
+          name: item.rawName,
+          brand: item.brand,
+          qty: item.qty,
           selected: true,
-        }))
-        .filter((item: DetectedItem) => item.rawName.length > 0);
+        }),
+      );
       if (items.length === 0) {
         throw new Error("I couldn't name that product. Try a clearer photo.");
       }
@@ -226,7 +233,9 @@ export function AddToListSheet({
     }
   };
 
-  const selectedCameraItems = detected.filter((item) => item.selected);
+  const selectedCameraItems = detected.filter(
+    (item) => item.selected && item.name.trim().length > 0,
+  );
   const canAddVoice =
     voiceRows.length > 0 &&
     voiceRows.every((row) => row.name.trim().length > 0);
@@ -464,20 +473,23 @@ export function AddToListSheet({
             {detected.length > 0 && (
               <div className="detected-list" aria-label="Detected products">
                 {detected.map((item, index) => (
-                  <div className={`detected-row ${item.selected ? "is-selected" : ""}`} key={index}>
+                  <div
+                    className={`detected-row ${item.selected ? "is-selected" : ""}`}
+                    key={item.id}
+                  >
                     <button
                       type="button"
                       className="detected-check"
                       aria-label={
                         item.selected
-                          ? `Don't add ${item.rawName}`
-                          : `Add ${item.rawName}`
+                          ? `Don't add ${item.name}`
+                          : `Add ${item.name}`
                       }
                       aria-pressed={item.selected}
                       onClick={() =>
                         setDetected(
-                          detected.map((current, i) =>
-                            i === index
+                          detected.map((current) =>
+                            current.id === item.id
                               ? { ...current, selected: !current.selected }
                               : current,
                           ),
@@ -486,19 +498,80 @@ export function AddToListSheet({
                     >
                       {item.selected ? <Check size={16} /> : null}
                     </button>
-                    <input
-                      value={item.rawName}
-                      onChange={(event) =>
-                        setDetected(
-                          detected.map((current, i) =>
-                            i === index
-                              ? { ...current, rawName: event.target.value }
-                              : current,
-                          ),
-                        )
-                      }
-                      aria-label="Product name"
-                    />
+                    <div className="detected-fields">
+                      <input
+                        value={item.name}
+                        onChange={(event) =>
+                          setDetected(
+                            detected.map((current) =>
+                              current.id === item.id
+                                ? { ...current, name: event.target.value }
+                                : current,
+                            ),
+                          )
+                        }
+                        aria-label={`Detected item ${index + 1} name`}
+                      />
+                      <input
+                        value={item.brand ?? ""}
+                        onChange={(event) =>
+                          setDetected(
+                            detected.map((current) =>
+                              current.id === item.id
+                                ? {
+                                    ...current,
+                                    brand: event.target.value || null,
+                                  }
+                                : current,
+                            ),
+                          )
+                        }
+                        placeholder="Brand (optional)"
+                        aria-label={`Detected item ${index + 1} brand`}
+                      />
+                    </div>
+                    <div className="detected-qty grocery-qty">
+                      <button
+                        type="button"
+                        className="grocery-step"
+                        aria-label={`One less ${item.name}`}
+                        onClick={() =>
+                          setDetected(
+                            detected.map((current) =>
+                              current.id === item.id
+                                ? {
+                                    ...current,
+                                    qty: Math.max(1, current.qty - 1),
+                                  }
+                                : current,
+                            ),
+                          )
+                        }
+                        disabled={item.qty <= 1}
+                      >
+                        <Minus size={13} />
+                      </button>
+                      <span className="grocery-item-qty">Qty {item.qty}</span>
+                      <button
+                        type="button"
+                        className="grocery-step"
+                        aria-label={`One more ${item.name}`}
+                        onClick={() =>
+                          setDetected(
+                            detected.map((current) =>
+                              current.id === item.id
+                                ? {
+                                    ...current,
+                                    qty: Math.min(99, current.qty + 1),
+                                  }
+                                : current,
+                            ),
+                          )
+                        }
+                      >
+                        <Plus size={13} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -511,10 +584,10 @@ export function AddToListSheet({
               onClick={() =>
                 onAdd(
                   selectedCameraItems.map((item) => ({
-                    rawName: item.rawName,
-                    brand: null,
+                    rawName: item.name.trim(),
+                    brand: item.brand?.trim() || null,
                     productId: null,
-                    qty: 1,
+                    qty: item.qty,
                     source: "camera" as const,
                   })),
                 )
