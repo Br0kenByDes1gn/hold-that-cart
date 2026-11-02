@@ -105,6 +105,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: production
+    outputs:
+      tag: ${{ needs.publish.outputs.tag }}
     steps:
       - uses: azure/login@v2
         with:
@@ -153,7 +155,7 @@ jobs:
 
       - name: Wait for the new version
         run: |
-          TAG='${{ needs.publish.outputs.tag }}'
+          TAG='${{ needs.deploy.outputs.tag }}'
           for BASE in '${{ steps.urls.outputs.url }}' '${{ steps.urls.outputs.custom }}'; do
             [ -z "$BASE" ] && continue
             echo "checking $BASE"
