@@ -10,9 +10,34 @@ import { routes } from "./routes.js";
 
 export const app = new Hono();
 
+const isProduction = process.env.NODE_ENV === "production";
+
 app.use("*", cors());
 
-app.get("/api/health", (c) => c.json({ ok: true, version: "0.1.0" }));
+// Azure Container Apps terminates TLS at the ingress, so plain-HTTP visits
+// arrive with x-forwarded-proto: http. Bounce them to HTTPS: the PWA can only
+// register its service worker on a secure origin.
+if (isProduction) {
+  app.use("*", async (c, next) => {
+    const proto = c.req.header("x-forwarded-proto")?.split(",")[0]?.trim();
+    if (proto === "http") {
+      const host = c.req.header("x-forwarded-host") ?? c.req.header("host");
+      const url = new URL(c.req.url);
+      return c.redirect(`https://${host}${url.pathname}${url.search}`, 301);
+    }
+    await next();
+    c.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  });
+}
+
+// Inspection endpoints stay available in dev; production must opt in.
+if (isProduction && process.env.DEV_ENDPOINTS !== "on") {
+  app.use("/api/dev/*", async () => new Response("Not Found", { status: 404 }));
+}
+
+app.get("/api/health", (c) =>
+  c.json({ ok: true, version: process.env.APP_VERSION ?? "0.1.0" }),
+);
 app.route("/", routes);
 
 // ── Static client (production: Hono serves Vite dist) ──
