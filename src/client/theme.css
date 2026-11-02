@@ -1297,6 +1297,36 @@ details summary { cursor: pointer; }
   color: var(--text-dim);
   font-size: 11px;
 }
+.grocery-auto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: rgba(8, 32, 50, 0.8);
+  color: var(--text);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.15);
+}
+.grocery-auto-undo {
+  min-height: 34px;
+  flex: none;
+  padding: 6px 12px;
+  border: 1px solid rgba(56, 189, 248, 0.6);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.grocery-auto-undo:hover {
+  background: rgba(56, 189, 248, 0.14);
+}
+.grocery-auto-undo:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .grocery-item-name {
   display: block;
   width: 100%;
@@ -2041,6 +2071,62 @@ details summary { cursor: pointer; }
   font-size: 11px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   overflow-wrap: anywhere;
+}
+
+/* Dev-only pantry schedule table */
+.devmode-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-bottom: 12px;
+  color: var(--text-dim);
+  font-size: 11px;
+}
+.devmode-table-wrap {
+  overflow-x: auto;
+}
+.devmode-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.devmode-table th {
+  padding: 8px 10px;
+  border-bottom: 1px solid #183b55;
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.devmode-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #122c42;
+  color: var(--text);
+  vertical-align: top;
+  white-space: nowrap;
+}
+.devmode-table tr.is-due td {
+  background: rgba(56, 189, 248, 0.07);
+}
+.devmode-table tr.is-muted td {
+  color: var(--text-dim);
+}
+.devmode-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--cyan);
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.devmode-badge.is-muted {
+  background: rgba(148, 163, 184, 0.14);
+  color: var(--text-dim);
 }
 .main > .pantry-see-all {
   align-self: flex-start;

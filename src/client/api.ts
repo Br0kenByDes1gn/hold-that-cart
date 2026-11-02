@@ -29,6 +29,7 @@ export const api = {
   pantrySections: () => req("/api/pantry/sections"),
   devPantryInsights: () => req("/api/dev/pantry-insights"),
   devLatestScan: () => req("/api/dev/scans/latest"),
+  devPantrySchedule: () => req("/api/dev/pantry-schedule"),
   product: (id: string) => req(`/api/pantry/${id}`),
   patchProduct: (id: string, patch: Record<string, unknown>) =>
     req(`/api/products/${id}`, { method: "PATCH", body: JSON.stringify(patch) }),
@@ -52,6 +53,10 @@ export const api = {
     req("/api/lists", { method: "POST", body: JSON.stringify(payload) }),
   clearList: (id: string) =>
     req(`/api/lists/${id}/items`, { method: "DELETE" }),
+  pantryRefresh: () =>
+    req("/api/lists/pantry-refresh", { method: "POST", body: "{}" }),
+  undoAutoItems: (id: string) =>
+    req(`/api/lists/${id}/auto-items`, { method: "DELETE" }),
   listSuggestions: (listId?: string | null) =>
     req(`/api/lists/suggestions${listId ? `?listId=${listId}` : ""}`),
   addListItem: (listId: string, item: Record<string, unknown>) =>

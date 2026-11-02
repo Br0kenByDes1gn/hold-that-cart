@@ -346,6 +346,65 @@ export type ListSuggestionsResponse = z.infer<
   typeof listSuggestionsResponseSchema
 >;
 
+// ── Pantry → grocery-list auto-add ──
+// Items are added by normalized product name after a category interval:
+// perishable 3d · staple 14d · household 60d · durable 365d.
+// The list refreshes at most once every 3 days.
+
+export const autoAddedListItemSchema = z.object({
+  id: z.string().uuid(),
+  productId: z.string().uuid(),
+  /** Canonical normalized name, never the receipt line or brand. */
+  rawName: z.string().min(1),
+  qty: z.number().positive(),
+});
+export type AutoAddedListItem = z.infer<typeof autoAddedListItemSchema>;
+
+export const pantryRefreshResponseSchema = z.object({
+  refreshed: z.boolean(),
+  listId: z.string().uuid().nullable(),
+  added: z.array(autoAddedListItemSchema),
+  lastRefreshedAt: z.string().nullable(),
+  nextRefreshAt: z.string().nullable(),
+});
+export type PantryRefreshResponse = z.infer<typeof pantryRefreshResponseSchema>;
+
+export const listAutoSchema = z.object({
+  refreshIntervalDays: z.number().int().positive(),
+  lastRefreshedAt: z.string().nullable(),
+  nextRefreshAt: z.string().nullable(),
+  added: z.array(autoAddedListItemSchema),
+});
+export type ListAuto = z.infer<typeof listAutoSchema>;
+
+export const pantryScheduleItemResponseSchema = z.object({
+  productId: z.string().uuid(),
+  name: z.string().min(1),
+  shelfLifeClass: shelfLifeClassSchema,
+  intervalDays: z.number().int().positive().nullable(),
+  lastAddedAt: z.string().nullable(),
+  dueAt: z.string().nullable(),
+  daysLeft: z.number().int().nonnegative().nullable(),
+  due: z.boolean(),
+  muted: z.boolean(),
+  onList: z.boolean(),
+  autoAddedAt: z.string().nullable(),
+});
+export type PantryScheduleItemResponse = z.infer<
+  typeof pantryScheduleItemResponseSchema
+>;
+
+export const pantryScheduleResponseSchema = z.object({
+  generatedAt: z.string(),
+  refreshIntervalDays: z.number().int().positive(),
+  lastRefreshedAt: z.string().nullable(),
+  nextRefreshAt: z.string().nullable(),
+  items: z.array(pantryScheduleItemResponseSchema),
+});
+export type PantryScheduleResponse = z.infer<
+  typeof pantryScheduleResponseSchema
+>;
+
 export const correctionSchema = z.object({
   type: correctionTypeSchema,
 });

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { randomUUID } from "node:crypto";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, gte } from "drizzle-orm";
 import { getDb } from "./db/client.js";
 import {
   addPurchase,
@@ -8,6 +8,7 @@ import {
   getOrCreateProduct,
   loadAllProductViews,
   loadLatestProductInsights,
+  loadPantryScheduleSources,
   loadProductView,
   saveProductInsight,
   upsertKnowledge,
@@ -39,6 +40,14 @@ import type { ListItemCreate } from "../shared/schemas.js";
 import { matchProduct } from "./domain/match.js";
 import { suggestForProducts } from "./domain/suggestions.js";
 import { suggestionsFromViews } from "./domain/listSuggestions.js";
+import {
+  LIST_REFRESH_DAYS,
+  autoAddCandidates,
+  buildPantrySchedule,
+  nextRefreshAt,
+  shouldRefresh,
+  type PantryScheduleItem,
+} from "./domain/pantrySchedule.js";
 import {
   attachPantryMatches,
   fallbackVoiceItems,
@@ -87,6 +96,22 @@ function emptyInsight(normalizedName: string): PantryItemInsight {
     healthy: 0.5,
     sustainable: 0.5,
     swap: false,
+  };
+}
+
+function scheduleResponseItem(item: PantryScheduleItem) {
+  return {
+    productId: item.productId,
+    name: item.name,
+    shelfLifeClass: item.shelfLifeClass,
+    intervalDays: item.intervalDays,
+    lastAddedAt: item.lastAddedAt?.toISOString() ?? null,
+    dueAt: item.dueAt?.toISOString() ?? null,
+    daysLeft: item.daysLeft,
+    due: item.due,
+    muted: item.muted,
+    onList: item.onList,
+    autoAddedAt: item.autoAddedAt?.toISOString() ?? null,
   };
 }
 
@@ -580,6 +605,45 @@ routes.get("/api/dev/pantry-insights", async (c) => {
   });
 });
 
+/** Dev-only: pantry auto-add schedule, sorted perishables first. */
+routes.get("/api/dev/pantry-schedule", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const db = await getDb();
+  const now = new Date();
+  const open = await latestOpenList(hh!.id);
+  const existing = open
+    ? await db.select().from(listItems).where(eq(listItems.listId, open.id))
+    : [];
+  const byName = new Map(
+    existing.map((item) => [normalizeName(item.rawName), item]),
+  );
+  const sources = await loadPantryScheduleSources(hh!.id);
+  const schedule = buildPantrySchedule(
+    sources.map((source) => {
+      const listed = byName.get(normalizeName(source.name));
+      return {
+        ...source,
+        onList: Boolean(listed),
+        autoAddedAt: listed?.source === "auto" ? listed.addedAt : null,
+      };
+    }),
+    now,
+  );
+  const lastRefreshedAt = hh!.lastPantryRefreshAt
+    ? new Date(hh!.lastPantryRefreshAt)
+    : null;
+
+  return c.json({
+    generatedAt: now.toISOString(),
+    refreshIntervalDays: LIST_REFRESH_DAYS,
+    lastRefreshedAt: lastRefreshedAt?.toISOString() ?? null,
+    nextRefreshAt: nextRefreshAt(lastRefreshedAt)?.toISOString() ?? null,
+    items: schedule.map(scheduleResponseItem),
+  });
+});
+
 routes.get("/api/pantry/:id", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);
@@ -834,6 +898,147 @@ routes.get("/api/lists", async (c) => {
 });
 
 /**
+ * Pantry → grocery-list auto-add.
+ *
+ * Lazy 3-day refresh: the first time /quick-view opens after the window has
+ * elapsed, every product whose category interval has passed (or is exactly
+ * due today) is added under its normalized generic name. Items already on the
+ * list and muted products are skipped. Returns the batch so the client can
+ * offer a single Undo.
+ */
+routes.post("/api/lists/pantry-refresh", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const db = await getDb();
+  const now = new Date();
+  const lastRefreshedAt = hh!.lastPantryRefreshAt
+    ? new Date(hh!.lastPantryRefreshAt)
+    : null;
+
+  if (!shouldRefresh(lastRefreshedAt, now)) {
+    const open = await latestOpenList(hh!.id);
+    return c.json({
+      refreshed: false,
+      listId: open?.id ?? null,
+      added: [],
+      lastRefreshedAt: lastRefreshedAt?.toISOString() ?? null,
+      nextRefreshAt: nextRefreshAt(lastRefreshedAt)?.toISOString() ?? null,
+    });
+  }
+
+  const open = await latestOpenList(hh!.id);
+  let listId = open?.id ?? null;
+  const existing = listId
+    ? await db.select().from(listItems).where(eq(listItems.listId, listId))
+    : [];
+  const byName = new Map(
+    existing.map((item) => [normalizeName(item.rawName), item]),
+  );
+
+  const sources = await loadPantryScheduleSources(hh!.id);
+  const schedule = buildPantrySchedule(
+    sources.map((source) => {
+      const listed = byName.get(normalizeName(source.name));
+      return {
+        ...source,
+        onList: Boolean(listed),
+        autoAddedAt: listed?.source === "auto" ? listed.addedAt : null,
+      };
+    }),
+    now,
+  );
+  const candidates = autoAddCandidates(schedule);
+
+  if (!listId && candidates.length > 0) {
+    listId = randomUUID();
+    await db.insert(shoppingLists).values({
+      id: listId,
+      householdId: hh!.id,
+      title: "Shopping list",
+      source: "auto",
+      status: "open",
+      createdAt: now,
+    });
+  }
+
+  const added: Array<{
+    id: string;
+    productId: string;
+    rawName: string;
+    qty: number;
+  }> = [];
+  if (listId) {
+    const insertedNames = new Set<string>();
+    for (const item of candidates) {
+      if (insertedNames.has(item.name)) continue;
+      const id = randomUUID();
+      await db.insert(listItems).values({
+        id,
+        listId,
+        productId: item.productId,
+        rawName: item.name,
+        brand: null,
+        qty: "1",
+        checked: false,
+        decision: null,
+        source: "auto",
+        addedAt: now,
+      });
+      insertedNames.add(item.name);
+      added.push({
+        id,
+        productId: item.productId,
+        rawName: item.name,
+        qty: 1,
+      });
+    }
+  }
+
+  await db
+    .update(households)
+    .set({ lastPantryRefreshAt: now })
+    .where(eq(households.id, hh!.id));
+
+  return c.json({
+    refreshed: true,
+    listId,
+    added,
+    lastRefreshedAt: now.toISOString(),
+    nextRefreshAt: nextRefreshAt(now)?.toISOString() ?? null,
+  });
+});
+
+/** Undo the latest auto-add batch (items added since the last refresh). */
+routes.delete("/api/lists/:id/auto-items", async (c) => {
+  const hh = await household(c);
+  const err = needHH(c, hh);
+  if (err) return err;
+  const list = await ownedList(hh!.id, c.req.param("id"));
+  if (!list) return c.json({ error: "not found" }, 404);
+  const cutoff = hh!.lastPantryRefreshAt
+    ? new Date(hh!.lastPantryRefreshAt)
+    : null;
+  if (!cutoff) return c.json({ removed: 0 });
+
+  const db = await getDb();
+  const rows = await db
+    .select({ id: listItems.id })
+    .from(listItems)
+    .where(
+      and(
+        eq(listItems.listId, list.id),
+        eq(listItems.source, "auto"),
+        gte(listItems.addedAt, cutoff),
+      ),
+    );
+  for (const row of rows) {
+    await db.delete(listItems).where(eq(listItems.id, row.id));
+  }
+  return c.json({ removed: rows.length });
+});
+
+/**
  * PREVIEW: pantry-driven list suggestions. The response contract is final;
  * the implementation is a rhythm-based stub until the prediction service lands.
  */
@@ -907,7 +1112,41 @@ routes.get("/api/lists/:id", async (c) => {
     .where(and(eq(shoppingLists.id, c.req.param("id")), eq(shoppingLists.householdId, hh!.id)));
   if (!lrows[0]) return c.json({ error: "not found" }, 404);
   const items = await db.select().from(listItems).where(eq(listItems.listId, lrows[0].id));
-  return c.json({ list: lrows[0], items });
+  const lastRefreshedAt = hh!.lastPantryRefreshAt
+    ? new Date(hh!.lastPantryRefreshAt)
+    : null;
+  const added = (
+    lastRefreshedAt
+      ? items.filter(
+          (item) =>
+            item.source === "auto" &&
+            item.productId &&
+            item.addedAt &&
+            new Date(item.addedAt).getTime() >= lastRefreshedAt.getTime(),
+        )
+      : []
+  )
+    .sort((a, b) => {
+      const aAt = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+      const bAt = b.addedAt ? new Date(b.addedAt).getTime() : 0;
+      return bAt - aAt;
+    })
+    .map((item) => ({
+      id: item.id,
+      productId: item.productId as string,
+      rawName: item.rawName,
+      qty: Number(item.qty) || 1,
+    }));
+  return c.json({
+    list: lrows[0],
+    items,
+    auto: {
+      refreshIntervalDays: LIST_REFRESH_DAYS,
+      lastRefreshedAt: lastRefreshedAt?.toISOString() ?? null,
+      nextRefreshAt: nextRefreshAt(lastRefreshedAt)?.toISOString() ?? null,
+      added,
+    },
+  });
 });
 
 routes.post("/api/lists/:id/items", async (c) => {
@@ -1205,6 +1444,12 @@ routes.post("/api/demo/seed", async (c) => {
   const err = needHH(c, hh);
   if (err) return err;
   const now = new Date();
+  // A fresh demo pantry should auto-add on the next /quick-view open.
+  const db = await getDb();
+  await db
+    .update(households)
+    .set({ lastPantryRefreshAt: null })
+    .where(eq(households.id, hh!.id));
   for (const item of DEMO_ITEMS) {
     await upsertKnowledge(demoKnowledgeKey(item.name), item.enrichment);
   }
@@ -1213,7 +1458,6 @@ routes.post("/api/demo/seed", async (c) => {
     const demo = DEMO_ITEMS.find((d) => d.name === p.item);
     const prod = await getOrCreateProduct(hh!.id, p.item, { icon: demo?.icon });
     // Link knowledge + icon + class from fixture.
-    const db = await getDb();
     if (demo) {
       await db
         .update(products)
@@ -1280,5 +1524,9 @@ routes.post("/api/demo/reset", async (c) => {
   await db.delete(corrections).where(eq(corrections.householdId, hh!.id));
   await db.delete(scans).where(eq(scans.householdId, hh!.id));
   await db.delete(products).where(eq(products.householdId, hh!.id));
+  await db
+    .update(households)
+    .set({ lastPantryRefreshAt: null })
+    .where(eq(households.id, hh!.id));
   return c.json({ ok: true });
 });

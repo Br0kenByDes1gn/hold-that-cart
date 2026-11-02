@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Check, Camera, ChevronRight, Mic, Minus, Plus, Sparkles, Trash2 } from "lucide-react";
+import { Camera, Mic, Minus, Plus, Sparkles, Trash2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -25,15 +25,21 @@ interface ListItemRow {
   source: string;
 }
 
-interface SuggestionRow {
-  productId: string | null;
+interface AutoAddedRow {
+  id: string;
+  productId: string;
   rawName: string;
   qty: number;
-  reasonCode: string;
-  reason: string;
-  confidence: number;
-  evidence: { daysSince: number | null; typicalIntervalDays: number | null };
 }
+
+interface ListAuto {
+  refreshIntervalDays: number;
+  lastRefreshedAt: string | null;
+  nextRefreshAt: string | null;
+  added: AutoAddedRow[];
+}
+
+const DAY_MS = 86_400_000;
 
 const SOURCE_LABEL: Record<string, string> = {
   voice: "voice",
@@ -41,10 +47,6 @@ const SOURCE_LABEL: Record<string, string> = {
   auto: "pantry",
   scan: "scan",
 };
-
-function suggestionKey(suggestion: SuggestionRow): string {
-  return suggestion.productId ?? suggestion.rawName.toLowerCase();
-}
 
 export function QuickViewScreen() {
   const icons = useIconRegistry();
@@ -61,10 +63,12 @@ export function QuickViewScreen() {
     enabled: !!listId,
   });
 
-  const suggestionsQ = useQuery({
-    queryKey: ["list-suggestions", listId],
-    queryFn: () => api.listSuggestions(listId),
-    enabled: listsQ.isSuccess,
+  // Lazy pantry sweep: adds due items at most once every 3 days.
+  const refreshQ = useQuery({
+    queryKey: ["pantry-refresh"],
+    queryFn: api.pantryRefresh,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
   const items: ListItemRow[] = useMemo(
@@ -74,14 +78,19 @@ export function QuickViewScreen() {
       ),
     [listQ.data],
   );
-  const suggestions: SuggestionRow[] = suggestionsQ.data?.suggestions ?? [];
+  const auto: ListAuto | null = listQ.data?.auto ?? null;
+  const autoAdded = auto?.added ?? [];
+  const nextRefreshInDays = auto?.nextRefreshAt
+    ? Math.max(
+        0,
+        Math.ceil((new Date(auto.nextRefreshAt).getTime() - Date.now()) / DAY_MS),
+      )
+    : null;
 
   const [draft, setDraft] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetTab, setSheetTab] = useState<AddSource>("voice");
-  const [reviewOpen, setReviewOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
-  const [selectedSuggestions, setSelectedSuggestions] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<{ id: string; value: string } | null>(null);
   const [error, setError] = useState("");
 
@@ -89,9 +98,18 @@ export function QuickViewScreen() {
     setError("");
   }, [listId]);
 
+  // The refresh may have created a list and inserted rows; pull them in.
+  useEffect(() => {
+    if (!refreshQ.data) return;
+    qc.invalidateQueries({ queryKey: ["lists"] });
+    const refreshedListId = (refreshQ.data as { listId?: string | null }).listId;
+    if (refreshedListId) {
+      qc.invalidateQueries({ queryKey: ["list", refreshedListId] });
+    }
+  }, [refreshQ.data, qc]);
+
   const invalidateList = (targetId: string) => {
     qc.invalidateQueries({ queryKey: ["list", targetId] });
-    qc.invalidateQueries({ queryKey: ["list-suggestions", targetId] });
     qc.invalidateQueries({ queryKey: ["lists"] });
   };
 
@@ -125,7 +143,6 @@ export function QuickViewScreen() {
     onSuccess: ({ targetId, created }) => {
       setDraft("");
       setSheetOpen(false);
-      setReviewOpen(false);
       setError("");
       if (created) qc.invalidateQueries();
       else invalidateList(targetId);
@@ -156,6 +173,18 @@ export function QuickViewScreen() {
     },
   });
 
+  const undoAuto = useMutation({
+    mutationFn: () => {
+      if (!listId) throw new Error("No list to undo");
+      return api.undoAutoItems(listId);
+    },
+    onSuccess: () => {
+      if (listId) invalidateList(listId);
+    },
+    onError: (mutationError: any) =>
+      setError(String(mutationError?.message ?? mutationError)),
+  });
+
   const clearList = useMutation({
     mutationFn: async () => {
       if (!listId) throw new Error("No list to clear");
@@ -184,34 +213,6 @@ export function QuickViewScreen() {
 
   const onSheetAdd = (pending: PendingListItem[]) => {
     addItems.mutate(pending);
-  };
-
-  const openReview = () => {
-    setSelectedSuggestions(new Set(suggestions.map(suggestionKey)));
-    setReviewOpen(true);
-  };
-
-  const toggleSuggestion = (key: string) => {
-    setSelectedSuggestions((current) => {
-      const next = new Set(current);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
-  const acceptSuggestions = () => {
-    const chosen = suggestions.filter((suggestion) =>
-      selectedSuggestions.has(suggestionKey(suggestion)),
-    );
-    if (chosen.length === 0) return;
-    addItems.mutate(
-      chosen.map((suggestion) => ({
-        rawName: suggestion.rawName,
-        qty: suggestion.qty,
-        source: "auto",
-      })),
-    );
   };
 
   const commitRename = () => {
@@ -273,22 +274,32 @@ export function QuickViewScreen() {
         </div>
       </div>
 
-      {suggestions.length > 0 && (
-        <button type="button" className="grocery-suggest" onClick={openReview}>
+      {autoAdded.length > 0 && (
+        <section className="grocery-auto" aria-label="Auto-added from pantry">
           <span className="grocery-suggest-icon" aria-hidden="true">
             <Sparkles size={20} />
           </span>
           <span className="grocery-suggest-copy">
             <strong>
-              {suggestions.length} item{suggestions.length === 1 ? "" : "s"} from your
+              {autoAdded.length} item{autoAdded.length === 1 ? "" : "s"} added from your
               pantry
             </strong>
             <span className="grocery-suggest-note">
-              Preview · pantry rhythm — predictions are being upgraded
+              Refreshes every {auto?.refreshIntervalDays ?? 3} days
+              {nextRefreshInDays !== null
+                ? ` · next in ${nextRefreshInDays}d`
+                : ""}
             </span>
           </span>
-          <ChevronRight size={20} />
-        </button>
+          <button
+            type="button"
+            className="grocery-auto-undo"
+            onClick={() => undoAuto.mutate()}
+            disabled={undoAuto.isPending}
+          >
+            {undoAuto.isPending ? "Undoing…" : "Undo"}
+          </button>
+        </section>
       )}
 
       {error && <p className="error">{error}</p>}
@@ -444,80 +455,6 @@ export function QuickViewScreen() {
         onClose={() => setSheetOpen(false)}
         onAdd={onSheetAdd}
       />
-
-      {reviewOpen && (
-        <div
-          className="sheet-backdrop"
-          role="presentation"
-          onClick={() => setReviewOpen(false)}
-        >
-          <section
-            className="sheet"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Pantry suggestions"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <header className="sheet-head">
-              <h2>From your pantry</h2>
-              <span className="preview-badge">Preview</span>
-            </header>
-            <p className="dim sheet-hint">
-              Temporary rhythm-based suggestions for testing. The pantry prediction
-              service will replace them.
-            </p>
-            <div className="suggestion-list">
-              {suggestions.map((suggestion) => {
-                const key = suggestionKey(suggestion);
-                const selected = selectedSuggestions.has(key);
-                return (
-                  <button
-                    type="button"
-                    className={`suggestion-row ${selected ? "is-selected" : ""}`}
-                    key={key}
-                    aria-pressed={selected}
-                    onClick={() => toggleSuggestion(key)}
-                  >
-                    <span className="suggestion-check">
-                      {selected ? <Check size={16} /> : null}
-                    </span>
-                    <span className="suggestion-copy">
-                      <strong>{suggestion.rawName}</strong>
-                      <span className="dim">
-                        {suggestion.reason}
-                        {suggestion.evidence.daysSince !== null
-                          ? ` · ${suggestion.evidence.daysSince}d ago`
-                          : ""}
-                      </span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-            <div className="sheet-actions">
-              <button
-                type="button"
-                className="sheet-secondary"
-                onClick={() => setReviewOpen(false)}
-              >
-                Not now
-              </button>
-              <button
-                type="button"
-                className="sheet-primary"
-                disabled={busy || selectedSuggestions.size === 0}
-                onClick={acceptSuggestions}
-              >
-                {selectedSuggestions.size > 0
-                  ? `Add ${selectedSuggestions.size} item${
-                      selectedSuggestions.size === 1 ? "" : "s"
-                    }`
-                  : "Add items"}
-              </button>
-            </div>
-          </section>
-        </div>
-      )}
 
       {clearOpen && (
         <div

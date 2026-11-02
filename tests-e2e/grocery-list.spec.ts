@@ -117,22 +117,26 @@ test.describe("grocery list editing", () => {
     await expect(page.getByText("Qty 4")).toBeVisible();
   });
 
-  test("accepts pantry suggestions with the preview label", async ({ page }) => {
+  test("auto-adds due pantry items and undoes the batch", async ({ page }) => {
     await useDevice(page, true);
     await page.goto("/quick-view");
 
-    const strip = page.locator(".grocery-suggest");
+    const strip = page.locator(".grocery-auto");
     await expect(strip).toBeVisible();
-    await expect(strip).toContainText("from your pantry");
-    await expect(strip).toContainText("Preview");
+    await expect(strip).toContainText("added from your pantry");
+    await expect(strip).toContainText("Refreshes every 3 days");
 
-    await strip.click();
-    await expect(page.getByRole("heading", { name: "From your pantry" })).toBeVisible();
-    await expect(page.getByText("Temporary rhythm-based suggestions")).toBeVisible();
+    // Due items arrive under their normalized generic names.
+    await expect(page.getByRole("button", { name: "milk", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "olive oil", exact: true }),
+    ).toBeVisible();
 
-    await page.getByRole("button", { name: /^Add \d+ item/ }).click();
-    await expect(page.getByRole("dialog")).toHaveCount(0);
-    await expect(page.locator(".grocery-card").first()).toBeVisible();
+    await strip.getByRole("button", { name: "Undo" }).click();
+    await expect(page.locator(".grocery-auto")).toHaveCount(0);
+    await expect(
+      page.getByText("Your grocery list is empty.", { exact: false }),
+    ).toBeVisible();
   });
 
   test("reviews model-split voice items with pantry matches and brand", async ({ page }) => {

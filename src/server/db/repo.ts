@@ -12,7 +12,7 @@ import {
   scans,
   shoppingLists,
 } from "./schema.js";
-import type { ProductEnrichment } from "../../shared/schemas.js";
+import type { ProductEnrichment, ShelfLifeClass } from "../../shared/schemas.js";
 import { productEnrichmentSchema } from "../../shared/schemas.js";
 import { knowledgeKey, normalizeName, slugify } from "../domain/normalize.js";
 import { computeState } from "../domain/rhythm.js";
@@ -232,6 +232,46 @@ export async function loadAllProductViews(
     v.state = st;
   }
   return views;
+}
+
+export interface PantryScheduleSource {
+  productId: string;
+  name: string;
+  shelfLifeClass: ShelfLifeClass;
+  /** Latest purchase = the date the item entered the pantry. */
+  lastPurchasedAt: Date | null;
+  muted: boolean;
+}
+
+/** Minimal product data needed by the pantry → list schedule (no rhythm). */
+export async function loadPantryScheduleSources(
+  householdId: string,
+): Promise<PantryScheduleSource[]> {
+  const db = await getDb();
+  const prows = await db
+    .select()
+    .from(products)
+    .where(eq(products.householdId, householdId));
+  const purchaseRows = await db
+    .select()
+    .from(purchases)
+    .where(eq(purchases.householdId, householdId))
+    .orderBy(desc(purchases.purchasedAt));
+
+  const latest = new Map<string, Date>();
+  for (const row of purchaseRows) {
+    if (!latest.has(row.productId)) {
+      latest.set(row.productId, new Date(row.purchasedAt));
+    }
+  }
+
+  return prows.map((product) => ({
+    productId: product.id,
+    name: product.name,
+    shelfLifeClass: (product.shelfLifeClass ?? "unknown") as ShelfLifeClass,
+    lastPurchasedAt: latest.get(product.id) ?? null,
+    muted: product.muted,
+  }));
 }
 
 export interface ProductInsightInput {
