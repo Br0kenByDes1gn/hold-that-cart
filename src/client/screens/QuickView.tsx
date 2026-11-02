@@ -11,6 +11,7 @@ import {
   type PendingListItem,
 } from "../components/AddToListSheet";
 import { parseListText } from "../../shared/listText";
+import { getSpeechSupport, speechSupportNote } from "../lib/speech";
 import profilePic from "../../../assets/page-icons/profilepic.png";
 import groceryListArt from "../../../assets/page-icons/businesscart.png";
 
@@ -93,6 +94,7 @@ export function QuickViewScreen() {
   const [clearOpen, setClearOpen] = useState(false);
   const [editing, setEditing] = useState<{ id: string; value: string } | null>(null);
   const [error, setError] = useState("");
+  const [speechSupport] = useState(() => getSpeechSupport());
 
   useEffect(() => {
     setError("");
@@ -207,6 +209,7 @@ export function QuickViewScreen() {
   };
 
   const openSheet = (tab: AddSource) => {
+    if (tab === "voice" && speechSupport.status !== "supported") return;
     setSheetTab(tab);
     setSheetOpen(true);
   };
@@ -273,6 +276,12 @@ export function QuickViewScreen() {
           )}
         </div>
       </div>
+
+      {speechSupport.status !== "supported" && (
+        <p className="grocery-voice-note" role="note">
+          {speechSupportNote(speechSupport)}
+        </p>
+      )}
 
       {autoAdded.length > 0 && (
         <section className="grocery-auto" aria-label="Auto-added from pantry">
@@ -403,8 +412,9 @@ export function QuickViewScreen() {
 
         {items.length === 0 && (
           <p className="grocery-empty">
-            Your grocery list is empty. Type an item, dictate one, snap a product,
-            or add what your pantry says is due.
+            {speechSupport.status === "supported"
+              ? "Your grocery list is empty. Type an item, dictate one, snap a product, or add what your pantry says is due."
+              : "Your grocery list is empty. Type an item, snap a product, or add what your pantry says is due."}
           </p>
         )}
       </div>
@@ -434,6 +444,12 @@ export function QuickViewScreen() {
           type="button"
           className="grocery-addbar-btn"
           aria-label="Add by voice"
+          title={
+            speechSupport.status === "supported"
+              ? "Add by voice"
+              : speechSupportNote(speechSupport)
+          }
+          disabled={speechSupport.status !== "supported"}
           onClick={() => openSheet("voice")}
         >
           <Mic size={20} />

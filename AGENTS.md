@@ -271,6 +271,10 @@ are real receipts — check for names/addresses/card fragments before pushing.
   transcript, keeps the spoken brand as a note, dedupes, clamps quantities and
   matches pantry products deterministically. Model failure falls back to
   `parseListText` with `source: "fallback"` — never a guessed list.
+- Browser dictation (`getSpeechSupport`) is disabled when no SpeechRecognition
+  API exists (Firefox) and in Brave, which exposes the API but blocks the cloud
+  speech service (it fails with a misleading `network` error). The mic stays
+  visible but disabled, with a reason-specific note.
 - `parseListText` (`src/shared/listText.ts`) deterministically splits typed text
   and reads quantities; typed input never calls the model.
 - Items carry `qty`, `brand` and `source` (`manual | voice | camera | scan | auto`).

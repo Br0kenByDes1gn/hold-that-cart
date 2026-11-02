@@ -32,7 +32,17 @@ interface SpeechRecognitionLike {
 }
 type SpeechRecognitionCtor = new () => SpeechRecognitionLike;
 
+/**
+ * - `no-api`: no SpeechRecognition constructor (Firefox et al.).
+ * - `brave`: the constructor exists, but Brave blocks the cloud speech service
+ *   and every attempt fails with a misleading `network` error.
+ */
+export type SpeechSupport =
+  | { status: "supported" }
+  | { status: "unsupported"; reason: "no-api" | "brave" };
+
 function recognitionCtor(): SpeechRecognitionCtor | null {
+  if (typeof window === "undefined") return null;
   const w = window as unknown as {
     SpeechRecognition?: SpeechRecognitionCtor;
     webkitSpeechRecognition?: SpeechRecognitionCtor;
@@ -40,12 +50,51 @@ function recognitionCtor(): SpeechRecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
+function isBrave(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const nav = navigator as Navigator & {
+    brave?: { isBrave?: () => Promise<boolean> };
+  };
+  if (typeof nav.brave?.isBrave === "function") return true;
+  return /\bBrave\//.test(nav.userAgent ?? "");
+}
+
+export function getSpeechSupport(): SpeechSupport {
+  if (!recognitionCtor()) return { status: "unsupported", reason: "no-api" };
+  if (isBrave()) return { status: "unsupported", reason: "brave" };
+  return { status: "supported" };
+}
+
+/** Short note shown next to the grocery list. */
+export function speechSupportNote(support: SpeechSupport): string {
+  if (support.status === "supported") return "";
+  return support.reason === "brave"
+    ? "Brave blocks voice input. Type items instead."
+    : "Voice isn't available here. Type items instead.";
+}
+
+/** Longer explanation shown inside the add-items sheet. */
+export function speechSupportDetail(support: SpeechSupport): string {
+  if (support.status === "supported") return "";
+  return support.reason === "brave"
+    ? "Brave doesn't provide online speech recognition. Type the items below."
+    : "Voice input isn't supported in this browser. Type the items below.";
+}
+
 function errorMessage(code: string): string {
-  if (code === "not-allowed" || code === "service-not-allowed") {
+  if (code === "not-allowed") {
     return "Allow microphone access in your browser, then try again.";
   }
+  if (code === "service-not-allowed") {
+    return "Speech recognition is blocked in this browser. Type the items instead.";
+  }
   if (code === "no-speech") return "I didn't hear anything. Try again.";
-  if (code === "network") return "Speech recognition needs a network connection.";
+  if (code === "network") {
+    return isBrave()
+      ? "Brave doesn't provide online speech recognition. Type the items instead."
+      : "Speech recognition is unavailable. Check your connection and try again.";
+  }
+  if (code === "audio-capture") return "No microphone was found.";
   if (code === "aborted") return "";
   return "Voice input stopped. Try again.";
 }
@@ -55,7 +104,7 @@ function errorMessage(code: string): string {
  * this hook is the client seam that a Meta transcription endpoint can replace.
  */
 export function useDictation() {
-  const [supported, setSupported] = useState(false);
+  const [support] = useState<SpeechSupport>(() => getSpeechSupport());
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [error, setError] = useState("");
@@ -63,7 +112,6 @@ export function useDictation() {
   const finalRef = useRef("");
 
   useEffect(() => {
-    setSupported(Boolean(recognitionCtor()));
     return () => {
       recognitionRef.current?.abort();
       recognitionRef.current = null;
@@ -71,9 +119,14 @@ export function useDictation() {
   }, []);
 
   const start = useCallback(() => {
+    const supportNow = getSpeechSupport();
+    if (supportNow.status !== "supported") {
+      setError(speechSupportDetail(supportNow));
+      return;
+    }
     const Ctor = recognitionCtor();
     if (!Ctor) {
-      setError("Voice input isn't supported in this browser. Type the item instead.");
+      setError("Voice input isn't supported in this browser. Type the items instead.");
       return;
     }
 
@@ -128,7 +181,8 @@ export function useDictation() {
   }, []);
 
   return {
-    supported,
+    support,
+    supported: support.status === "supported",
     listening,
     transcript,
     error,

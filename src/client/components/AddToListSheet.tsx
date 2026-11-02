@@ -3,7 +3,7 @@ import { Camera, Check, Mic, Minus, Plus, Sparkles, X } from "lucide-react";
 
 import { api } from "../api";
 import { fileToDataUrl } from "../lib/image";
-import { useDictation } from "../lib/speech";
+import { useDictation, speechSupportDetail } from "../lib/speech";
 import { parseListText } from "../../shared/listText";
 import { groupDetectedProducts } from "../../shared/detectedProducts";
 
@@ -299,14 +299,14 @@ export function AddToListSheet({
                 <span>{dictation.listening ? "Listening…" : "Tap and speak"}</span>
               </button>
             ) : (
-              <p className="dim">
-                Voice input isn't supported in this browser. Type the item instead.
-              </p>
+              <p className="dim">{speechSupportDetail(dictation.support)}</p>
             )}
 
-            <p className="dim sheet-hint">
-              Just say the products: “milk, two eggs, Borges olive oil”.
-            </p>
+            {dictation.supported && (
+              <p className="dim sheet-hint">
+                Just say the products: “milk, two eggs, Borges olive oil”.
+              </p>
+            )}
 
             <label className="sheet-field">
               <span>Your items</span>

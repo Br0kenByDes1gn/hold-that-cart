@@ -1449,6 +1449,14 @@ details summary { cursor: pointer; }
   border-color: var(--cyan);
   color: var(--cyan);
 }
+.grocery-addbar-btn:disabled {
+  cursor: not-allowed;
+}
+.grocery-voice-note {
+  margin: -8px 0 0;
+  color: var(--text-dim);
+  font-size: 12px;
+}
 /* Keep the dev-only gear above the add bar, and behind bottom sheets. */
 .shell.on-grocery .devmenu {
   bottom: calc(146px + env(safe-area-inset-bottom, 0px));

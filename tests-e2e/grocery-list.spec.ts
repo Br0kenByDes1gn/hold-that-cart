@@ -141,6 +141,17 @@ test.describe("grocery list editing", () => {
 
   test("reviews model-split voice items with pantry matches and brand", async ({ page }) => {
     await useDevice(page, true);
+    await page.addInitScript(() => {
+      class FakeSpeechRecognition {}
+      Object.defineProperty(window, "SpeechRecognition", {
+        value: FakeSpeechRecognition,
+        configurable: true,
+      });
+      Object.defineProperty(window, "webkitSpeechRecognition", {
+        value: FakeSpeechRecognition,
+        configurable: true,
+      });
+    });
     await page.route("**/api/ai/parse-list", (route) =>
       route.fulfill({
         status: 200,
@@ -195,5 +206,66 @@ test.describe("grocery list editing", () => {
       page.getByRole("button", { name: "Olive oil", exact: true }),
     ).toBeVisible();
     await expect(page.locator(".grocery-item-brand", { hasText: "Borges" })).toBeVisible();
+  });
+
+  test("disables voice when the browser has no speech API", async ({ page }) => {
+    await useDevice(page);
+    await page.addInitScript(() => {
+      Object.defineProperty(window, "SpeechRecognition", {
+        value: undefined,
+        configurable: true,
+      });
+      Object.defineProperty(window, "webkitSpeechRecognition", {
+        value: undefined,
+        configurable: true,
+      });
+    });
+
+    await page.goto("/quick-view");
+    await expect(page.getByLabel("Add by voice")).toBeDisabled();
+    await expect(
+      page.getByText("Voice isn't available here.", { exact: false }),
+    ).toBeVisible();
+
+    await page.getByLabel("Add by photo").click();
+    await page.getByRole("tab", { name: "Voice" }).click();
+    await expect(
+      page.getByText("Voice input isn't supported in this browser.", {
+        exact: false,
+      }),
+    ).toBeVisible();
+  });
+
+  test("disables voice in Brave and explains why", async ({ page }) => {
+    await useDevice(page);
+    await page.addInitScript(() => {
+      class FakeSpeechRecognition {}
+      Object.defineProperty(window, "SpeechRecognition", {
+        value: FakeSpeechRecognition,
+        configurable: true,
+      });
+      Object.defineProperty(window, "webkitSpeechRecognition", {
+        value: FakeSpeechRecognition,
+        configurable: true,
+      });
+      Object.defineProperty(navigator, "brave", {
+        value: { isBrave: () => Promise.resolve(true) },
+        configurable: true,
+      });
+    });
+
+    await page.goto("/quick-view");
+    await expect(page.getByLabel("Add by voice")).toBeDisabled();
+    await expect(
+      page.getByText("Brave blocks voice input.", { exact: false }),
+    ).toBeVisible();
+
+    await page.getByLabel("Add by photo").click();
+    await page.getByRole("tab", { name: "Voice" }).click();
+    await expect(
+      page.getByText("Brave doesn't provide online speech recognition.", {
+        exact: false,
+      }),
+    ).toBeVisible();
   });
 });
