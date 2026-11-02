@@ -1,0 +1,183 @@
+name: Deploy
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to deploy (e.g. v0.1.0)"
+        required: true
+        type: string
+      publish_only:
+        description: "Only build and push the image (skip Azure deploy + smoke)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  # Normal runs build the tag. A publish_only bootstrap run may label the
+  # current branch's commit with the tag it will deploy later.
+  TARGET_REF: ${{ (inputs.publish_only && github.ref) || inputs.tag || github.ref }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_REF }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm test
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - run: pnpm run test:e2e
+
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      tag: ${{ steps.ref.outputs.tag }}
+      image: ${{ steps.image.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # A dispatch for an older tag must build that tag, not the default
+          # branch. publish_only may build the current branch (bootstrap).
+          ref: ${{ env.TARGET_REF }}
+
+      - name: Resolve tag
+        id: ref
+        run: echo "tag=${{ inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Image name (GHCR requires lowercase)
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=raw,value=${{ steps.ref.outputs.tag }}
+            type=sha,prefix=sha-,format=short
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: [verify, publish]
+    if: ${{ inputs.publish_only != true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Update Container App image
+        run: |
+          TAG='${{ needs.publish.outputs.tag }}'
+          SUFFIX="$(printf '%s' "$TAG" | tr '[:upper:]._' '[:lower:]--' | tr -cd 'a-z0-9-' | cut -c1-40)-${GITHUB_SHA::7}"
+          az containerapp update \
+            -g "${{ vars.RESOURCE_GROUP }}" \
+            -n "${{ vars.CONTAINER_APP }}" \
+            --image "${{ needs.publish.outputs.image }}:${TAG}" \
+            --set-env-vars APP_VERSION="${TAG}" \
+            --revision-suffix "$SUFFIX"
+
+      - name: Single revision mode
+        run: |
+          az containerapp revision set-mode \
+            -g "${{ vars.RESOURCE_GROUP }}" \
+            -n "${{ vars.CONTAINER_APP }}" \
+            --mode single
+
+  smoke:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Resolve URLs
+        id: urls
+        run: |
+          FQDN=$(az containerapp show \
+            -g "${{ vars.RESOURCE_GROUP }}" \
+            -n "${{ vars.CONTAINER_APP }}" \
+            --query properties.configuration.ingress.fqdn -o tsv)
+          echo "url=https://$FQDN" >> "$GITHUB_OUTPUT"
+          echo "custom=${{ vars.SMOKE_URL }}" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for the new version
+        run: |
+          TAG='${{ needs.publish.outputs.tag }}'
+          for BASE in '${{ steps.urls.outputs.url }}' '${{ steps.urls.outputs.custom }}'; do
+            [ -z "$BASE" ] && continue
+            echo "checking $BASE"
+            OK=0
+            for i in $(seq 1 30); do
+              if V=$(curl -fsS --connect-timeout 5 --max-time 10 "$BASE/api/health" 2>/dev/null | jq -r '.version' 2>/dev/null) && [ "$V" = "$TAG" ]; then
+                echo "$BASE reports $V"
+                OK=1
+                break
+              fi
+              echo "waiting for $TAG (attempt $i/30)..."
+              sleep 10
+            done
+            [ "$OK" = 1 ] || { echo "timed out waiting for $TAG on $BASE"; exit 1; }
+          done
+
+      - name: Demo seed + briefing
+        run: |
+          URL='${{ steps.urls.outputs.url }}'
+          DID="gha-smoke-$(date +%s)-$$"
+          curl -fsS -X POST "$URL/api/households" \
+            -H "X-Device-Id: $DID" -H 'Content-Type: application/json' \
+            -d "{\"deviceId\":\"$DID\",\"householdSize\":2}" > /dev/null
+          curl -fsS -X POST "$URL/api/demo/seed" -H "X-Device-Id: $DID" > /dev/null
+          curl -fsS "$URL/api/briefing" -H "X-Device-Id: $DID" \
+            | jq -e '((.buy|length) + (.swap|length) + (.skip|length)) > 0' > /dev/null
+          echo "smoke passed"

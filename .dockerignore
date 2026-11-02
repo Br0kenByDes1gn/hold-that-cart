@@ -1,0 +1,13 @@
+node_modules
+.git
+.github
+.data
+dist
+dist-server
+test-results
+playwright-report
+log.txt
+.env
+.env.*
+.DS_Store
+tests/vision/__artifacts__

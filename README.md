@@ -77,3 +77,14 @@ pnpm test:vision    # LIVE vision goldens — costs credits
 
 Key acceptance: seed → expected briefing groups; 3rd receipt flips a product
 to personal rhythm; `I'm out` clears a SKIP; durable re-scan → hold alert.
+
+## Deploy
+
+Production runs on Azure Container Apps with a small Postgres Flexible Server,
+built and deployed by GitHub Actions on every `v*.*.*` tag. Infra lives in
+`infra/` (Bicep), the image in GHCR, and the full runbook — including the
+`holdthatcart.lol` custom domain — is in [`docs/deploy.md`](docs/deploy.md).
+
+```bash
+git tag v0.1.0 && git push origin v0.1.0
+```

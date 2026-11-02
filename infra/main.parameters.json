@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "value": "westeurope" },
+    "namePrefix": { "value": "holdthatcart" },
+    "minReplicas": { "value": 0 },
+    "maxReplicas": { "value": 1 },
+    "appVersion": { "value": "bootstrap" },
+    "postgresAdminLogin": { "value": "htcadmin" },
+    "databaseName": { "value": "holdthatcart" },
+    "metaBaseUrl": { "value": "https://api.meta.ai/v1" },
+    "metaModel": { "value": "muse-spark-1.3" }
+  }
+}
