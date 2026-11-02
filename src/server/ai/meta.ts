@@ -61,7 +61,7 @@ export function enrichmentUser(name: string, brand?: string, form?: string): str
 
 export const PANTRY_CLASSIFY_SYSTEM = `You classify grocery items already extracted from a receipt for a pantry app.
 Output JSON ONLY, no markdown, no commentary, with this shape:
-{"items":[{"normalizedName":string,"savesMoney":number,"healthy":number,"sustainable":number,"swap":false | {"name":string,"savesMoney":number,"healthy":number,"sustainable":number}}]}
+{"items":[{"normalizedName":string,"savesMoney":number,"healthy":number,"sustainable":number,"shelfLifeClass":"perishable" | "staple" | "household" | "durable" | "unknown","reason":string,"swap":false | {"name":string,"savesMoney":number,"healthy":number,"sustainable":number}}]}
 Every number is a value from 0 to 1:
 - 0 means definitely no / very poor.
 - 0.5 means unknown, neutral, or no reliable signal.
@@ -71,6 +71,14 @@ Rules:
 - savesMoney: how strongly this choice is likely to save money versus a typical alternative.
 - healthy: how strongly this is a healthier choice. Use general knowledge: chips, candy and soft drinks are usually unhealthy; fruit and vegetables are usually healthy.
 - sustainable: how strongly this is a greener/sustainable choice. Reusable, refillable and plant-based options usually score higher; single-use packaging usually scores lower.
+- shelfLifeClass is the product's single category by nature, shelf life and how it is replenished. Judge by the product's form (fresh, frozen, dried, canned, packaged, disposable, reusable), not just its name:
+  - "perishable": spoils, deteriorates, or is consumed and replaced within days. Dairy and dairy products; fresh fruit and vegetables; bakery and fresh baked goods; fresh meat, poultry, seafood and eggs; fresh herbs and sprouts; fresh tofu and refrigerated plant-based products; fresh juice and refrigerated beverages; refrigerated ready-to-eat food; frozen food including ice cream.
+  - "staple": regularly consumed food and drink with a relatively long shelf life. Grains and cereals; flour and baking ingredients; pulses, lentils, dried beans and peas; cooking oils and fats; spices, seasonings, salt and sweeteners; nuts, seeds and dried fruit; pasta and noodles; packaged snacks and biscuits; breakfast cereals; condiments, sauces and pickles; canned and preserved food; tea and coffee; packaged beverages including soft drinks; soya and plant-based protein; ready-to-cook and instant food.
+  - "household": non-durable cleaning, hygiene and personal care products replaced periodically. Laundry and fabric care; dishwashing; surface, floor, bathroom and toilet cleaners; disinfectants and sanitisers; personal hygiene, hair care, skincare, oral care, feminine hygiene and grooming; baby and adult care; paper and tissues; bin liners; pest control; air fresheners; disposable kitchen supplies and cleaning accessories; pet food and pet care consumables.
+  - "durable": reusable products, equipment, utensils and accessories expected to last months or years. Kitchen utensils and cookware; tableware and cutlery; food storage containers and jars; reusable bottles, flasks and drinkware; kitchen appliances and accessories; cleaning equipment and reusable cleaning tools; laundry and bathroom accessories; home organisation and storage; furniture and furnishings; reusable shopping and grocery bags; household tools; electrical accessories; safety equipment; pet accessories; gardening tools and accessories; travel accessories.
+  - "unknown": only when the name truly gives no reliable signal.
+  - Return exactly one class per item. When two seem possible, pick by the product's form and primary purpose.
+- reason: one short sentence (max 20 words) explaining the shelfLifeClass choice.
 - Do not overthink or demand exact nutrition/supply-chain facts. Use general category knowledge and be reasonably conservative.
 - Use 0.5 when the name genuinely gives no signal.
 - swap: a generic product type or form with MORE values at or above 0.6 than the original. Use false when there is no clearly better option.
@@ -427,7 +435,7 @@ export class MetaProvider implements AIProvider {
         ? (raw as { items: unknown[] }).items
         : [],
       modelName: this.model,
-      promptVersion: "pantry-v1",
+      promptVersion: "pantry-v4",
     };
   }
 

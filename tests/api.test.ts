@@ -150,6 +150,8 @@ describe("seed → briefing flow", () => {
                     savesMoney: 0.4,
                     healthy: 0.8,
                     sustainable: 0.7,
+                    shelfLifeClass: "staple",
+                    reason: "Shelf-stable pantry food bought every few weeks",
                     swap: {
                       name: "Raw honey",
                       savesMoney: 0.7,
@@ -204,6 +206,51 @@ describe("seed → briefing flow", () => {
         healthy: 0.8,
       });
       expect(devHoney.classification.swap.name).toBe("Raw honey");
+
+      // The classification also fills an unknown shelf-life class, so the
+      // pantry → list schedule gets a real clock for future receipts.
+      const pantry = await api("/api/pantry");
+      const product = pantry.body.products.find((p: any) => p.name === "Honey");
+      expect(product.shelfLifeClass).toBe("staple");
+
+      const schedule = await api("/api/dev/pantry-schedule");
+      const row = schedule.body.items.find((i: any) => i.name === "honey");
+      expect(row).toMatchObject({ shelfLifeClass: "staple", intervalDays: 14 });
+      expect(row.dueAt).toBeTruthy();
+      expect(row.daysLeft).not.toBeNull();
+      // The model's one-line rationale surfaces in the dev schedule.
+      expect(row.reason).toBe("Shelf-stable pantry food bought every few weeks");
+
+      // A user-edited class is never overwritten by a later classification.
+      await api(`/api/products/${product.productId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ shelfLifeClass: "perishable" }),
+      });
+      const scan2 = await api("/api/scans", {
+        method: "POST",
+        body: JSON.stringify({
+          kind: "receipt",
+          items: [{ rawName: "Honey", normalizedName: "honey", qty: 1, confidence: 1 }],
+        }),
+      });
+      await api(`/api/scans/${scan2.body.id}/confirm`, {
+        method: "POST",
+        body: JSON.stringify({
+          kind: "receipt",
+          items: [{ rawName: "Honey", normalizedName: "honey", qty: 1 }],
+        }),
+      });
+      const after = await api("/api/pantry");
+      expect(
+        after.body.products.find((p: any) => p.name === "Honey").shelfLifeClass,
+      ).toBe("perishable");
+
+      // Invalid classes are rejected instead of silently breaking the clock.
+      const badClass = await api(`/api/products/${product.productId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ shelfLifeClass: "weekly" }),
+      });
+      expect(badClass.status).toBe(400);
     } finally {
       fetchSpy.mockRestore();
       if (oldClassify === undefined) delete process.env.PANTRY_CLASSIFY;
@@ -433,6 +480,128 @@ describe("grocery list editing", () => {
       method: "PATCH",
       body: JSON.stringify({ status: "done" }),
     });
+  });
+});
+
+describe("pantry auto-add to grocery list", () => {
+  it("adds due items under normalized names and undoes the batch", async () => {
+    await api("/api/demo/reset", { method: "POST" });
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    await api("/api/demo/seed", { method: "POST" });
+
+    const first = await api("/api/lists/pantry-refresh", {
+      method: "POST",
+      body: "{}",
+    });
+    expect(first.status).toBe(200);
+    expect(first.body.refreshed).toBe(true);
+    expect(first.body.listId).toBeTruthy();
+
+    const names = first.body.added.map((item: any) => item.rawName);
+    // Milk (6d since purchase, 3d interval) and olive oil (35d, 14d interval)
+    // are due; detergent (50d, 60d interval) is not.
+    expect(names).toContain("milk");
+    expect(names).toContain("olive oil");
+    expect(names).not.toContain("laundry detergent");
+    expect(names.every((name: string) => name === name.toLowerCase())).toBe(true);
+
+    const list = await api(`/api/lists/${first.body.listId}`);
+    expect(list.status).toBe(200);
+    expect(list.body.auto.refreshIntervalDays).toBe(3);
+    expect(list.body.auto.added).toHaveLength(first.body.added.length);
+    const oil = list.body.items.find((item: any) => item.rawName === "olive oil");
+    expect(oil).toMatchObject({ source: "auto", brand: null });
+
+    // A second sweep inside the 3-day window changes nothing.
+    const second = await api("/api/lists/pantry-refresh", {
+      method: "POST",
+      body: "{}",
+    });
+    expect(second.body.refreshed).toBe(false);
+    expect(second.body.added).toHaveLength(0);
+
+    // Undo removes only the auto batch, not manually added rows.
+    await api(`/api/lists/${first.body.listId}/items`, {
+      method: "POST",
+      body: JSON.stringify({ rawName: "Bananas", qty: 1, source: "manual" }),
+    });
+    const undo = await api(`/api/lists/${first.body.listId}/auto-items`, {
+      method: "DELETE",
+    });
+    expect(undo.status).toBe(200);
+    expect(undo.body.removed).toBe(first.body.added.length);
+
+    const after = await api(`/api/lists/${first.body.listId}`);
+    expect(after.body.items.map((item: any) => item.rawName)).toEqual(["Bananas"]);
+    expect(after.body.auto.added).toHaveLength(0);
+
+    await api("/api/demo/reset", { method: "POST" });
+  });
+
+  it("does not duplicate a normalized name already on the list", async () => {
+    await api("/api/demo/reset", { method: "POST" });
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    await api("/api/demo/seed", { method: "POST" });
+
+    const created = await api("/api/lists", {
+      method: "POST",
+      body: JSON.stringify({ title: "Manual list" }),
+    });
+    await api(`/api/lists/${created.body.id}/items`, {
+      method: "POST",
+      body: JSON.stringify({ rawName: "Milk", qty: 1, source: "manual" }),
+    });
+
+    const refresh = await api("/api/lists/pantry-refresh", {
+      method: "POST",
+      body: "{}",
+    });
+    const names = refresh.body.added.map((item: any) => item.rawName);
+    expect(names).not.toContain("milk");
+    expect(names).toContain("olive oil");
+
+    const list = await api(`/api/lists/${created.body.id}`);
+    expect(
+      list.body.items.filter((item: any) => item.rawName.toLowerCase() === "milk"),
+    ).toHaveLength(1);
+
+    await api("/api/demo/reset", { method: "POST" });
+  });
+
+  it("exposes the sorted schedule in dev mode", async () => {
+    await api("/api/demo/reset", { method: "POST" });
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    await api("/api/demo/seed", { method: "POST" });
+
+    const dev = await api("/api/dev/pantry-schedule");
+    expect(dev.status).toBe(200);
+    expect(dev.body.refreshIntervalDays).toBe(3);
+    expect(dev.body.items.length).toBeGreaterThan(0);
+    expect(dev.body.items[0].shelfLifeClass).toBe("perishable");
+    expect(dev.body.items[0].name).toBe("milk");
+    expect(dev.body.items.every((item: any) => item.name === item.name.toLowerCase())).toBe(
+      true,
+    );
+    const detergent = dev.body.items.find(
+      (item: any) => item.name === "laundry detergent",
+    );
+    expect(detergent).toMatchObject({
+      shelfLifeClass: "household",
+      intervalDays: 60,
+      due: false,
+    });
+    expect(detergent.daysLeft).toBeGreaterThan(0);
+
+    await api("/api/demo/reset", { method: "POST" });
   });
 });
 

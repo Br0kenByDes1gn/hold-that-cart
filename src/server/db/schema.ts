@@ -7,6 +7,8 @@ export const households = pgTable("households", {
   householdSize: integer("household_size").notNull().default(2),
   accountType: text("account_type").notNull().default("household"),
   currency: text("currency").notNull().default("€"),
+  /** Last pantry → grocery-list auto-add pass (3-day cadence). */
+  lastPantryRefreshAt: timestamp("last_pantry_refresh_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -115,6 +117,8 @@ export const listItems = pgTable("list_items", {
   checked: boolean("checked").notNull().default(false),
   decision: text("decision"),
   source: text("source").notNull().default("manual"),
+  /** When the row was added — used to undo the latest auto-add batch. */
+  addedAt: timestamp("added_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const corrections = pgTable("corrections", {

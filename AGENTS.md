@@ -33,8 +33,11 @@ that file are explicitly **out of scope**, see "Not built yet").
    receipt-derived money evidence used by the briefing.
 4. **Shelf-life policy** (class comes from enrichment, user-editable):
    perishables never SKIP; staples soft-SKIP; household SKIP; durables get
-   the strongest hold alert and never auto-BUY. Unknown items get no rhythm
-   claims. Only flags with enough history; label estimates "probably".
+   the strongest hold alert and never auto-BUY in the briefing. The grocery
+   list has its own auto-add clock: perishable 3 days, staple 14 days,
+   household 60 days, durable 365 days from the latest purchase (see
+   `/quick-view`). Unknown items get no rhythm claims. Only flags with enough
+   history; label estimates "probably".
 5. **Only tags that apply light up** (money/health/planet); the rest stay
    grey. Health/planet tags need model confidence ≥0.5 and a ≥1-point delta.
 6. **Canonical product identity = generic type.** `normalizedName`
@@ -106,6 +109,7 @@ src/server/domain/           PURE deterministic core — no I/O except demo.ts f
   tags.ts                    tag gating (evidence-only)
   suggestions.ts             BUY/SWAP/SKIP grouping, ordering, caps
   listSuggestions.ts         PREVIEW stub: rhythm BUY → grocery-list suggestion contract
+  pantrySchedule.ts          pantry → list auto-add clock (3/14/60/365d) + 3-day refresh gate
   pantrySection.ts           pantry insight → SWAP/BUY/SKIP section + tag mapping
   demo.ts                    fixture enrichments, demo insights, purchase plan (dates relative to now)
 src/server/ai/provider.ts    AIProvider interface; Stub until MODEL_API_KEY set
@@ -115,7 +119,7 @@ src/client/api.ts            typed fetchers (sends X-Device-Id)
 src/client/screens/          Home, Briefing, Scanner, Pantry (+detail), Lists
 src/client/components.tsx    TagChip/Tags, ProductArt, icon registry hook
 src/client/theme.css         design tokens (single source of truth for colour)
-tests/                       rhythm, match, money, suggestions, api (E2E), ai (mocked fetch), smoke
+tests/                       rhythm, pantrySchedule, match, money, suggestions, api (E2E), ai (mocked fetch), smoke
 tests/fixtures/              golden ExtractedItem JSON (copies served from public/fixtures/)
 assets/item/                 106 transparent product PNGs (source art, do not edit)
 assets/manifest.json         icon filename + category registry
@@ -169,7 +173,10 @@ POST /api/ai/enrich              { name, brand?, form? } → cached enrichment
 GET  /api/briefing?buy=8&swap=3&skip=5   grouped suggestions + holdCount
 POST /api/lists, GET/PATCH /api/lists/:id, POST/PATCH/DELETE list items, POST /api/lists/:id/evaluate
 DELETE /api/lists/:id/items   clear the whole list in place (confirmation is client-side)
+POST /api/lists/pantry-refresh   lazy 3-day pantry→list auto-add (normalized names)
+DELETE /api/lists/:id/auto-items  undo the latest auto-add batch
 GET  /api/lists/suggestions?listId=   PREVIEW pantry→list suggestions (rhythm stub; contract final)
+GET  /api/dev/pantry-schedule   dev-only auto-add schedule, sorted perishables first
 POST /api/demo/seed | /api/demo/reset    demo household (see below)
 GET  /api/health
 ```
@@ -200,8 +207,11 @@ GET  /api/health
   `healthy`, `sustainable`, and `swap` as directional scores from 0 to 1
   (0 = definitely no, 0.5 = unknown, 1 = definitely yes). `domain/pantrySection.ts`
   counts a parameter only when its score is ≥0.6 for BUY/SWAP/SKIP, while the
-  Pantry tag chips light up when the score is strictly above 0.5. Set
-  `PANTRY_CLASSIFY=off` for deterministic tests.
+  Pantry tag chips light up when the score is strictly above 0.5. It also
+  returns `shelfLifeClass` plus a one-line `reason` (shown in the dev schedule
+  table); at confirm time an `unknown` product adopts that class (a user-edited
+  class is never overwritten), which gives new receipt items a pantry → list
+  schedule. Set `PANTRY_CLASSIFY=off` for deterministic tests.
 - Every model call logs one `[ai-usage]` JSON line with request/response
   bytes, image bytes (extraction), prompt/completion/reasoning/cached/total
   tokens, duration, finish reason, item count, and tokens per item. The same
@@ -266,11 +276,20 @@ are real receipts — check for names/addresses/card fragments before pushing.
 - Items carry `qty`, `brand` and `source` (`manual | voice | camera | scan | auto`).
   Renaming re-matches the canonical product server-side; brand is never identity.
 - “Clear list” empties the current list in place after a confirm sheet. It never
-  archives or creates a list; the same open list stays and suggestions return.
-- Pantry suggestions are **preview only**: `GET /api/lists/suggestions` maps the
-  existing rhythm BUY list through `domain/listSuggestions.ts`. The prediction
-  service replaces that module; keep the response contract in
-  `listSuggestionsResponseSchema`. Never auto-add suggestions — the user confirms.
+  archives or creates a list; the same open list stays.
+- Pantry → list auto-add is deterministic (`domain/pantrySchedule.ts`). It runs
+  when `/quick-view` opens, at most once every 3 days. At each pass every
+  product whose category interval has elapsed — perishable 3d, staple 14d,
+  household 60d, durable 365d, counted from the latest purchase — is inserted
+  with `source: "auto"` under its **normalized generic name** (never a brand
+  or receipt line). Muted items and names already on the list are skipped.
+  A product's class comes from its row, falling back to cached enrichment;
+  truly unknown items have no clock until classified/enriched.
+  The refresh response exposes the batch so the UI offers one Undo;
+  `DELETE /api/lists/:id/auto-items` removes it.
+- `GET /api/lists/suggestions` remains the read-only rhythm preview contract
+  for the future prediction service (`listSuggestionsResponseSchema`); the
+  `/quick-view` UI no longer uses it.
 - Voice transcription is a seam (`AIProvider.transcribe?`) for when Meta audio
   is confirmed; audio currently stays in the browser.
 

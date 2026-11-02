@@ -73,6 +73,8 @@ describe("meta provider (mocked fetch, no network)", () => {
               savesMoney: 0.8,
               healthy: 0.9,
               sustainable: 0.3,
+              shelfLifeClass: "perishable",
+              reason: "Dairy spoils within days",
               swap: {
                 name: "Oat milk",
                 savesMoney: 0.8,
@@ -98,11 +100,47 @@ describe("meta provider (mocked fetch, no network)", () => {
     expect(res.items).toHaveLength(1);
     expect(res.items[0].normalizedName).toBe("milk");
     expect(res.items[0].savesMoney).toBe(0.8);
+    expect(res.items[0].shelfLifeClass).toBe("perishable");
+    expect(res.items[0].reason).toBe("Dairy spoils within days");
     expect(res.items[0].swap).toMatchObject({ name: "Oat milk" });
     expect(res.rawItems).toHaveLength(2);
     expect((res.rawItems?.[0] as any).normalizedName).toBe("milk");
     expect(res.modelName).toBe("muse-spark-1.3");
-    expect(res.promptVersion).toBe("pantry-v1");
+    expect(res.promptVersion).toBe("pantry-v4");
+  });
+
+  it("classifyPantryItems tolerates a missing or malformed shelfLifeClass", async () => {
+    const fetchFn = vi.fn(async () =>
+      chatResponse(
+        JSON.stringify({
+          items: [
+            {
+              normalizedName: "milk",
+              savesMoney: 0.5,
+              healthy: 0.5,
+              sustainable: 0.5,
+              shelfLifeClass: "weekly",
+              swap: false,
+            },
+            {
+              normalizedName: "rice",
+              savesMoney: 0.5,
+              healthy: 0.5,
+              sustainable: 0.5,
+              swap: false,
+            },
+          ],
+        }),
+      ),
+    );
+    const p = new MetaProvider({ apiKey: "test", fetchFn: fetchFn as any });
+    const res = await p.classifyPantryItems([
+      { rawName: "Milk", normalizedName: "milk" },
+      { rawName: "Rice", normalizedName: "rice" },
+    ]);
+    expect(res.items).toHaveLength(2);
+    expect(res.items[0].shelfLifeClass).toBeUndefined();
+    expect(res.items[1].shelfLifeClass).toBeUndefined();
   });
 
   it("classifyPantryItems rejects price-bearing output", async () => {
