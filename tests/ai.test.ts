@@ -106,7 +106,7 @@ describe("meta provider (mocked fetch, no network)", () => {
     expect(res.rawItems).toHaveLength(2);
     expect((res.rawItems?.[0] as any).normalizedName).toBe("milk");
     expect(res.modelName).toBe("muse-spark-1.3");
-    expect(res.promptVersion).toBe("pantry-v3");
+    expect(res.promptVersion).toBe("pantry-v4");
   });
 
   it("classifyPantryItems tolerates a missing or malformed shelfLifeClass", async () => {

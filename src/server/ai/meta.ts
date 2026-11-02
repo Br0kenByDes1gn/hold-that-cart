@@ -71,13 +71,13 @@ Rules:
 - savesMoney: how strongly this choice is likely to save money versus a typical alternative.
 - healthy: how strongly this is a healthier choice. Use general knowledge: chips, candy and soft drinks are usually unhealthy; fruit and vegetables are usually healthy.
 - sustainable: how strongly this is a greener/sustainable choice. Reusable, refillable and plant-based options usually score higher; single-use packaging usually scores lower.
-- shelfLifeClass is how often a household normally buys this product type again. Use the product's form (fresh, frozen, dried, canned, packaged, disposable, reusable), not just its name:
-  - "perishable": spoils in days — fresh produce, dairy, meat, fish, eggs, bakery, fresh juice, refrigerated ready-to-eat food.
-  - "staple": shelf-stable food and drink bought every week or few weeks — grains, flour, pulses, oil, spices, pasta, cereal, canned food, coffee, tea, packaged snacks and biscuits, shelf-stable soft drinks and juice. Frozen food also belongs here: it keeps for months and is bought monthly.
-  - "household": cleaning, hygiene, personal care and paper goods replaced every few months; pet food.
-  - "durable": reusable non-consumables that last a year or more — cookware, tableware, storage containers, bottles, appliances, tools, bags.
+- shelfLifeClass is the product's single category by nature, shelf life and how it is replenished. Judge by the product's form (fresh, frozen, dried, canned, packaged, disposable, reusable), not just its name:
+  - "perishable": spoils, deteriorates, or is consumed and replaced within days. Dairy and dairy products; fresh fruit and vegetables; bakery and fresh baked goods; fresh meat, poultry, seafood and eggs; fresh herbs and sprouts; fresh tofu and refrigerated plant-based products; fresh juice and refrigerated beverages; refrigerated ready-to-eat food; frozen food including ice cream.
+  - "staple": regularly consumed food and drink with a relatively long shelf life. Grains and cereals; flour and baking ingredients; pulses, lentils, dried beans and peas; cooking oils and fats; spices, seasonings, salt and sweeteners; nuts, seeds and dried fruit; pasta and noodles; packaged snacks and biscuits; breakfast cereals; condiments, sauces and pickles; canned and preserved food; tea and coffee; packaged beverages including soft drinks; soya and plant-based protein; ready-to-cook and instant food.
+  - "household": non-durable cleaning, hygiene and personal care products replaced periodically. Laundry and fabric care; dishwashing; surface, floor, bathroom and toilet cleaners; disinfectants and sanitisers; personal hygiene, hair care, skincare, oral care, feminine hygiene and grooming; baby and adult care; paper and tissues; bin liners; pest control; air fresheners; disposable kitchen supplies and cleaning accessories; pet food and pet care consumables.
+  - "durable": reusable products, equipment, utensils and accessories expected to last months or years. Kitchen utensils and cookware; tableware and cutlery; food storage containers and jars; reusable bottles, flasks and drinkware; kitchen appliances and accessories; cleaning equipment and reusable cleaning tools; laundry and bathroom accessories; home organisation and storage; furniture and furnishings; reusable shopping and grocery bags; household tools; electrical accessories; safety equipment; pet accessories; gardening tools and accessories; travel accessories.
   - "unknown": only when the name truly gives no reliable signal.
-  - Prioritise how often it is repurchased over how fast it spoils.
+  - Return exactly one class per item. When two seem possible, pick by the product's form and primary purpose.
 - reason: one short sentence (max 20 words) explaining the shelfLifeClass choice.
 - Do not overthink or demand exact nutrition/supply-chain facts. Use general category knowledge and be reasonably conservative.
 - Use 0.5 when the name genuinely gives no signal.
@@ -435,7 +435,7 @@ export class MetaProvider implements AIProvider {
         ? (raw as { items: unknown[] }).items
         : [],
       modelName: this.model,
-      promptVersion: "pantry-v3",
+      promptVersion: "pantry-v4",
     };
   }
 
