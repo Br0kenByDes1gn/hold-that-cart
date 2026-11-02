@@ -2108,6 +2108,12 @@ details summary { cursor: pointer; }
   vertical-align: top;
   white-space: nowrap;
 }
+.devmode-table td.devmode-why {
+  min-width: 180px;
+  max-width: 280px;
+  color: var(--text-dim);
+  white-space: normal;
+}
 .devmode-table tr.is-due td {
   background: rgba(56, 189, 248, 0.07);
 }

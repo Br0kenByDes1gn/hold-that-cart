@@ -61,7 +61,7 @@ export function enrichmentUser(name: string, brand?: string, form?: string): str
 
 export const PANTRY_CLASSIFY_SYSTEM = `You classify grocery items already extracted from a receipt for a pantry app.
 Output JSON ONLY, no markdown, no commentary, with this shape:
-{"items":[{"normalizedName":string,"savesMoney":number,"healthy":number,"sustainable":number,"swap":false | {"name":string,"savesMoney":number,"healthy":number,"sustainable":number}}]}
+{"items":[{"normalizedName":string,"savesMoney":number,"healthy":number,"sustainable":number,"shelfLifeClass":"perishable" | "staple" | "household" | "durable" | "unknown","reason":string,"swap":false | {"name":string,"savesMoney":number,"healthy":number,"sustainable":number}}]}
 Every number is a value from 0 to 1:
 - 0 means definitely no / very poor.
 - 0.5 means unknown, neutral, or no reliable signal.
@@ -71,6 +71,14 @@ Rules:
 - savesMoney: how strongly this choice is likely to save money versus a typical alternative.
 - healthy: how strongly this is a healthier choice. Use general knowledge: chips, candy and soft drinks are usually unhealthy; fruit and vegetables are usually healthy.
 - sustainable: how strongly this is a greener/sustainable choice. Reusable, refillable and plant-based options usually score higher; single-use packaging usually scores lower.
+- shelfLifeClass is how often a household normally buys this product type again. Use the product's form (fresh, frozen, dried, canned, packaged, disposable, reusable), not just its name:
+  - "perishable": spoils in days — fresh produce, dairy, meat, fish, eggs, bakery, fresh juice, refrigerated ready-to-eat food.
+  - "staple": shelf-stable food and drink bought every week or few weeks — grains, flour, pulses, oil, spices, pasta, cereal, canned food, coffee, tea, packaged snacks and biscuits, shelf-stable soft drinks and juice. Frozen food also belongs here: it keeps for months and is bought monthly.
+  - "household": cleaning, hygiene, personal care and paper goods replaced every few months; pet food.
+  - "durable": reusable non-consumables that last a year or more — cookware, tableware, storage containers, bottles, appliances, tools, bags.
+  - "unknown": only when the name truly gives no reliable signal.
+  - Prioritise how often it is repurchased over how fast it spoils.
+- reason: one short sentence (max 20 words) explaining the shelfLifeClass choice.
 - Do not overthink or demand exact nutrition/supply-chain facts. Use general category knowledge and be reasonably conservative.
 - Use 0.5 when the name genuinely gives no signal.
 - swap: a generic product type or form with MORE values at or above 0.6 than the original. Use false when there is no clearly better option.
@@ -427,7 +435,7 @@ export class MetaProvider implements AIProvider {
         ? (raw as { items: unknown[] }).items
         : [],
       modelName: this.model,
-      promptVersion: "pantry-v1",
+      promptVersion: "pantry-v3",
     };
   }
 

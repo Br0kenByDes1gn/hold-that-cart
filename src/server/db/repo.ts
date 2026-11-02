@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "./client.js";
 import {
   corrections,
@@ -13,7 +13,10 @@ import {
   shoppingLists,
 } from "./schema.js";
 import type { ProductEnrichment, ShelfLifeClass } from "../../shared/schemas.js";
-import { productEnrichmentSchema } from "../../shared/schemas.js";
+import {
+  productEnrichmentSchema,
+  shelfLifeClassSchema,
+} from "../../shared/schemas.js";
 import { knowledgeKey, normalizeName, slugify } from "../domain/normalize.js";
 import { computeState } from "../domain/rhythm.js";
 import { unitPrice } from "../domain/units.js";
@@ -265,10 +268,43 @@ export async function loadPantryScheduleSources(
     }
   }
 
+  // Fall back to cached enrichment when the product row has no class yet:
+  // products created before their knowledge entry existed stay "unknown"
+  // until enrichment or classification fills them.
+  const keys = [
+    ...new Set(
+      prows
+        .flatMap((product) => [product.knowledgeKey, knowledgeKey(product.name)])
+        .filter((key): key is string => !!key),
+    ),
+  ];
+  const knowledgeRows =
+    keys.length > 0
+      ? await db
+          .select()
+          .from(productKnowledge)
+          .where(inArray(productKnowledge.key, keys))
+      : [];
+  const classByKey = new Map<string, ShelfLifeClass>();
+  for (const row of knowledgeRows) {
+    const cls = shelfLifeClassSchema.safeParse(
+      (row.enrichment as ProductEnrichment | null)?.shelfLifeClass,
+    );
+    if (cls.success) classByKey.set(row.key, cls.data);
+  }
+  const classFor = (product: (typeof prows)[number]): ShelfLifeClass => {
+    const stored = shelfLifeClassSchema.safeParse(product.shelfLifeClass);
+    if (stored.success && stored.data !== "unknown") return stored.data;
+    const cached =
+      (product.knowledgeKey ? classByKey.get(product.knowledgeKey) : undefined) ??
+      classByKey.get(knowledgeKey(product.name));
+    return cached ?? "unknown";
+  };
+
   return prows.map((product) => ({
     productId: product.id,
     name: product.name,
-    shelfLifeClass: (product.shelfLifeClass ?? "unknown") as ShelfLifeClass,
+    shelfLifeClass: classFor(product),
     lastPurchasedAt: latest.get(product.id) ?? null,
     muted: product.muted,
   }));

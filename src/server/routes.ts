@@ -35,6 +35,7 @@ import {
   productEnrichmentSchema,
   scanConfirmSchema,
   scanCreateSchema,
+  shelfLifeClassSchema,
 } from "../shared/schemas.js";
 import type { ListItemCreate } from "../shared/schemas.js";
 import { matchProduct } from "./domain/match.js";
@@ -99,7 +100,7 @@ function emptyInsight(normalizedName: string): PantryItemInsight {
   };
 }
 
-function scheduleResponseItem(item: PantryScheduleItem) {
+function scheduleResponseItem(item: PantryScheduleItem, reason: string | null = null) {
   return {
     productId: item.productId,
     name: item.name,
@@ -112,6 +113,7 @@ function scheduleResponseItem(item: PantryScheduleItem) {
     muted: item.muted,
     onList: item.onList,
     autoAddedAt: item.autoAddedAt?.toISOString() ?? null,
+    reason,
   };
 }
 
@@ -129,6 +131,7 @@ async function classifyAndStoreInsights(
     return { classified: 0, fallback: 0, error: null as string | null };
   }
 
+  const db = await getDb();
   const byKey = new Map<string, PantryItemInsight>();
   const rawByKey = new Map<string, unknown>();
   let modelName: string | null = null;
@@ -188,6 +191,24 @@ async function classifyAndStoreInsights(
       classificationError: byKey.has(key) ? null : error,
       raw: rawByKey.get(key) ?? null,
     });
+    // Classify shelf life once from the model when it's unknown; never
+    // overwrite a user-edited class.
+    if (insight.shelfLifeClass) {
+      try {
+        await db
+          .update(products)
+          .set({ shelfLifeClass: insight.shelfLifeClass })
+          .where(
+            and(
+              eq(products.id, target.productId),
+              eq(products.householdId, householdId),
+              eq(products.shelfLifeClass, "unknown"),
+            ),
+          );
+      } catch {
+        // Non-fatal: a malformed enum should never block insight storage.
+      }
+    }
   }
 
   return {
@@ -631,6 +652,15 @@ routes.get("/api/dev/pantry-schedule", async (c) => {
     }),
     now,
   );
+  // Model's one-line shelf-life rationale, when this product was classified.
+  const insights = await loadLatestProductInsights(hh!.id);
+  const reasonByProduct = new Map<string, string>();
+  for (const row of insights) {
+    const assessment = row.assessment as { reason?: unknown } | null;
+    if (typeof assessment?.reason === "string" && assessment.reason.trim()) {
+      reasonByProduct.set(row.productId, assessment.reason.trim());
+    }
+  }
   const lastRefreshedAt = hh!.lastPantryRefreshAt
     ? new Date(hh!.lastPantryRefreshAt)
     : null;
@@ -640,7 +670,9 @@ routes.get("/api/dev/pantry-schedule", async (c) => {
     refreshIntervalDays: LIST_REFRESH_DAYS,
     lastRefreshedAt: lastRefreshedAt?.toISOString() ?? null,
     nextRefreshAt: nextRefreshAt(lastRefreshedAt)?.toISOString() ?? null,
-    items: schedule.map(scheduleResponseItem),
+    items: schedule.map((item) =>
+      scheduleResponseItem(item, reasonByProduct.get(item.productId) ?? null),
+    ),
   });
 });
 
@@ -703,7 +735,11 @@ routes.patch("/api/products/:id", async (c) => {
     patch.name = body.name.trim();
     patch.catalogKey = normalizeName(body.name);
   }
-  if (typeof body.shelfLifeClass === "string") patch.shelfLifeClass = body.shelfLifeClass;
+  if (typeof body.shelfLifeClass === "string") {
+    const cls = shelfLifeClassSchema.safeParse(body.shelfLifeClass);
+    if (!cls.success) return c.json({ error: "invalid shelfLifeClass" }, 400);
+    patch.shelfLifeClass = cls.data;
+  }
   if (typeof body.muted === "boolean") patch.muted = body.muted;
   if (typeof body.icon === "string") patch.icon = body.icon;
   if (Object.keys(patch).length > 0) {

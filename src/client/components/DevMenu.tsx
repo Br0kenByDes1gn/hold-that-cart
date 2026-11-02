@@ -284,6 +284,18 @@ export function DevMenu() {
                       ? new Date(devData.nextRefreshAt).toLocaleString()
                       : "on open"}
                   </span>
+                  {devData?.items?.some(
+                    (item: any) => item.shelfLifeClass === "unknown",
+                  ) && (
+                    <span>
+                      {
+                        devData.items.filter(
+                          (item: any) => item.shelfLifeClass === "unknown",
+                        ).length
+                      }{" "}
+                      without shelf life — enrich or re-scan
+                    </span>
+                  )}
                 </div>
                 <div className="devmode-table-wrap">
                   <table className="devmode-table">
@@ -295,6 +307,7 @@ export function DevMenu() {
                         <th>Due</th>
                         <th>Days left</th>
                         <th>Status</th>
+                        <th>Why</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -307,8 +320,11 @@ export function DevMenu() {
                         >
                           <td>{item.name}</td>
                           <td>
-                            {item.shelfLifeClass}
-                            {item.intervalDays ? ` · ${item.intervalDays}d` : ""}
+                            {item.shelfLifeClass === "unknown"
+                              ? "unknown · no schedule"
+                              : `${item.shelfLifeClass}${
+                                  item.intervalDays ? ` · ${item.intervalDays}d` : ""
+                                }`}
                           </td>
                           <td>
                             {item.lastAddedAt
@@ -337,6 +353,9 @@ export function DevMenu() {
                             ) : (
                               <span className="dim">queued</span>
                             )}
+                          </td>
+                          <td className="devmode-why" title={item.reason ?? undefined}>
+                            {item.reason ?? "—"}
                           </td>
                         </tr>
                       ))}

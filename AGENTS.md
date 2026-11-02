@@ -207,8 +207,11 @@ GET  /api/health
   `healthy`, `sustainable`, and `swap` as directional scores from 0 to 1
   (0 = definitely no, 0.5 = unknown, 1 = definitely yes). `domain/pantrySection.ts`
   counts a parameter only when its score is ≥0.6 for BUY/SWAP/SKIP, while the
-  Pantry tag chips light up when the score is strictly above 0.5. Set
-  `PANTRY_CLASSIFY=off` for deterministic tests.
+  Pantry tag chips light up when the score is strictly above 0.5. It also
+  returns `shelfLifeClass` plus a one-line `reason` (shown in the dev schedule
+  table); at confirm time an `unknown` product adopts that class (a user-edited
+  class is never overwritten), which gives new receipt items a pantry → list
+  schedule. Set `PANTRY_CLASSIFY=off` for deterministic tests.
 - Every model call logs one `[ai-usage]` JSON line with request/response
   bytes, image bytes (extraction), prompt/completion/reasoning/cached/total
   tokens, duration, finish reason, item count, and tokens per item. The same
@@ -280,6 +283,8 @@ are real receipts — check for names/addresses/card fragments before pushing.
   household 60d, durable 365d, counted from the latest purchase — is inserted
   with `source: "auto"` under its **normalized generic name** (never a brand
   or receipt line). Muted items and names already on the list are skipped.
+  A product's class comes from its row, falling back to cached enrichment;
+  truly unknown items have no clock until classified/enriched.
   The refresh response exposes the batch so the UI offers one Undo;
   `DELETE /api/lists/:id/auto-items` removes it.
 - `GET /api/lists/suggestions` remains the read-only rhythm preview contract

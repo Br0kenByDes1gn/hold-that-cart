@@ -132,6 +132,13 @@ export const pantryItemInsightSchema = z.object({
   savesMoney: pantryScoreSchema,
   healthy: pantryScoreSchema,
   sustainable: pantryScoreSchema,
+  /**
+   * Shelf-life class inferred from the product type. Optional so older prompts
+   * and mocks still parse; a malformed value degrades to "unknown" instead of
+   * failing the whole classification.
+   */
+  shelfLifeClass: shelfLifeClassSchema.optional().catch(undefined),
+  reason: z.string().min(1).max(200).optional().catch(undefined),
   swap: z
     .union([z.literal(false), pantrySwapSchema])
     .nullish()
@@ -389,6 +396,8 @@ export const pantryScheduleItemResponseSchema = z.object({
   muted: z.boolean(),
   onList: z.boolean(),
   autoAddedAt: z.string().nullable(),
+  /** Model's one-line shelf-life rationale, when classified. */
+  reason: z.string().nullable().default(null),
 });
 export type PantryScheduleItemResponse = z.infer<
   typeof pantryScheduleItemResponseSchema

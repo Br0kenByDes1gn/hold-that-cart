@@ -150,6 +150,8 @@ describe("seed → briefing flow", () => {
                     savesMoney: 0.4,
                     healthy: 0.8,
                     sustainable: 0.7,
+                    shelfLifeClass: "staple",
+                    reason: "Shelf-stable pantry food bought every few weeks",
                     swap: {
                       name: "Raw honey",
                       savesMoney: 0.7,
@@ -204,6 +206,51 @@ describe("seed → briefing flow", () => {
         healthy: 0.8,
       });
       expect(devHoney.classification.swap.name).toBe("Raw honey");
+
+      // The classification also fills an unknown shelf-life class, so the
+      // pantry → list schedule gets a real clock for future receipts.
+      const pantry = await api("/api/pantry");
+      const product = pantry.body.products.find((p: any) => p.name === "Honey");
+      expect(product.shelfLifeClass).toBe("staple");
+
+      const schedule = await api("/api/dev/pantry-schedule");
+      const row = schedule.body.items.find((i: any) => i.name === "honey");
+      expect(row).toMatchObject({ shelfLifeClass: "staple", intervalDays: 14 });
+      expect(row.dueAt).toBeTruthy();
+      expect(row.daysLeft).not.toBeNull();
+      // The model's one-line rationale surfaces in the dev schedule.
+      expect(row.reason).toBe("Shelf-stable pantry food bought every few weeks");
+
+      // A user-edited class is never overwritten by a later classification.
+      await api(`/api/products/${product.productId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ shelfLifeClass: "perishable" }),
+      });
+      const scan2 = await api("/api/scans", {
+        method: "POST",
+        body: JSON.stringify({
+          kind: "receipt",
+          items: [{ rawName: "Honey", normalizedName: "honey", qty: 1, confidence: 1 }],
+        }),
+      });
+      await api(`/api/scans/${scan2.body.id}/confirm`, {
+        method: "POST",
+        body: JSON.stringify({
+          kind: "receipt",
+          items: [{ rawName: "Honey", normalizedName: "honey", qty: 1 }],
+        }),
+      });
+      const after = await api("/api/pantry");
+      expect(
+        after.body.products.find((p: any) => p.name === "Honey").shelfLifeClass,
+      ).toBe("perishable");
+
+      // Invalid classes are rejected instead of silently breaking the clock.
+      const badClass = await api(`/api/products/${product.productId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ shelfLifeClass: "weekly" }),
+      });
+      expect(badClass.status).toBe(400);
     } finally {
       fetchSpy.mockRestore();
       if (oldClassify === undefined) delete process.env.PANTRY_CLASSIFY;
