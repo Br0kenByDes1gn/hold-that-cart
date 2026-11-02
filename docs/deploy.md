@@ -199,8 +199,10 @@ az group delete -n $RG --yes --no-wait
 ## Troubleshooting
 
 - **DB won't connect:** the URL must include `sslmode=require`; Bicep adds it. `getDb()` forces `ssl: "require"` for Postgres.
+- **First deployment: provider not registered:** run `az provider register --namespace Microsoft.App`, `Microsoft.DBforPostgreSQL`, `Microsoft.OperationalInsights` (registration takes a minute).
+- **Postgres firewall:** Bicep allows `0.0.0.0` (all Azure services) because Container Apps egress IPs are dynamic. Acceptable for a demo with a generated password over TLS; tighten to a VNet later.
 - **Schema errors on first boot:** the app runs idempotent DDL automatically. If you already have objects, keep `DB_AUTO_MIGRATE=on` or set `off` and manage manually.
-- **Image pull fails:** the package must be public (or you'd need a registry credential). This repo is public.
+- **Image pull fails:** the package must be public (or you'd need a registry credential). This repo is public; publish once and flip visibility before the first deploy.
 - **E2E fails in CI:** `playwright install --with-deps chromium` is included; the webServer still builds locally in Playwright config, which matches the workflow.
-- **Cold start:** `minReplicas: 0` means first request can take a few seconds — expected.
+- **Cold start:** `minReplicas: 0` means first request can take a few seconds — expected. Flip to 1 for the demo week.
 - **HTTP → HTTPS redirect:** production Hono middleware does 301 redirects using `x-forwarded-proto`.
