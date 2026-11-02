@@ -125,7 +125,17 @@ assets/item/                 106 transparent product PNGs (source art, do not ed
 assets/manifest.json         icon filename + category registry
 scripts/normalize-assets.mjs regenerates public/icons/products/*.png + icons.json (generated, gitignored)
 design_system.md             visual spec: tokens, tag design, screen names, copy rules
+Dockerfile                   multi-stage prod image (pnpm install → assets + vite build → node:22-slim, non-root)
+infra/main.bicep             Azure: Container Apps env/app, Postgres Flexible Server B1ms, Log Analytics
+.github/workflows/deploy.yml tag push → verify → publish GHCR → deploy ACA → smoke
+docs/deploy.md               runbook: Bicep, OIDC, GHCR visibility, holdthatcart.lol domain, rollback
 ```
+
+Production notes: `src/server/db/ddl.ts` is applied on **both** drivers at boot
+(`DB_AUTO_MIGRATE=off` disables it); `/api/health` reports `APP_VERSION`; the
+`postgres` branch honours `sslmode=require`; `/api/dev/*` is 404 unless
+`DEV_ENDPOINTS=on`; production redirects `http` → `https` via
+`x-forwarded-proto` and sets HSTS.
 
 ## Domain model in one paragraph
 
