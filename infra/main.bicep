@@ -45,6 +45,19 @@ param postgresAdminPassword string
 @description('Database name inside the Postgres server.')
 param databaseName string = 'holdthatcart'
 
+@description('Postgres compute SKU. list-skus shows the region catalog, not what your subscription can provision; if a deploy fails with SkuNotAvailable, try Standard_B2ms (Burstable), then Standard_D2s_v3 (GeneralPurpose).')
+param postgresSkuName string = 'Standard_B1ms'
+
+@allowed(['Burstable', 'GeneralPurpose', 'MemoryOptimized'])
+@description('Postgres compute tier. Must match the SKU family.')
+param postgresSkuTier string = 'Burstable'
+
+@description('Postgres major version.')
+param postgresVersion string = '16'
+
+@description('Region for the Postgres server. Defaults to the app region; only override when the SKU is unavailable there (cross-region queries add latency).')
+param postgresLocation string = location
+
 @secure()
 @description('Meta Model API key. Stored as a Container App secret, not in the repo.')
 param modelApiKey string
@@ -65,13 +78,13 @@ resource logs 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
 
 resource postgres 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
   name: postgresName
-  location: location
+  location: postgresLocation
   sku: {
-    name: 'Standard_B1ms'
-    tier: 'Burstable'
+    name: postgresSkuName
+    tier: postgresSkuTier
   }
   properties: {
-    version: '16'
+    version: postgresVersion
     administratorLogin: postgresAdminLogin
     administratorLoginPassword: postgresAdminPassword
     storage: {

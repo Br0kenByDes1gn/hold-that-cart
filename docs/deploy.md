@@ -5,7 +5,7 @@ This repo deploys on **tag push** `v*.*.*` via GitHub Actions. The image goes to
 ## Architecture
 
 - **Compute:** Azure Container Apps (external HTTPS ingress, `minReplicas` 0 by default, `maxReplicas` 1)
-- **Database:** Azure Database for PostgreSQL Flexible Server `Standard_B1ms` (PG 16, 32 GB, 7-day backup, TLS required)
+- **Database:** Azure Database for PostgreSQL Flexible Server, `Standard_B1ms` Burstable by default (`postgresSkuName`/`postgresSkuTier`/`postgresVersion` parameters; bump to `Standard_B2ms` or `Standard_D2s_v3` if your subscription refuses B1ms), PG 16, 32 GB, 7-day backup, TLS required
 - **Registry:** `ghcr.io/<owner>/hold-that-cart` (public)
 - **Secrets:** `DATABASE_URL` and `MODEL_API_KEY` are secure Bicep parameters, stored as Container App secrets and injected as env vars. Rotate them by re-running the Bicep deployment (or `az containerapp secret set`). Key Vault is optional hardening later, not part of the template.
 - **Domain:** `https://holdthatcart.lol` (apex) via a free managed certificate
@@ -37,6 +37,21 @@ az deployment group create \
 ```
 
 The deployment outputs `fqdn`, `staticIp`, `containerAppName`, `environmentName`. Save them.
+
+If it fails with `SkuNotAvailable`, `az postgres flexible-server list-skus` is misleading: it lists the region catalog, not what your subscription may provision (common on new/trial/student subscriptions and in capacity-constrained regions). Keep the app region and try, in order:
+
+```bash
+# 1. bigger Burstable size (still cheap, ~€25/mo)
+-p postgresSkuName=Standard_B2ms -p postgresSkuTier=Burstable
+
+# 2. GeneralPurpose (~€120+/mo; delete the resource group after the demo)
+-p postgresSkuName=Standard_D2s_v3 -p postgresSkuTier=GeneralPurpose
+
+# 3. same SKU, older major version — cheap check for a version-specific restriction
+-p postgresVersion=15
+```
+
+Only if every SKU fails, change region — and move the whole stack, not just the database (logs, environment and app are location-bound). `-p postgresLocation=<region>` exists for the rare case where the database must live elsewhere, but cross-region queries add latency to every request.
 
 ## 3) Configure GitHub OIDC (federated credentials)
 
@@ -199,6 +214,7 @@ az group delete -n $RG --yes --no-wait
 ## Troubleshooting
 
 - **DB won't connect:** the URL must include `sslmode=require`; Bicep adds it. `getDb()` forces `ssl: "require"` for Postgres.
+- **`SkuNotAvailable` although `list-skus` shows the SKU:** the catalog is not subscription-aware. Retry with `Standard_B2ms`, then `Standard_D2s_v3` + `GeneralPurpose`; `-p postgresVersion=15` to rule out a version restriction; move the whole stack only as a last resort.
 - **First deployment: provider not registered:** run `az provider register --namespace Microsoft.App`, `Microsoft.DBforPostgreSQL`, `Microsoft.OperationalInsights` (registration takes a minute).
 - **Postgres firewall:** Bicep allows `0.0.0.0` (all Azure services) because Container Apps egress IPs are dynamic. Acceptable for a demo with a generated password over TLS; tighten to a VNet later.
 - **Schema errors on first boot:** the app runs idempotent DDL automatically. If you already have objects, keep `DB_AUTO_MIGRATE=on` or set `off` and manage manually.

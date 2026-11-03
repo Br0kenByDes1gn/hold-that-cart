@@ -126,7 +126,7 @@ assets/manifest.json         icon filename + category registry
 scripts/normalize-assets.mjs regenerates public/icons/products/*.png + icons.json (generated, gitignored)
 design_system.md             visual spec: tokens, tag design, screen names, copy rules
 Dockerfile                   multi-stage prod image (pnpm install → assets + vite build → node:22-slim, non-root)
-infra/main.bicep             Azure: Container Apps env/app, Postgres Flexible Server B1ms, Log Analytics
+infra/main.bicep             Azure: Container Apps env/app, Postgres Flexible Server (Burstable B1ms default), Log Analytics
 .github/workflows/deploy.yml tag push → verify → publish GHCR → deploy ACA → smoke
 docs/deploy.md               runbook: Bicep, OIDC, GHCR visibility, holdthatcart.lol domain, rollback
 ```

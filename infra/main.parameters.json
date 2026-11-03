@@ -9,6 +9,9 @@
     "appVersion": { "value": "bootstrap" },
     "postgresAdminLogin": { "value": "htcadmin" },
     "databaseName": { "value": "holdthatcart" },
+    "postgresSkuName": { "value": "Standard_B1ms" },
+    "postgresSkuTier": { "value": "Burstable" },
+    "postgresVersion": { "value": "16" },
     "metaBaseUrl": { "value": "https://api.meta.ai/v1" },
     "metaModel": { "value": "muse-spark-1.3" }
   }
