@@ -88,12 +88,37 @@ The workflow uses `permissions: { contents: read, packages: write, id-token: wri
 
 ## 4) Make the GHCR package public
 
-Because the repo is public, the container package is usually public by default. If it isn't:
+A public repository does **not** make its container package public. The Container
+registry uses granular permissions, so the image is private until you say
+otherwise, and Azure cannot pull it anonymously.
 
 1. Push an image once (`publish_only` run in step 5).
-2. Open `https://github.com/orgs/Br0kenByDes1gn/packages/container/hold-that-cart`.
-3. **Package settings → Danger Zone → Change visibility → Public**. Once public it cannot be made private again.
-4. Ensure **Manage Actions access** includes this repository (it inherits from the repo).
+2. Open `https://github.com/orgs/<org>/packages/container/package/hold-that-cart/settings`
+   (the `/package/` segment is part of the real path — the URL without it does
+   not open the package).
+3. **Danger Zone → Change visibility → Public**, then type the package name and
+   confirm. Closing the dialog early saves nothing.
+4. Verify from anywhere, without credentials:
+
+```bash
+curl -s "https://ghcr.io/token?scope=repository%3A<org>%2Fhold-that-cart%3Apull&service=ghcr.io" | head -c 120
+```
+
+A `token` in the response means public; `UNAUTHORIZED` means still private.
+
+**If the org forbids public packages**, give the app a pull credential instead:
+
+```bash
+read -rs GHCR_PAT    # classic PAT, read:packages only
+az containerapp registry set -g rg-hold-that-cart -n holdthatcart-app \
+  --server ghcr.io --username <github-user> --password "$GHCR_PAT"
+```
+
+`az containerapp update` (what the workflow uses) preserves registries, but a
+`az deployment group create` of `infra/main.bicep` replaces the whole
+`configuration` block and **drops the credential**, so the next revision fails
+with `UNAUTHORIZED: authentication required`. Re-run the command above after any
+Bicep deployment.
 
 ## 5) First deploy
 
@@ -218,7 +243,8 @@ az group delete -n $RG --yes --no-wait
 - **First deployment: provider not registered:** run `az provider register --namespace Microsoft.App`, `Microsoft.DBforPostgreSQL`, `Microsoft.OperationalInsights` (registration takes a minute).
 - **Postgres firewall:** Bicep allows `0.0.0.0` (all Azure services) because Container Apps egress IPs are dynamic. Acceptable for a demo with a generated password over TLS; tighten to a VNet later.
 - **Schema errors on first boot:** the app runs idempotent DDL automatically. If you already have objects, keep `DB_AUTO_MIGRATE=on` or set `off` and manage manually.
-- **Image pull fails:** the package must be public (or you'd need a registry credential). This repo is public; publish once and flip visibility before the first deploy.
+- **Image pull fails:** the package must be public (or the app needs a registry credential) — see step 4. Repo visibility does not carry over to the package.
+- **`AADSTS700213: No matching federated identity record found`:** the subject in the error is the one to store, verbatim. GitHub now puts immutable IDs in it (`repo:Org@328680724/repo@1434019363:...`), so a slug-only subject never matches. The suffix also depends on the job: a job with `environment: production` presents `:environment:production`, one without presents `:ref:refs/tags/v0.1.0`. Every job that calls `azure/login` must declare the environment the federated credential was created for.
 - **E2E fails in CI:** `playwright install --with-deps chromium` is included; the webServer still builds locally in Playwright config, which matches the workflow.
 - **Cold start:** `minReplicas: 0` means first request can take a few seconds — expected. Flip to 1 for the demo week.
 - **HTTP → HTTPS redirect:** production Hono middleware does 301 redirects using `x-forwarded-proto`.

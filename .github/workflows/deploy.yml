@@ -139,9 +139,8 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # OIDC subject is `repo:OWNER/REPO:environment:production` only when the job
-    # declares the environment; without it GitHub presents `:ref:<ref>`, which
-    # the federated credential does not cover.
+    # Without an environment the OIDC subject ends in :ref:refs/..., which the
+    # environment-scoped federated credential does not cover.
     environment: production
     steps:
       - uses: azure/login@v2
