@@ -58,6 +58,7 @@ import {
 import {
   DEMO_INSIGHTS,
   DEMO_ITEMS,
+  DEMO_LIST,
   DEMO_PURCHASES,
   demoKnowledgeKey,
 } from "./domain/demo.js";
@@ -370,6 +371,8 @@ routes.post("/api/scans/:id/confirm", async (c) => {
         listId: targetList!,
         productId: it.productId,
         rawName: it.rawName,
+        brand: it.brand ?? null,
+        qty: String(it.qty ?? 1),
         checked: false,
         decision: null,
         source: "scan",
@@ -1475,20 +1478,49 @@ routes.post("/api/products/:id/enrich-ai", async (c) => {
 });
 
 // ── Demo seed/reset ──
+
+/** Warm the cross-household enrichment cache. This is not household data, so
+ *  it survives a reset; doing it on reset means a receipt confirmed from an
+ *  empty household still gets shelf-life classes and alternatives. */
+async function prewarmDemoKnowledge() {
+  for (const item of DEMO_ITEMS) {
+    await upsertKnowledge(demoKnowledgeKey(item.name), item.enrichment);
+  }
+}
+
+/** Delete every row owned by the household (the knowledge cache stays). */
+async function resetDemoHousehold(householdId: string) {
+  const db = await getDb();
+  const lists = await db
+    .select()
+    .from(shoppingLists)
+    .where(eq(shoppingLists.householdId, householdId));
+  for (const l of lists) {
+    await db.delete(listItems).where(eq(listItems.listId, l.id));
+  }
+  await db.delete(shoppingLists).where(eq(shoppingLists.householdId, householdId));
+  await db.delete(productInsights).where(eq(productInsights.householdId, householdId));
+  await db.delete(purchases).where(eq(purchases.householdId, householdId));
+  await db.delete(corrections).where(eq(corrections.householdId, householdId));
+  await db.delete(scans).where(eq(scans.householdId, householdId));
+  await db.delete(products).where(eq(products.householdId, householdId));
+  await db
+    .update(households)
+    .set({ lastPantryRefreshAt: null })
+    .where(eq(households.id, householdId));
+  await prewarmDemoKnowledge();
+}
+
 routes.post("/api/demo/seed", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);
   if (err) return err;
+  // Idempotent: a second click (or a Playwright retake) starts from the same
+  // state instead of duplicating purchases and lists.
+  await resetDemoHousehold(hh!.id);
+
   const now = new Date();
-  // A fresh demo pantry should auto-add on the next /quick-view open.
   const db = await getDb();
-  await db
-    .update(households)
-    .set({ lastPantryRefreshAt: null })
-    .where(eq(households.id, hh!.id));
-  for (const item of DEMO_ITEMS) {
-    await upsertKnowledge(demoKnowledgeKey(item.name), item.enrichment);
-  }
   const seededInsights = new Set<string>();
   for (const p of DEMO_PURCHASES) {
     const demo = DEMO_ITEMS.find((d) => d.name === p.item);
@@ -1539,30 +1571,49 @@ routes.post("/api/demo/seed", async (c) => {
       brand: p.brand,
     });
   }
-  return c.json({ ok: true });
+
+  // Seeded open grocery list. lastPantryRefreshAt is null, so the first
+  // /quick-view open runs the 3-day sweep and adds the due pantry items.
+  const listId = randomUUID();
+  await db.insert(shoppingLists).values({
+    id: listId,
+    householdId: hh!.id,
+    title: DEMO_LIST.title,
+    source: "manual",
+    status: "open",
+    createdAt: now,
+  });
+  const created = await insertListItems(
+    hh!.id,
+    listId,
+    DEMO_LIST.items.map((item) => ({
+      productId: null,
+      rawName: item.rawName,
+      brand: item.brand ?? null,
+      qty: item.qty,
+      source: item.source,
+      decision: item.decision,
+    })),
+  );
+  const checkedByName = new Map(
+    DEMO_LIST.items.filter((item) => item.checked).map((item) => [item.rawName, item]),
+  );
+  for (const row of created) {
+    const demo = checkedByName.get(row.rawName);
+    if (!demo) continue;
+    await db
+      .update(listItems)
+      .set({ checked: true, decision: demo.decision ?? null })
+      .where(eq(listItems.id, row.id));
+  }
+
+  return c.json({ ok: true, listId });
 });
 
 routes.post("/api/demo/reset", async (c) => {
   const hh = await household(c);
   const err = needHH(c, hh);
   if (err) return err;
-  const db = await getDb();
-  const lists = await db
-    .select()
-    .from(shoppingLists)
-    .where(eq(shoppingLists.householdId, hh!.id));
-  for (const l of lists) {
-    await db.delete(listItems).where(eq(listItems.listId, l.id));
-  }
-  await db.delete(shoppingLists).where(eq(shoppingLists.householdId, hh!.id));
-  await db.delete(productInsights).where(eq(productInsights.householdId, hh!.id));
-  await db.delete(purchases).where(eq(purchases.householdId, hh!.id));
-  await db.delete(corrections).where(eq(corrections.householdId, hh!.id));
-  await db.delete(scans).where(eq(scans.householdId, hh!.id));
-  await db.delete(products).where(eq(products.householdId, hh!.id));
-  await db
-    .update(households)
-    .set({ lastPantryRefreshAt: null })
-    .where(eq(households.id, hh!.id));
+  await resetDemoHousehold(hh!.id);
   return c.json({ ok: true });
 });

@@ -1,5 +1,8 @@
 [
   { "rawName": "Milk bottle", "normalizedName": "milk", "category": "dairy", "qty": 1, "confidence": 0.7 },
   { "rawName": "Chips bag", "normalizedName": "chips", "category": "chips", "qty": 2, "confidence": 0.65 },
-  { "rawName": "Rice?", "normalizedName": "rice", "category": "grains", "qty": 1, "confidence": 0.5 }
+  { "rawName": "Rice?", "normalizedName": "rice", "category": "grains", "qty": 1, "confidence": 0.5 },
+  { "rawName": "Steel bottle", "normalizedName": "steel water bottle", "category": "other", "qty": 1, "confidence": 0.6 },
+  { "rawName": "Dish soap", "normalizedName": "dish soap", "category": "cleaning", "qty": 1, "confidence": 0.8 },
+  { "rawName": "Toothpaste", "normalizedName": "toothpaste", "category": "personal_care", "qty": 1, "confidence": 0.85 }
 ]

@@ -2,5 +2,7 @@
   { "rawName": "Milk 1L", "normalizedName": "milk", "category": "dairy", "brand": "Dairy Pure", "qty": 1, "packQty": 1, "packUnit": "L", "price": 1.4, "confidence": 0.95 },
   { "rawName": "White bread 500g", "normalizedName": "bread", "category": "bread", "qty": 1, "packQty": 500, "packUnit": "g", "price": 2.1, "confidence": 0.9 },
   { "rawName": "Eggs 10pcs", "normalizedName": "eggs", "category": "eggs", "qty": 1, "packQty": 10, "packUnit": "pcs", "price": 3.1, "confidence": 0.92 },
-  { "rawName": "Olive oil 500ml", "normalizedName": "olive oil", "category": "oils", "brand": "Borges", "qty": 1, "packQty": 500, "packUnit": "ml", "price": 6.0, "confidence": 0.88 }
+  { "rawName": "Olive oil 500ml", "normalizedName": "olive oil", "category": "oils", "brand": "Borges", "qty": 1, "packQty": 500, "packUnit": "ml", "price": 6.0, "confidence": 0.88 },
+  { "rawName": "Greek yogurt 500g", "normalizedName": "yogurt", "category": "dairy", "brand": "Fage", "qty": 1, "packQty": 500, "packUnit": "g", "price": 2.0, "confidence": 0.9 },
+  { "rawName": "Chicken breast 500g", "normalizedName": "chicken breast", "category": "meat", "qty": 1, "packQty": 500, "packUnit": "g", "price": 6.5, "confidence": 0.87 }
 ]

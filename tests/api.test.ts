@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -76,6 +76,184 @@ describe("seed → briefing flow", () => {
     expect(empty.body.skip).toHaveLength(0);
     const emptySections = await api("/api/pantry/sections");
     expect(emptySections.body.total).toBe(0);
+  });
+
+  it("seeds the full demo with holds, savings and a grocery list", async () => {
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    await api("/api/demo/reset", { method: "POST" });
+    const seed = await api("/api/demo/seed", { method: "POST" });
+    expect(seed.status).toBe(200);
+    expect(seed.body.listId).toBeTruthy();
+
+    const briefing = await api("/api/briefing");
+    expect(briefing.body.buy.map((s: any) => s.rawName)).toEqual(
+      expect.arrayContaining(["Milk", "Olive oil", "Cooking oil", "Trash bags"]),
+    );
+    expect(briefing.body.skip.map((s: any) => s.rawName)).toEqual(
+      expect.arrayContaining(["Rice", "Dish soap", "Toothpaste", "Steel water bottle"]),
+    );
+    expect(briefing.body.holdCount).toBe(4);
+
+    const oil = briefing.body.swap.find((s: any) => s.rawName === "Olive oil");
+    const laundry = briefing.body.swap.find(
+      (s: any) => s.rawName === "Laundry detergent",
+    );
+    const coffee = briefing.body.swap.find((s: any) => s.rawName === "Coffee");
+    expect(oil?.evidence.expectedSaving).toBeCloseTo(2.0, 5);
+    expect(laundry?.evidence.expectedSaving).toBeCloseTo(2.0, 5);
+    expect(coffee?.evidence.expectedSaving).toBeCloseTo(1.5, 5);
+
+    // Seeded open list: mixed sources, one checked row, no auto items yet.
+    const seeded = await api(`/api/lists/${seed.body.listId}`);
+    expect(seeded.body.list.title).toBe("Weekly shop");
+    expect(seeded.body.items).toHaveLength(9);
+    expect(
+      seeded.body.items.find((item: any) => item.rawName === "Eggs"),
+    ).toMatchObject({ checked: true, decision: "needs_it" });
+    expect(seeded.body.items.map((item: any) => item.source)).toEqual(
+      expect.arrayContaining(["voice", "camera", "scan"]),
+    );
+
+    // First /quick-view open runs the sweep and adds the due pantry items.
+    const refresh = await api("/api/lists/pantry-refresh", {
+      method: "POST",
+      body: "{}",
+    });
+    expect(refresh.body.listId).toBe(seed.body.listId);
+    expect(refresh.body.added.map((item: any) => item.rawName)).toEqual(
+      expect.arrayContaining(["milk", "olive oil", "coffee", "trash bags", "cooking oil"]),
+    );
+    expect(refresh.body.added).toHaveLength(5);
+
+    const ev = await api(`/api/lists/${seed.body.listId}/evaluate`, {
+      method: "POST",
+      body: "{}",
+    });
+    expect(ev.body.holdCount).toBe(4);
+    expect(
+      ev.body.results
+        .filter((r: any) => r.suggestion.action === "SKIP")
+        .map((r: any) => r.rawName),
+    ).toEqual(expect.arrayContaining(["Rice", "Dish soap", "Toothpaste", "Steel water bottle"]));
+
+    // Seed is idempotent: a second call does not duplicate products or lists.
+    const productsBefore = await api("/api/pantry");
+    const listsBefore = await api("/api/lists");
+    await api("/api/demo/seed", { method: "POST" });
+    const productsAfter = await api("/api/pantry");
+    const listsAfter = await api("/api/lists");
+    expect(productsAfter.body.products).toHaveLength(
+      productsBefore.body.products.length,
+    );
+    expect(listsAfter.body.lists.filter((l: any) => l.status === "open")).toHaveLength(1);
+    expect(
+      listsBefore.body.lists.filter((l: any) => l.status === "open"),
+    ).toHaveLength(1);
+
+    await api("/api/demo/reset", { method: "POST" });
+  });
+
+  it("cart fixture produces four holds", async () => {
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    await api("/api/demo/reset", { method: "POST" });
+    await api("/api/demo/seed", { method: "POST" });
+
+    const items = JSON.parse(readFileSync("public/fixtures/cart-1.json", "utf8"));
+    const scan = await api("/api/scans", {
+      method: "POST",
+      body: JSON.stringify({ kind: "cart", items }),
+    });
+    expect(scan.status).toBe(200);
+    const confirm = await api(`/api/scans/${scan.body.id}/confirm`, {
+      method: "POST",
+      body: JSON.stringify({ kind: "cart", items }),
+    });
+    expect(confirm.status).toBe(200);
+    expect(confirm.body.listId).toBeTruthy();
+
+    const list = await api(`/api/lists/${confirm.body.listId}`);
+    expect(list.body.items).toHaveLength(6);
+
+    const ev = await api(`/api/lists/${confirm.body.listId}/evaluate`, {
+      method: "POST",
+      body: "{}",
+    });
+    expect(ev.body.holdCount).toBe(4);
+    expect(
+      ev.body.results
+        .filter((r: any) => r.suggestion.action === "SKIP")
+        .map((r: any) => r.rawName),
+    ).toEqual(
+      expect.arrayContaining(["Rice?", "Steel bottle", "Dish soap", "Toothpaste"]),
+    );
+
+    await api("/api/demo/reset", { method: "POST" });
+  });
+
+  it("empty household + first receipt uses the pre-warmed knowledge", async () => {
+    await api("/api/households", {
+      method: "POST",
+      body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
+    });
+    // Empty scene: household is cleared, but the global knowledge cache is warm
+    // so a first receipt still gets shelf-life classes and alternatives.
+    await api("/api/demo/reset", { method: "POST" });
+
+    const oldClassify = process.env.PANTRY_CLASSIFY;
+    process.env.PANTRY_CLASSIFY = "off";
+    try {
+      const items = JSON.parse(
+        readFileSync("public/fixtures/receipt-1.json", "utf8"),
+      );
+      const scan = await api("/api/scans", {
+        method: "POST",
+        body: JSON.stringify({ kind: "receipt", items }),
+      });
+      const confirm = await api(`/api/scans/${scan.body.id}/confirm`, {
+        method: "POST",
+        body: JSON.stringify({ kind: "receipt", items }),
+      });
+      expect(confirm.status).toBe(200);
+
+      const pantry = await api("/api/pantry");
+      expect(pantry.body.products).toHaveLength(6);
+      expect(pantry.body.products.map((p: any) => p.name)).toEqual(
+        expect.arrayContaining([
+          "Milk",
+          "Bread",
+          "Eggs",
+          "Olive oil",
+          "Yogurt",
+          "Chicken breast",
+        ]),
+      );
+      const milk = pantry.body.products.find((p: any) => p.name === "Milk");
+      expect(milk).toBeTruthy();
+      const detail = await api(`/api/pantry/${milk.productId}`);
+      expect(detail.body.enrichment).toBeTruthy();
+      expect(detail.body.enrichment.alternatives.length).toBeGreaterThan(0);
+
+      const briefing = await api("/api/briefing");
+      expect(briefing.body.buy).toHaveLength(0);
+      expect(briefing.body.skip).toHaveLength(0);
+      expect(briefing.body.holdCount).toBe(0);
+      expect(briefing.body.swap.map((s: any) => s.rawName)).toEqual(
+        expect.arrayContaining(["Milk", "Bread"]),
+      );
+      for (const swap of briefing.body.swap) {
+        expect(swap.evidence.expectedSaving).toBeNull();
+      }
+    } finally {
+      if (oldClassify === undefined) delete process.env.PANTRY_CLASSIFY;
+      else process.env.PANTRY_CLASSIFY = oldClassify;
+      await api("/api/demo/reset", { method: "POST" });
+    }
   });
 
   it("same receipt 3× with spaced dates → personal rhythm", async () => {
@@ -491,6 +669,15 @@ describe("pantry auto-add to grocery list", () => {
       body: JSON.stringify({ deviceId: DID, householdSize: 2 }),
     });
     await api("/api/demo/seed", { method: "POST" });
+
+    // The seeded "Weekly shop" list is open; empty it so this test starts
+    // from a clean list and can assert the undo batch in isolation.
+    const seededLists = await api("/api/lists");
+    const seeded = seededLists.body.lists.find(
+      (list: any) => list.title === "Weekly shop",
+    );
+    expect(seeded).toBeTruthy();
+    await api(`/api/lists/${seeded.id}/items`, { method: "DELETE" });
 
     const first = await api("/api/lists/pantry-refresh", {
       method: "POST",

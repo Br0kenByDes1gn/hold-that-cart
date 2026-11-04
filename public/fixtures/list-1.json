@@ -1,6 +1,8 @@
 [
   { "rawName": "milk", "normalizedName": "milk", "category": "dairy", "qty": 1, "confidence": 0.8 },
+  { "rawName": "eggs", "normalizedName": "eggs", "category": "eggs", "qty": 1, "confidence": 0.85 },
   { "rawName": "rice", "normalizedName": "rice", "category": "grains", "qty": 1, "confidence": 0.85 },
-  { "rawName": "olive oil", "normalizedName": "olive oil", "category": "oils", "qty": 1, "confidence": 0.8 },
-  { "rawName": "steel bottle", "normalizedName": "steel water bottle", "category": "other", "qty": 1, "confidence": 0.6 }
+  { "rawName": "dish soap", "normalizedName": "dish soap", "category": "cleaning", "qty": 1, "confidence": 0.8 },
+  { "rawName": "toothpaste", "normalizedName": "toothpaste", "category": "personal_care", "qty": 1, "confidence": 0.8 },
+  { "rawName": "bananas", "normalizedName": "bananas", "category": "fruit", "qty": 1, "confidence": 0.7 }
 ]

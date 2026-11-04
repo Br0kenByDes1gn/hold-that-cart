@@ -69,16 +69,32 @@ export async function getOrCreateProduct(
     .where(and(eq(products.householdId, householdId), eq(products.catalogKey, norm)));
   if (existing[0]) return existing[0];
   const key = knowledgeKey(name, opts.brand, opts.form);
-  const know = await db
+  let know = await db
     .select()
     .from(productKnowledge)
     .where(eq(productKnowledge.key, key));
+  // Brand/form-specific knowledge wins, but fall back to the generic name so a
+  // branded receipt line ("Dairy Pure milk") still inherits Milk's class.
+  let resolvedKey = key;
+  if (!know[0]) {
+    const genericKey = knowledgeKey(name);
+    if (genericKey !== key) {
+      const generic = await db
+        .select()
+        .from(productKnowledge)
+        .where(eq(productKnowledge.key, genericKey));
+      if (generic[0]) {
+        know = generic;
+        resolvedKey = genericKey;
+      }
+    }
+  }
   const shelf = (know[0]?.enrichment as ProductEnrichment | undefined)?.shelfLifeClass ?? "unknown";
   const row = {
     id: randomUUID(),
     householdId,
     catalogKey: norm,
-    knowledgeKey: know[0] ? key : null,
+    knowledgeKey: know[0] ? resolvedKey : null,
     name,
     shelfLifeClass: shelf as string,
     icon: opts.icon ?? slugify(name),

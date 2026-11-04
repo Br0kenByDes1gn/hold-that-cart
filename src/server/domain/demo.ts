@@ -56,6 +56,11 @@ export const DEMO_ITEMS: DemoItem[] = [
     enrichment: e("dairy", "perishable", 7, 4, 2),
   },
   {
+    name: "Chicken breast",
+    icon: "raw-chicken",
+    enrichment: e("meat", "perishable", 4, 3, 1),
+  },
+  {
     name: "Yogurt",
     icon: "yogurt",
     enrichment: e("dairy", "perishable", 6, 4, 2, [
@@ -128,6 +133,11 @@ export const DEMO_ITEMS: DemoItem[] = [
     enrichment: e("paper", "household", 30, null, 2, [
       { title: "Bigger pack instead of small", swapType: "larger_pack", healthDelta: 0, sustainabilityDelta: 1, rationale: "Less packaging per roll", confidence: 0.7 },
     ]),
+  },
+  {
+    name: "Trash bags",
+    icon: "trash-bags",
+    enrichment: e("cleaning", "household", 60, null, 2),
   },
   {
     name: "Steel water bottle",
@@ -222,13 +232,54 @@ export const DEMO_INSIGHTS: Record<string, DemoInsight> = {
     healthy: 0.5,
     sustainable: 0.4,
   },
+  Coffee: {
+    category: "coffee_tea",
+    savesMoney: 0.6,
+    healthy: 0.55,
+    sustainable: 0.6,
+  },
+  Yogurt: {
+    category: "dairy",
+    savesMoney: 0.6,
+    healthy: 0.7,
+    sustainable: 0.6,
+  },
+  "Trash bags": {
+    category: "cleaning",
+    savesMoney: 0.7,
+    healthy: 0.4,
+    sustainable: 0.7,
+  },
+  "Cooking oil": {
+    category: "oils",
+    savesMoney: 0.65,
+    healthy: 0.55,
+    sustainable: 0.45,
+  },
+  "Dish soap": {
+    category: "cleaning",
+    savesMoney: 0.5,
+    healthy: 0.5,
+    sustainable: 0.7,
+  },
+  Toothpaste: {
+    category: "personal_care",
+    savesMoney: 0.6,
+    healthy: 0.5,
+    sustainable: 0.55,
+  },
 };
 
 // ── Demo purchase plan (offsets in days before "now") ──
-// Designed so a fresh seed deterministically shows: one stocked (rice),
-// one getting-low, one due (milk depends on timing — milk bought 6d ago,
-// T=5 → due), one durable hold alert (steel bottle), and a money story
-// (branded vs store-brand olive oil unit prices).
+// Designed so a fresh seed deterministically shows a full mix:
+//   BUY: milk (perishable due), olive oil + cooking oil (staple due),
+//        trash bags (household due)
+//   SKIP: rice (staple stocked), steel bottle (durable), dish soap +
+//         toothpaste (household stocked)
+//   SWAP: olive oil (branded vs store-brand), laundry (20 vs 40 wash),
+//         coffee (Lavazza vs store brand) — all receipt-derived € evidence
+// The 3-day pantry→list sweep then adds milk, olive oil, coffee, trash bags
+// and cooking oil to the seeded grocery list.
 
 export interface DemoPurchase {
   item: string;
@@ -262,12 +313,65 @@ export const DEMO_PURCHASES: DemoPurchase[] = [
   { item: "Olive oil", daysAgo: 70, brand: "Borges", qty: 1, packQty: 500, packUnit: "ml", totalPrice: 6.0 },
   { item: "Olive oil", daysAgo: 52, brand: "Store brand", qty: 1, packQty: 1, packUnit: "L", totalPrice: 8.0 },
   { item: "Olive oil", daysAgo: 35, brand: "Borges", qty: 1, packQty: 500, packUnit: "ml", totalPrice: 6.0 },
-  // Detergent: 50d ago, T=45 → due (BUY)
+  // Detergent: 3 purchases, last 30d ago → getting low → cheaper-format SWAP.
+  // Current habit (20-wash Persil @ €0.375/wash) vs 40-wash trial @ €0.275/wash.
   { item: "Laundry detergent", daysAgo: 95, brand: "Persil", qty: 1, packQty: 20, packUnit: "wash", totalPrice: 7.5 },
-  { item: "Laundry detergent", daysAgo: 50, brand: "Persil", qty: 1, packQty: 20, packUnit: "wash", totalPrice: 7.5 },
+  { item: "Laundry detergent", daysAgo: 80, brand: "Persil", qty: 1, packQty: 40, packUnit: "wash", totalPrice: 11.0 },
+  { item: "Laundry detergent", daysAgo: 30, brand: "Persil", qty: 1, packQty: 20, packUnit: "wash", totalPrice: 7.5 },
+  // Coffee: 3 purchases, last 15d ago → getting low → cheaper-format SWAP.
+  // Current habit (Lavazza 250g @ €18/kg) vs store 500g trial @ €12/kg.
+  { item: "Coffee", daysAgo: 60, brand: "Lavazza", qty: 1, packQty: 250, packUnit: "g", totalPrice: 4.5 },
+  { item: "Coffee", daysAgo: 40, brand: "Store brand", qty: 1, packQty: 500, packUnit: "g", totalPrice: 6.0 },
+  { item: "Coffee", daysAgo: 15, brand: "Lavazza", qty: 1, packQty: 250, packUnit: "g", totalPrice: 4.5 },
+  // Trash bags: 70d ago, household clock 60d → due (BUY + auto-add)
+  { item: "Trash bags", daysAgo: 130, qty: 1, packQty: 30, packUnit: "pcs", totalPrice: 3.0 },
+  { item: "Trash bags", daysAgo: 70, qty: 1, packQty: 30, packUnit: "pcs", totalPrice: 3.2 },
+  // Cooking oil: last 45d ago, staple clock 14d → due (BUY + auto-add)
+  { item: "Cooking oil", daysAgo: 85, qty: 1, packQty: 1, packUnit: "L", totalPrice: 2.5 },
+  { item: "Cooking oil", daysAgo: 45, qty: 1, packQty: 1, packUnit: "L", totalPrice: 2.6 },
+  // Dish soap: 3 purchases, last 10d ago → stocked household hold
+  { item: "Dish soap", daysAgo: 90, qty: 1, packQty: 500, packUnit: "ml", totalPrice: 1.8 },
+  { item: "Dish soap", daysAgo: 50, qty: 1, packQty: 500, packUnit: "ml", totalPrice: 1.8 },
+  { item: "Dish soap", daysAgo: 10, qty: 1, packQty: 500, packUnit: "ml", totalPrice: 1.9 },
+  // Toothpaste: 3 purchases, last 15d ago → stocked household hold
+  { item: "Toothpaste", daysAgo: 135, qty: 1, packQty: 100, packUnit: "ml", totalPrice: 2.2 },
+  { item: "Toothpaste", daysAgo: 75, qty: 1, packQty: 100, packUnit: "ml", totalPrice: 2.2 },
+  { item: "Toothpaste", daysAgo: 15, qty: 1, packQty: 100, packUnit: "ml", totalPrice: 2.3 },
+  // Yogurt: fresh perishable, used for camera/list matching
+  { item: "Yogurt", daysAgo: 8, qty: 1, packQty: 500, packUnit: "g", totalPrice: 2.0 },
+  { item: "Yogurt", daysAgo: 2, qty: 1, packQty: 500, packUnit: "g", totalPrice: 2.0 },
   // Steel bottle: bought 90d ago → durable hold alert when re-scanned
   { item: "Steel water bottle", daysAgo: 90, qty: 1, totalPrice: 18.0 },
   // Toilet paper: 20d ago, T=30 → getting low
   { item: "Toilet paper", daysAgo: 50, qty: 1, packQty: 8, packUnit: "roll", totalPrice: 4.5 },
   { item: "Toilet paper", daysAgo: 20, qty: 1, packQty: 8, packUnit: "roll", totalPrice: 4.7 },
 ];
+
+// ── Demo grocery list ──
+// Seeded as the open "Weekly shop" list. The auto-add sweep runs on the first
+// /quick-view open (lastPantryRefreshAt is reset to null) and adds the due
+// pantry items on top of these rows.
+
+export interface DemoListItem {
+  rawName: string;
+  qty: number;
+  source: "manual" | "voice" | "camera" | "scan";
+  brand?: string;
+  checked?: boolean;
+  decision?: "needs_it" | "skip";
+}
+
+export const DEMO_LIST = {
+  title: "Weekly shop",
+  items: [
+    { rawName: "Bananas", qty: 2, source: "manual" },
+    { rawName: "Bread", qty: 1, source: "voice", brand: "Hovis" },
+    { rawName: "Yogurt", qty: 2, source: "camera", brand: "Fage" },
+    { rawName: "Rice", qty: 1, source: "scan" },
+    { rawName: "Dish soap", qty: 1, source: "manual" },
+    { rawName: "Toothpaste", qty: 1, source: "manual" },
+    { rawName: "Steel water bottle", qty: 1, source: "manual" },
+    { rawName: "Saffron", qty: 1, source: "manual" },
+    { rawName: "Eggs", qty: 1, source: "manual", checked: true, decision: "needs_it" },
+  ] as DemoListItem[],
+};
