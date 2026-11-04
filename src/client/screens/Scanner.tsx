@@ -17,6 +17,17 @@ const SCAN_MODES: Array<{ id: ScanMode; label: string }> = [
   { id: "receipt", label: "Receipt" },
 ];
 
+// Demo-camera props: shown instead of a live feed when the scanner is opened
+// with ?demo=1 (or ?demo=receipt|cart). The detections still come from the
+// deterministic JSON fixtures; the photos only make the scan look real.
+const DEMO_RECEIPT_IMAGE = "/fixtures/receipt-demo.jpeg";
+const DEMO_CART_IMAGE = "/fixtures/cart-demo.jpeg";
+
+function demoParamFromLocation(): string | null {
+  if (typeof window === "undefined") return null;
+  return new URLSearchParams(window.location.search).get("demo");
+}
+
 function ChevronLeft({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -111,11 +122,26 @@ export function ScannerScreen() {
   const [busy, setBusy] = useState(false);
   const [extractError, setExtractError] = useState("");
   const [facing, setFacing] = useState<Facing>("user");
-  const [scanMode, setScanMode] = useState<ScanMode>("receipt");
-  const [cameraState, setCameraState] = useState<CameraState>("starting");
+  const [demoParam] = useState<string | null>(() => demoParamFromLocation());
+  const demoEnabled =
+    demoParam === "1" || demoParam === "receipt" || demoParam === "cart";
+  const [scanMode, setScanMode] = useState<ScanMode>(
+    demoParam === "cart" ? "cart" : "receipt",
+  );
+  const demoImage =
+    demoEnabled && scanMode === "cart"
+      ? DEMO_CART_IMAGE
+      : demoEnabled && scanMode === "receipt"
+        ? DEMO_RECEIPT_IMAGE
+        : null;
+  const demoKind: "cart" | "receipt" = scanMode === "cart" ? "cart" : "receipt";
+  const [cameraState, setCameraState] = useState<CameraState>(
+    demoEnabled ? "ready" : "starting",
+  );
   const [cameraError, setCameraError] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const demoTimerRef = useRef<number | null>(null);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -199,12 +225,30 @@ export function ScannerScreen() {
   );
 
   useEffect(() => {
+    if (demoEnabled) {
+      stopCamera();
+      setCameraState("ready");
+      setCameraError("");
+      return () => {
+        requestIdRef.current += 1;
+        stopCamera();
+      };
+    }
     void startCamera("user");
     return () => {
       requestIdRef.current += 1;
       stopCamera();
     };
-  }, [startCamera, stopCamera]);
+  }, [demoEnabled, startCamera, stopCamera]);
+
+  useEffect(
+    () => () => {
+      if (demoTimerRef.current !== null) {
+        window.clearTimeout(demoTimerRef.current);
+      }
+    },
+    [],
+  );
 
   const goBack = () => {
     if (window.history.length > 1) {
@@ -231,6 +275,32 @@ export function ScannerScreen() {
   };
 
   const capturePhoto = () => {
+    if (demoImage) {
+      if (photo) {
+        setPhoto(null);
+        setCameraState("ready");
+        setCameraError("");
+        return;
+      }
+      if (demoTimerRef.current !== null) {
+        window.clearTimeout(demoTimerRef.current);
+      }
+      setExtracted([]);
+      setScanId(null);
+      setExtractError("");
+      setPhoto(demoImage);
+      setCameraState("captured");
+      setCameraError("");
+      setBusy(true);
+      // Keep the captured frame on screen briefly so it reads as a real scan
+      // before the deterministic fixture results appear.
+      demoTimerRef.current = window.setTimeout(() => {
+        demoTimerRef.current = null;
+        void loadFixture();
+      }, 700);
+      return;
+    }
+
     if (photo) {
       void startCamera(facing, true, activeDeviceIdRef.current ?? undefined);
       return;
@@ -329,6 +399,17 @@ export function ScannerScreen() {
     onError: (e: any) => setExtractError(e.message),
   });
 
+  const chooseMode = (mode: ScanMode) => {
+    setScanMode(mode);
+    if (demoEnabled) {
+      setPhoto(null);
+      setCameraState("ready");
+      setCameraError("");
+      setExtracted([]);
+      setScanId(null);
+    }
+  };
+
   return (
     <div className="scanner-page">
       <header className="cr-header">
@@ -372,15 +453,33 @@ export function ScannerScreen() {
         <span className="cr-corner cr-corner-bl" />
         <span className="cr-corner cr-corner-br" />
 
-        <video
-          ref={videoRef}
-          className={`cr-camera-feed ${facing === "user" ? "is-mirrored" : ""}`}
-          autoPlay
-          playsInline
-          muted
-        />
+        {!demoEnabled && (
+          <video
+            ref={videoRef}
+            className={`cr-camera-feed ${facing === "user" ? "is-mirrored" : ""}`}
+            autoPlay
+            playsInline
+            muted
+          />
+        )}
 
-        {photo && <img className="cr-captured-photo" src={photo} alt="Captured scan" />}
+        {demoImage && !photo && (
+          <img
+            className={`cr-camera-feed cr-demo-feed is-${demoKind}`}
+            src={demoImage}
+            alt=""
+          />
+        )}
+
+        {photo && (
+          <img
+            className={`cr-captured-photo ${
+              demoEnabled ? `cr-demo-photo is-${demoKind}` : ""
+            }`}
+            src={photo}
+            alt="Captured scan"
+          />
+        )}
 
         <div className="cr-scan-beam" aria-hidden="true" />
 
@@ -414,21 +513,23 @@ export function ScannerScreen() {
       </button>
 
       <div className="cr-controls" role="group" aria-label="Scan type">
-        <button
-          type="button"
-          className="cr-control cr-control-flip"
-          aria-label={`Switch to ${facing === "user" ? "back" : "front"} camera`}
-          onClick={() => void flipCamera()}
-        >
-          <FlipCamera />
-        </button>
-        {SCAN_MODES.map((mode) => (
+        {!demoEnabled && (
+          <button
+            type="button"
+            className="cr-control cr-control-flip"
+            aria-label={`Switch to ${facing === "user" ? "back" : "front"} camera`}
+            onClick={() => void flipCamera()}
+          >
+            <FlipCamera />
+          </button>
+        )}
+        {SCAN_MODES.filter((mode) => !demoEnabled || mode.id !== "list").map((mode) => (
           <button
             key={mode.id}
             type="button"
             className={`cr-control ${scanMode === mode.id ? "is-active" : ""}`}
             aria-pressed={scanMode === mode.id}
-            onClick={() => setScanMode(mode.id)}
+            onClick={() => chooseMode(mode.id)}
           >
             {mode.label}
           </button>

@@ -52,6 +52,7 @@ if (existsSync(DIST + "/index.html")) {
     app.use("/*.svg", serveStatic({ root: DIST }));
     app.use("/*.webmanifest", serveStatic({ root: DIST }));
     app.use("/sw.js", serveStatic({ root: DIST }));
+    app.use("/registerSW.js", serveStatic({ root: DIST }));
     app.use("/workbox-*.js", serveStatic({ root: DIST }));
   }
   const indexHtml = readFileSync(DIST + "/index.html", "utf8");

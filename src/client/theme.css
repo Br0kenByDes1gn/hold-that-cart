@@ -344,6 +344,18 @@ details summary { cursor: pointer; }
   z-index: 2;
 }
 
+/* Demo-camera props: receipt is shown whole, cart fills the frame. */
+.cr-demo-feed,
+.cr-demo-photo {
+  object-fit: contain;
+  background: #050b10;
+}
+.cr-demo-feed.is-cart,
+.cr-demo-photo.is-cart {
+  object-fit: cover;
+  object-position: center 40%;
+}
+
 .cr-camera-message {
   position: absolute;
   top: 50%;

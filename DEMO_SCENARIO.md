@@ -26,6 +26,8 @@ them as two takes (or cut between them).
   The demo receipt is a JSON fixture (no vision call), but **confirming it runs
   the pantry classification model**. Without a key the items fall back to
   "all false → SKIP", which is not the demo we want.
+- Open the scanner with `?demo=1` for every recorded scan. That shows the prop
+  photos instead of a live camera feed (no black screen, no permission prompt).
 - Use a fresh browser context (or keep the same context for both chapters).
 - The app must be booted once before seeding so the anonymous household exists.
 
@@ -185,6 +187,30 @@ soap, Toothpaste).
 - Product detail (Milk/Bread/Olive oil): enrichment alternatives present; one
   purchase in history; no "Variants you've bought" with two variants.
 
+### 3.4 Demo-camera props
+
+The scanner has a demo-camera mode so the recorded video never shows a black
+video element:
+
+| URL | Preview |
+|---|---|
+| `/scanner?demo=1` | Receipt mode → `public/fixtures/receipt-demo.jpeg` |
+| `/scanner?demo=1` then **Cart** | Cart mode → `public/fixtures/cart-demo.jpeg` |
+| `/scanner?demo=receipt` | Same, opens in Receipt mode |
+| `/scanner?demo=cart` | Same, opens in Cart mode |
+
+- The live camera is not started in demo mode.
+- The scan beam animates over the photo.
+- **Take photo** keeps the photo on screen, shows "Reading…", then loads the
+  deterministic JSON fixture (no vision API call). The visible button text is
+  `Take photo`; its accessible name is `Take receipt photo` / `Take cart photo`.
+- **Retake photo** returns to the prop photo.
+- The photos are visual props. The detections come from
+  `receipt-1.json` / `cart-1.json`, so they are **not expected to match the
+  photo line-for-line**. The cart photo is a real cart; the curated cart
+  fixture is what produces the 4-hold story.
+- The old **Use demo receipt/cart** buttons still exist as a fallback.
+
 ---
 
 ## 4. Chapter 1 — Empty → first receipt
@@ -197,8 +223,8 @@ type-level swaps without inventing savings or holds.
 | 1 | `goto("/")` and wait for the three mode cards | Mode screen |
 | 2 | `seed(page, "empty")` | household empty, knowledge warm |
 | 3 | `goto("/pantry")` | "Pantry is empty. Scan a receipt to add items." |
-| 4 | `goto("/scanner")` | Cart Radar, scan type **Receipt** selected |
-| 5 | Click **Use demo receipt** | "Detected (receipt)" and 6 rows |
+| 4 | `goto("/scanner?demo=1")` | Cart Radar, scan type **Receipt** selected; receipt photo in the frame, no camera prompt |
+| 5 | Click **Take photo** | photo is captured, "Reading…", then "Detected (receipt)" and 6 rows |
 | 6 | Click **Confirm → add to pantry** | button shows "Classifying items…"; waits; lands on `/pantry` |
 | 7 | Show the Pantry cards | 6 cards with tags; open **Milk** to show alternatives + one-purchase history |
 | 8 | `goto("/briefing")` | No hold alert; BUY/SKIP empty; 3 SWAP cards with **no €** |
@@ -231,12 +257,13 @@ pantry sections, grocery list building, auto-add, and list evaluation.
 | 8 | Check one row | "N in cart" count increments |
 | 9 | Optional: click **Undo** | the 5 auto rows disappear; banner clears |
 | 10 | Click **Check pantry** | `/lists/:id`: Hold alert **4**; row actions **I need it** / **Skip it** |
-| 11 | `goto("/scanner")` | select **Cart** |
-| 12 | Click **Use demo cart** | "Detected (cart)" 6 rows |
-| 13 | Click **Confirm → make list** | lands on a new `/lists/:id`; Hold alert **4** (Rice, Steel bottle, Dish soap, Toothpaste) |
-| 14 | Optional: on `/lists/:id` click **I need it** on Rice | row is marked done/needs it |
-| 15 | Optional corrections: `goto("/pantry")` → Rice → **I'm out** | `/briefing` now puts Rice in BUY (marked out) |
-| 16 | Optional: `goto("/quick-view")` → **Clear list** → **Clear** | list empties in place, stays open |
+| 11 | `goto("/scanner?demo=1")` | Cart Radar, receipt prop visible |
+| 12 | Click **Cart** | preview switches to the cart photo; scan beam still animates |
+| 13 | Click **Take photo** | photo is captured, "Reading…", then "Detected (cart)" 6 rows |
+| 14 | Click **Confirm → make list** | lands on a new `/lists/:id`; Hold alert **4** (Rice, Steel bottle, Dish soap, Toothpaste) |
+| 15 | Optional: on `/lists/:id` click **I need it** on Rice | row is marked done/needs it |
+| 16 | Optional corrections: `goto("/pantry")` → Rice → **I'm out** | `/briefing` now puts Rice in BUY (marked out) |
+| 17 | Optional: `goto("/quick-view")` → **Clear list** → **Clear** | list empties in place, stays open |
 
 If step 9 (Undo) is recorded, the auto rows are gone for the rest of the take.
 For a retake, call `seed(page, "full")` again; it is idempotent.
@@ -248,6 +275,12 @@ For a retake, call `seed(page, "full")` again; it is idempotent.
 Use these as Playwright assertions or recording checkpoints:
 
 ```text
+Scanner demo:
+  /scanner?demo=1     → prop receipt visible; no "Camera unavailable"
+  Cart mode           → prop cart visible
+  Take photo          → "Reading…" then "Detected (...)"
+  (no getUserMedia permission prompt)
+
 Empty:
   /pantry              → "Pantry is empty"
   /briefing            → no "Hold That Cart!" alert
@@ -286,8 +319,14 @@ Full:
   `/pantry` (or the end of "Classifying items…"), not a fixed timeout. If Muse
   fails, the fallback marks every item SKIP and the first-receipt pantry looks
   flat — retake that step.
-- **Camera may fail in headless Chromium.** The "Use demo receipt/cart/list"
-  buttons do not need a camera. Ignore the "Camera unavailable" message.
+- **Camera:** always use `/scanner?demo=1`. It shows the prop receipt/cart
+  photo and never starts `getUserMedia`, so there is no black preview and no
+  permission prompt. Without `?demo=1`, headless Chromium may fail to open the
+  camera.
+- **The photos are props.** Detections come from the deterministic JSON
+  fixtures, so the result list is not expected to match the photo line-for-line
+  (the cart photo is a real cart; the curated fixture is what produces the
+  4-hold story). This is accepted for the demo.
 - **The camera button in `/quick-view` and the mic** need browser permissions
   and, for voice, a Chromium build with the Web Speech API. The core scenario
   does not require either; typed + demo scans are enough.
