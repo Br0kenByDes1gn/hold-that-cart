@@ -79,9 +79,7 @@ export function DevMenu() {
 
   const openFixture = (fixture: "receipt" | "cart" | "list") => {
     setOpen(false);
-    const params = new URLSearchParams({ fixture });
-    // Receipt/cart have prop photos; the list fixture uses the live camera.
-    if (fixture !== "list") params.set("demo", "1");
+    const params = new URLSearchParams({ fixture, demo: "1" });
     window.location.assign(`/scanner?${params.toString()}`);
   };
 

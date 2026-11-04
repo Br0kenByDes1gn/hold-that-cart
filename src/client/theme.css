@@ -355,6 +355,10 @@ details summary { cursor: pointer; }
   object-fit: cover;
   object-position: center 40%;
 }
+.cr-demo-feed.is-list,
+.cr-demo-photo.is-list {
+  object-fit: contain;
+}
 
 .cr-camera-message {
   position: absolute;

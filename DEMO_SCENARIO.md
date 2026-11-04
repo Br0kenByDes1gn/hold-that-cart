@@ -196,20 +196,23 @@ video element:
 |---|---|
 | `/scanner?demo=1` | Receipt mode → `public/fixtures/receipt-demo.jpeg` |
 | `/scanner?demo=1` then **Cart** | Cart mode → `public/fixtures/cart-demo.jpeg` |
+| `/scanner?demo=1` then **Grocery list** | List mode → `public/fixtures/list-demo.jpeg` |
 | `/scanner?demo=receipt` | Same, opens in Receipt mode |
 | `/scanner?demo=cart` | Same, opens in Cart mode |
+| `/scanner?demo=list` | Same, opens in Grocery list mode |
 
 - The live camera is not started in demo mode.
 - The scan beam animates over the photo.
 - **Take photo** keeps the photo on screen, shows "Reading…", then loads the
   deterministic JSON fixture (no vision API call). The visible button text is
-  `Take photo`; its accessible name is `Take receipt photo` / `Take cart photo`.
+  `Take photo`; its accessible name is `Take receipt photo` / `Take cart photo`
+  / `Take list photo`.
 - **Retake photo** returns to the prop photo.
 - The photos are visual props. The detections come from
-  `receipt-1.json` / `cart-1.json`, so they are **not expected to match the
-  photo line-for-line**. The cart photo is a real cart; the curated cart
-  fixture is what produces the 4-hold story.
-- The old **Use demo receipt/cart** buttons still exist as a fallback.
+  `receipt-1.json` / `cart-1.json` / `list-1.json`, so they are **not expected
+  to match the photo line-for-line**. The cart photo is a real cart; the curated
+  cart fixture is what produces the 4-hold story.
+- The old **Use demo receipt/cart/list** buttons still exist as a fallback.
 
 ### 3.5 Dev-menu fixture shortcuts (dev only)
 
@@ -219,12 +222,11 @@ When running `pnpm run dev`, the gear menu has a **Demo fixtures** group:
 |---|---|---|
 | Receipt fixture | `/scanner?demo=1&fixture=receipt` | receipt prop + fixture auto-loaded |
 | Cart fixture | `/scanner?demo=1&fixture=cart` | cart prop + fixture auto-loaded |
-| List fixture | `/scanner?fixture=list` | live camera + fixture auto-loaded |
+| List fixture | `/scanner?demo=1&fixture=list` | list prop + fixture auto-loaded |
 
 These are one-click shortcuts for manual testing. They are **not** part of the
 production recording flow; the production scenario still uses the explicit
-steps in chapters 4 and 5. The list fixture has no prop photo, so it uses the
-live camera (and shows the camera error in headless Chromium).
+steps in chapters 4 and 5.
 
 ---
 
@@ -293,6 +295,7 @@ Use these as Playwright assertions or recording checkpoints:
 Scanner demo:
   /scanner?demo=1     → prop receipt visible; no "Camera unavailable"
   Cart mode           → prop cart visible
+  Grocery list mode   → prop list visible
   Take photo          → "Reading…" then "Detected (...)"
   (no getUserMedia permission prompt)
 
@@ -334,10 +337,10 @@ Full:
   `/pantry` (or the end of "Classifying items…"), not a fixed timeout. If Muse
   fails, the fallback marks every item SKIP and the first-receipt pantry looks
   flat — retake that step.
-- **Camera:** always use `/scanner?demo=1`. It shows the prop receipt/cart
-  photo and never starts `getUserMedia`, so there is no black preview and no
-  permission prompt. Without `?demo=1`, headless Chromium may fail to open the
-  camera.
+- **Camera:** always use `/scanner?demo=1`. It shows the prop
+  receipt/cart/list photo and never starts `getUserMedia`, so there is no black
+  preview and no permission prompt. Without `?demo=1`, headless Chromium may
+  fail to open the camera.
 - **The photos are props.** Detections come from the deterministic JSON
   fixtures, so the result list is not expected to match the photo line-for-line
   (the cart photo is a real cart; the curated fixture is what produces the

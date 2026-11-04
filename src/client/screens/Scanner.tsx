@@ -22,6 +22,7 @@ const SCAN_MODES: Array<{ id: ScanMode; label: string }> = [
 // deterministic JSON fixtures; the photos only make the scan look real.
 const DEMO_RECEIPT_IMAGE = "/fixtures/receipt-demo.jpeg";
 const DEMO_CART_IMAGE = "/fixtures/cart-demo.jpeg";
+const DEMO_LIST_IMAGE = "/fixtures/list-demo.jpeg";
 
 function demoParamFromLocation(): string | null {
   if (typeof window === "undefined") return null;
@@ -124,17 +125,22 @@ export function ScannerScreen() {
   const [facing, setFacing] = useState<Facing>("user");
   const [demoParam] = useState<string | null>(() => demoParamFromLocation());
   const demoEnabled =
-    demoParam === "1" || demoParam === "receipt" || demoParam === "cart";
+    demoParam === "1" ||
+    demoParam === "receipt" ||
+    demoParam === "cart" ||
+    demoParam === "list";
   const [scanMode, setScanMode] = useState<ScanMode>(
-    demoParam === "cart" ? "cart" : "receipt",
+    demoParam === "cart" ? "cart" : demoParam === "list" ? "list" : "receipt",
   );
-  const demoImage =
-    demoEnabled && scanMode === "cart"
+  const demoImage = !demoEnabled
+    ? null
+    : scanMode === "cart"
       ? DEMO_CART_IMAGE
-      : demoEnabled && scanMode === "receipt"
-        ? DEMO_RECEIPT_IMAGE
-        : null;
-  const demoKind: "cart" | "receipt" = scanMode === "cart" ? "cart" : "receipt";
+      : scanMode === "list"
+        ? DEMO_LIST_IMAGE
+        : DEMO_RECEIPT_IMAGE;
+  const demoKind: "cart" | "receipt" | "list" =
+    scanMode === "cart" ? "cart" : scanMode === "list" ? "list" : "receipt";
   const [cameraState, setCameraState] = useState<CameraState>(
     demoEnabled ? "ready" : "starting",
   );
@@ -540,7 +546,7 @@ export function ScannerScreen() {
             <FlipCamera />
           </button>
         )}
-        {SCAN_MODES.filter((mode) => !demoEnabled || mode.id !== "list").map((mode) => (
+        {SCAN_MODES.map((mode) => (
           <button
             key={mode.id}
             type="button"
