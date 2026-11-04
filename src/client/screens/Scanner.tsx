@@ -142,6 +142,7 @@ export function ScannerScreen() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const demoTimerRef = useRef<number | null>(null);
+  const fixtureLoadedRef = useRef(false);
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -358,13 +359,13 @@ export function ScannerScreen() {
     }
   };
 
-  const loadFixture = async () => {
+  const loadFixture = async (kind: ScanMode = scanMode) => {
     setBusy(true);
     setExtractError("");
     try {
-      const file = scanMode === "receipt" ? "receipt-1.json" : scanMode === "cart" ? "cart-1.json" : "list-1.json";
+      const file = kind === "receipt" ? "receipt-1.json" : kind === "cart" ? "cart-1.json" : "list-1.json";
       const arr = await fetch(`/fixtures/${file}`).then((r) => r.json());
-      const scan = await api.createScan(scanMode, arr);
+      const scan = await api.createScan(kind, arr);
       setDetectedKind(scan.kind);
       setScanId(scan.id);
       setExtracted(scan.matches ?? arr);
@@ -374,6 +375,22 @@ export function ScannerScreen() {
       setBusy(false);
     }
   };
+
+  // Dev-menu shortcut: /scanner?fixture=receipt|cart|list loads that fixture
+  // once on mount and shows the detected rows. The demo prop photo still comes
+  // from ?demo=1 for receipt/cart.
+  useEffect(() => {
+    if (fixtureLoadedRef.current) return;
+    const fixture = new URLSearchParams(window.location.search).get("fixture");
+    if (fixture !== "receipt" && fixture !== "cart" && fixture !== "list") return;
+    fixtureLoadedRef.current = true;
+    setScanMode(fixture);
+    setPhoto(null);
+    setExtracted([]);
+    setScanId(null);
+    void loadFixture(fixture);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const confirm = useMutation({
     mutationFn: () => {

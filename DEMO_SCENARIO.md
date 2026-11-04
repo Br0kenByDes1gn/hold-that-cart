@@ -211,6 +211,21 @@ video element:
   fixture is what produces the 4-hold story.
 - The old **Use demo receipt/cart** buttons still exist as a fallback.
 
+### 3.5 Dev-menu fixture shortcuts (dev only)
+
+When running `pnpm run dev`, the gear menu has a **Demo fixtures** group:
+
+| Button | URL | Result |
+|---|---|---|
+| Receipt fixture | `/scanner?demo=1&fixture=receipt` | receipt prop + fixture auto-loaded |
+| Cart fixture | `/scanner?demo=1&fixture=cart` | cart prop + fixture auto-loaded |
+| List fixture | `/scanner?fixture=list` | live camera + fixture auto-loaded |
+
+These are one-click shortcuts for manual testing. They are **not** part of the
+production recording flow; the production scenario still uses the explicit
+steps in chapters 4 and 5. The list fixture has no prop photo, so it uses the
+live camera (and shows the camera error in headless Chromium).
+
 ---
 
 ## 4. Chapter 1 — Empty → first receipt

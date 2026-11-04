@@ -77,6 +77,14 @@ export function DevMenu() {
     onError: (e: any) => setMsg(String(e.message).slice(0, 200)),
   });
 
+  const openFixture = (fixture: "receipt" | "cart" | "list") => {
+    setOpen(false);
+    const params = new URLSearchParams({ fixture });
+    // Receipt/cart have prop photos; the list fixture uses the live camera.
+    if (fixture !== "list") params.set("demo", "1");
+    window.location.assign(`/scanner?${params.toString()}`);
+  };
+
   const scan = devView === "scanner" ? devData?.scan : null;
   const scanItems: any[] = Array.isArray(scan?.rawExtraction?.items)
     ? scan.rawExtraction.items
@@ -104,6 +112,29 @@ export function DevMenu() {
             >
               Reset pantry
             </button>
+            <div className="devmenu-title">Demo fixtures</div>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => openFixture("receipt")}
+            >
+              Receipt fixture
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => openFixture("cart")}
+            >
+              Cart fixture
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => openFixture("list")}
+            >
+              List fixture
+            </button>
+            <div className="devmenu-msg">Opens Cart Radar with the fixture loaded.</div>
             {onPantry && (
               <button type="button" role="menuitem" onClick={() => openDevMode("pantry")}>
                 Dev mode
